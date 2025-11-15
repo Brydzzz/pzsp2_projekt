@@ -18,11 +18,28 @@ TEST(GraphTests, testGraphConstructorNegativeNodes) {
 }
 
 
+TEST(GraphTests, testGraphConstructorMatrix) {
+    std::vector<std::vector<int>> adjacencyMatrix = {{INT_MAX,2,INT_MAX,INT_MAX}, {2,INT_MAX,INT_MAX,INT_MAX}, {INT_MAX,INT_MAX,INT_MAX,INT_MAX}, {INT_MAX,INT_MAX,INT_MAX,INT_MAX}};
+    auto graph = Graph(adjacencyMatrix);
+    ASSERT_EQ(graph.getNodes(), 4);
+    ASSERT_EQ(graph.getWeightBetween(0,1), 2);
+    ASSERT_EQ(graph.getWeightBetween(1,0), 2);
+}
+
+
+TEST(GraphTests, testGraphConstructorInvalidMatrix) {
+    std::vector<std::vector<int>> invalidMatrix = {{INT_MAX,2,INT_MAX,INT_MAX}, {2,INT_MAX,INT_MAX}, {INT_MAX}, {INT_MAX,INT_MAX,INT_MAX,INT_MAX}};
+    ASSERT_ANY_THROW(auto graph = Graph(invalidMatrix));
+}
+
+
 TEST(GraphTests, addEdgeTest) {
     auto graph = Graph<int>(10);
     graph.addEdge(0, 1, 2);
     ASSERT_EQ(graph.getWeightBetween(0,1), 2);
+    ASSERT_EQ(graph.getWeightBetween(1,0), 2);
 }
+
 
 
 
