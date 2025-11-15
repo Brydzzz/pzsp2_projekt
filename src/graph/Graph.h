@@ -14,6 +14,9 @@ public:
     Graph();
     explicit Graph(int nodes);
     int getNodes();
+    void addEdge(int node1, int node2, T weight);
+    T getWeightBetween(int node1, int node2);
+
 };
 
 
