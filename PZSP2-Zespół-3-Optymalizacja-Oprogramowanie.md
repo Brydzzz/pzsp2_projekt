@@ -29,6 +29,8 @@ Pipeline kompiluje kod do uruchomienia testów jednostkowych
 #### Unit tests
 Pipeline uruchamia testy jednostkowe na skompilowanym kodzie
 
+<b>[ewentualnie]</b> Zostanie dodany stopień uruchamiający testy akceptacyjne.
+
 Tylko i wyłącznie po pomyślnym przejściu przez pipeline zmiany mogą być mergowane z branchem `main`.
 
 ## Metodyka tworzenia kodu
