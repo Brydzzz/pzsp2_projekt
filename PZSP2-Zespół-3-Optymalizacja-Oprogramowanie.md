@@ -69,7 +69,7 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 ---
 
 1. Uruchomienie programu bez gotowych danym ale dane grafu są w niepoprawnym formacie
-2. Program informuje o błędnym formacie danych `Invalid data format` kieruje nas do przykładowego pliku `<example-graph>` i kończy działanie z kodem -1.
+2. Program informuje o błędnym formacie danych `Invalid graph format` kieruje nas do przykładowego pliku `<example-graph>` i kończy działanie z kodem -1.
 
 ### Krzyw zbieżności badanych metryk
 
