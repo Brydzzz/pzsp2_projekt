@@ -15,9 +15,21 @@ Repozytorium kodu online znajduje się na GitLabie wydziałowym - [link](https:/
 
 ## CI/CD
 
-Będą uruchamianie narzędzia formatowania i analizy statycznej oraz testy jednostkowe.
+CI/CD będzie dzielił się na stopnie:
+- Formatter
+- Compiler
+- Unit tests
 
-_TODO: opisać może trochę dokładniej_
+#### Formatter
+Pipleline sprawdza poprawność formatu kodu
+
+#### Compiler
+Pipeline kompiluje kod do uruchomienia testów jednostkowych
+
+#### Unit tests
+Pipeline uruchamia testy jednostkowe na skompilowanym kodzie
+
+Tylko i wyłącznie po pomyślnym przejściu przez pipeline zmiany mogą być mergowane z branchem `main`.
 
 ## Metodyka tworzenia kodu
 
