@@ -43,7 +43,7 @@ Do implementacji algorytmów wybraliśmy C++ ze względu na jego szybkość.
 - implementacja CLI
 - wizualizacja wyników działania algorytmów oraz wyników przeprowadzonych eksperymentów
 
-Wybraliśmy Python ze względu na łatwości tworzenia aplikacji CLI (biblioteka `argparse` oraz biblioteka `rich` do formatowania tekstu w terminalu) oraz na 
+Wybraliśmy Python ze względu na łatwości tworzenia aplikacji CLI (biblioteka `argparse` oraz biblioteka `rich` do formatowania tekstu w terminalu) oraz na
 
 ## Propozycje testów akceptacyjnych
 
@@ -55,11 +55,8 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 
 1. Uruchomenie programu z wcześniej wygenerowanymi danymi
 2. Użytkownik uruchamia program jako `<nazwa-programu> c-comp --load-data <nazwa-pliku-z-danymi>` -> z danych utworzone zostają wykresy 3, które uruchamiają się w interaktywnym oknie matplotlib, dla każdego z badanych algorytmów
-<<<<<<< HEAD
--------------------------
-=======
 
->>>>>>> 96845fd66a6a04470f78827bebbe24a6646c5f9c
+---
 
 1. Uruchomienie programu bez gotowych danych -> uruchamiamy algorytmy ewolucyjne
 2. Użytkownik uruchamia program jako `<nazwa-programu> c-comp <nazwa pliku z grafem>` -> testy wykonują się w tle, użytkownik informowany jest o postępie prac w formie progress bar -> wyniki testów są zapisane jako `datafile-c-comp{N}` -> z danych utworzone zostają wykresy, które uruchamiają się inter w interkatywnym oknie matplotlib, dla każdego z badanych algorytmów
@@ -68,11 +65,9 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 
 1. Uruchomienie programu z gotowymi danymi, ale dane są w niepoprawnym formacie
 2. Program informuje o błędnym formacie danych `Invalid data format` kieruje nas do przykładowego pliku `<example-data>` i kończy działanie z kodem -1.
-<<<<<<< HEAD
-------------------------------------
-=======
 
->>>>>>> 96845fd66a6a04470f78827bebbe24a6646c5f9c
+---
+
 1. Uruchomienie programu bez gotowych danym ale dane grafu są w niepoprawnym formacie
 2. Program informuje o błędnym formacie danych `Invalid data format` kieruje nas do przykładowego pliku `<example-graph>` i kończy działanie z kodem -1.
 
@@ -82,16 +77,12 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 
 1. Uruchomenie programu z wcześniej wygenerowanymi danymi
 2. Użytkownik uruchamia program jako `<nazwa-programu> m-conv --load-data <nazwa-pliku-z-danymi>` -> z danych utworzone zostaje 8 wykresów, które uruchamiają się w interkatywnym oknie matplotlib, w zależności od prawdpodobieństwa mutacji oraz liczności populacji dla każdej z 4 metryk
-<<<<<<< HEAD
------------------------------------------------------
-=======
 
->>>>>>> 96845fd66a6a04470f78827bebbe24a6646c5f9c
+---
+
 1. Uruchomienie programu bez gotowych danych -> uruchamiamy algorytmy ewolucyjne
 2. Użytkownik uruchamia program jako `<nazwa-programu> m-conv <nazwa pliku z grafem>` -> testy wykonują się w tle, użytkownik informowany jest o postępie prac w formie progress bar -> wyniki testów są zapisane jako `datafile-m-conv{N}` -> z danych utworzone zostaje 8 wykresów, które uruchamiają się w interkatywnym oknie matplotlib, w zależności od prawdpodobieństwa mutacji oraz liczności populacji dla każdej z 4 metryk
 
 #### Scenariusz negatywny
 
 Analogicznie jak przy Testach złożoności obliczeniowej
-
-
