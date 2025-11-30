@@ -57,7 +57,7 @@ Do implementacji algorytmów wybraliśmy C++ ze względu na jego szybkość.
 - implementacja CLI
 - wizualizacja wyników działania algorytmów oraz wyników przeprowadzonych eksperymentów
 
-Wybraliśmy Python ze względu na łatwości tworzenia aplikacji CLI (biblioteka `argparse` oraz biblioteka `rich` do formatowania tekstu w terminalu) oraz na
+Wybraliśmy Python ze względu na łatwości tworzenia aplikacji CLI (biblioteka `argparse` oraz biblioteka `rich` do formatowania tekstu w terminalu) oraz na bibliotekę `matplotlib` do generowania wykresów.
 
 ## Propozycje testów akceptacyjnych
 
@@ -73,7 +73,7 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 ---
 
 1. Uruchomienie programu bez gotowych danych -> uruchamiamy algorytmy ewolucyjne
-2. Użytkownik uruchamia program jako `<nazwa-programu> c-comp <nazwa pliku z grafem>` -> testy wykonują się w tle, użytkownik informowany jest o postępie prac w formie progress bar -> wyniki testów są zapisane jako `datafile-c-comp{N}` -> z danych utworzone zostają wykresy, które uruchamiają się inter w interkatywnym oknie matplotlib, dla każdego z badanych algorytmów
+2. Użytkownik uruchamia program jako `<nazwa-programu> c-comp <nazwa pliku z grafem>` -> testy wykonują się w tle, użytkownik informowany jest o postępie prac w formie progress bar -> wyniki testów są zapisane jako `datafile-c-comp{N}` -> z danych utworzone zostają wykresy, które uruchamiają się w interkatywnym oknie matplotlib, dla każdego z badanych algorytmów
 
 #### Scenariusz negatywny
 
@@ -82,7 +82,7 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 
 ---
 
-1. Uruchomienie programu bez gotowych danym ale dane grafu są w niepoprawnym formacie
+1. Uruchomienie programu bez gotowych danych ale dane grafu są w niepoprawnym formacie
 2. Program informuje o błędnym formacie danych `Invalid graph format` kieruje nas do przykładowego pliku `<example-graph>` i kończy działanie z kodem -1.
 
 ### Krzyw zbieżności badanych metryk
@@ -99,4 +99,4 @@ Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różny
 
 #### Scenariusz negatywny
 
-Analogicznie jak przy Testach złożoności obliczeniowej
+Analogicznie jak przy testach złożoności obliczeniowej
