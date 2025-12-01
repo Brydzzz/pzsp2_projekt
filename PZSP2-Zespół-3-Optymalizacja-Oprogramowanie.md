@@ -61,19 +61,47 @@ Wybraliśmy Python ze względu na łatwości tworzenia aplikacji CLI (biblioteka
 
 ## Propozycje testów akceptacyjnych
 
+W miejscach gdzie zostały użyte `<>` należy wprowadzić rzeczywiste ściezki/nazwy.
+
 ### Testy złożoności obliczeniowej
 
-Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różnych topologii sieci - małej, średniej i dużej.
+Użytkownik chce sprawdzić jak rośnie czas obliczeń mierząc go dla 3 różnych topologii sieci - małej (5, 10, 15 węzłów), średniej (20, 25, 30 węzłów) i dużej (35, 40, 45, 50 węzłów).
 
 #### Scenariusze pozytywne
 
-1. Uruchomenie programu z wcześniej wygenerowanymi danymi
-2. Użytkownik uruchamia program jako `<nazwa-programu> c-comp --load-data <nazwa-pliku-z-danymi>` -> z danych utworzone zostają wykresy 3, które uruchamiają się w interaktywnym oknie matplotlib, dla każdego z badanych algorytmów
+Przypadek, gdy użytkownik posiada plik z wygenerowanymi wcześniej danymi do wykresów w poprawnym formacie.
 
+1. Jeśli pliku z danymi nie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/c-comp-data` użytkownik kopiuje go tam.
+2. Użytkownik uruchamia terminal
+3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> c-comp --load-data <nazwa-pliku-z-danymi>` (`<nazwa-pliku-z-danymi>` oznacza nazwę pliku w folderze `c-comp-data`, nie trzeba dodawać do niej `c-comp-data/`)
+5. Po uruchomieniu użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajduje się wykres, spełniający poniższe kryteria:
+    - liczba węzłów na osi OX
+    - czas trwania algorytmów na osi OY
+    - dla każdego z algorytmów ewolucyjnych tworzony jest jeden wykres
+      - punkty pomiarowe zaznaczone są kropkami
+      - kolejne punkty połączone są prostymi
+    - plot dla każdego z algorytmów ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor wykresu odpowiada, któremu algorytmowi
+6. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
 ---
 
-1. Uruchomienie programu bez gotowych danych -> uruchamiamy algorytmy ewolucyjne
-2. Użytkownik uruchamia program jako `<nazwa-programu> c-comp <nazwa pliku z grafem>` -> testy wykonują się w tle, użytkownik informowany jest o postępie prac w formie progress bar -> wyniki testów są zapisane jako `datafile-c-comp{N}` -> z danych utworzone zostają wykresy, które uruchamiają się w interkatywnym oknie matplotlib, dla każdego z badanych algorytmów
+Przypadek, gdy użytkownik nie posiada pliku z danymi.
+
+1. Użytkownik uruchamia terminal
+2. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+3. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> c-comp`
+4. Program uruchamia generowanie danych, użytkownik jest informowany o postępie prac w formie progress bar wskazujacego ile z przewidywanych iteracji zostało już wykonanych (gdzie jedna iteracja to uruchomienie jednego algorytmu dla jednej sieci)
+5. Po skończeniu generowania danych, pomiary zapisywane są do pliku `datafile-c-comp{N}` do folder `c-comp-data` o czym użytkownik jest informowany w postaci wiadomości tekstowej w terminalu.
+6. Następnie użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajduje się wykres, spełniający poniższe kryteria:
+    - liczba węzłów na osi OX
+    - czas trwania algorytmów na osi OY
+    - dla każdego z algorytmów ewolucyjnych tworzony jest jeden wykres
+      - punkty pomiarowe zaznaczone są kropkami
+      - kolejne punkty połączone są prostymi
+    - plot dla każdego z algorytmów ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor wykresu odpowiada, któremu algorytmowi
+7. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
 
 #### Scenariusz negatywny
 
