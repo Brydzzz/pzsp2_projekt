@@ -105,7 +105,7 @@ Przypadek, gdy użytkownik nie posiada pliku z danymi.
 
 #### Scenariusz negatywny
 
-Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepopranym formacie.
+Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepoprawnym formacie.
 
 1. Jeśli pliku z danymi nie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/c-comp-data` użytkownik kopiuje go tam.
 2. Użytkownik uruchamia terminal
@@ -116,6 +116,10 @@ Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepopranym formac
 
 
 ### Krzyw zbieżności badanych metryk
+
+Użytkownik chce zbadać zbieżność metryki GD, GD+, IGD, IGD+ w zależności od p-ństwa mutacji lub liczności populacji.
+
+W każdym z poniższych scenariuszy będzie miał do wyboru jeden z trzech algorytmów: `INSGA, NSGA2, SPEA2`. Nazw algorytmy należy wpisać w pole `<nazwa-algorytmu>` w argumentach uruchamiania programu
 
 #### Scenariusze pozytywne
 
@@ -159,6 +163,48 @@ Przypadek, gdy użytkownik posiada plik z wygenerowanymi wcześniej danymi do wy
 
 1. Uruchomienie programu bez gotowych danych -> uruchamiamy algorytmy ewolucyjne
 2. Użytkownik uruchamia program jako `<nazwa-programu> m-conv <nazwa pliku z grafem>` -> testy wykonują się w tle, użytkownik informowany jest o postępie prac w formie progress bar -> wyniki testów są zapisane jako `datafile-m-conv{N}` -> z danych utworzone zostaje 8 wykresów, które uruchamiają się w interkatywnym oknie matplotlib, w zależności od prawdpodobieństwa mutacji oraz liczności populacji dla każdej z 4 metryk
+
+
+##### Wariant A' - zależność zbieżności metryk od p-ństwa mutacji
+
+Przypadek, gdy użytkownik nie posiada plik z wygenerowanymi wcześniej danymi, ale ma plik z grafem w poprawnym formacie.
+
+1. Jeśli pliku z grafem nie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/graphs` użytkownik kopiuje go tam.
+2. Użytkownik uruchamia terminal
+3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> m-conv --algorithm <nazwa-algorytmu> --load-graph <nazwa-pliku-z-grafem>` (`<nazwa-pliku-z-grafem>` oznacza nazwę pliku w folderze `graphs`, nie trzeba dodawać do niej `graphs/`).
+5. Program uruchamia generowanie danych, użytkownik jest informowany o postępie prac w formie progress bar wskazujacego ile z przewidywanych iteracji zostało już wykonanych (gdzie jedna iteracja to uruchomienie algorytmu z daną wartości p-ństwa mutacji)
+6. Po skończeniu generowania danych, pomiary zapisywane są do pliku `datafile-m-conv{N}` do folder `m-conv-data` o czym użytkownik jest informowany w postaci wiadomości tekstowej w terminalu.
+5. Następnie użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajdują się 4 wykresy każdy dla danej metryki w swoim własnym układzie współrzędnych, pojedynczy wykres powinien spełniać poniższe kryteria:
+    - liczba iteracji algorytmu na osi OX
+    - wartość danej metryki na osi OY
+    - dla każdej wartośc p-ństwa mutacji tworzona jest jedna krzywa
+      - punkty pomiarowe zaznaczone są kropkami
+      - kolejne punkty połączone są prostymi
+    - krzywa dla każdego z p-ństwa mutacji ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor krzywej odpowiada, której wartości p-ństwa
+6. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
+
+##### Wariant B' - zależność zbieżności metryk od liczności populacji
+
+Przypadek, gdy użytkownik nie posiada plik z wygenerowanymi wcześniej danymi, ale ma plik z grafem w poprawnym formacie.
+
+1. Jeśli pliku z grafemnie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/graphs` użytkownik kopiuje go tam.
+2. Użytkownik uruchamia terminal
+3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> p-conv --algorithm <nazwa-algorytmu> --load-graph <nazwa-pliku-z-grafem>` (`<nazwa-pliku-z-grafem>` oznacza nazwę pliku w folderze `graphs`, nie trzeba dodawać do niej `graphs/`).
+5. Program uruchamia generowanie danych, użytkownik jest informowany o postępie prac w formie progress bar wskazujacego ile z przewidywanych iteracji zostało już wykonanych (gdzie jedna iteracja to uruchomienie algorytmu z daną licznością populacji)
+6. Po skończeniu generowania danych, pomiary zapisywane są do pliku `datafile-p-conv{N}` do folder `p-conv-data` o czym użytkownik jest informowany w postaci wiadomości tekstowej w terminalu.
+5. Następnie użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajdują się 4 wykresy każdy dla danej metryki w swoim własnym układzie współrzędnych, pojedynczy wykres powinien spełniać poniższe kryteria:
+    - liczba iteracji algorytmu na osi OX
+    - wartość danej metryki na osi OY
+    - dla każdej liczności populacji tworzona jest jedna krzywa
+      - punkty pomiarowe zaznaczone są kropkami
+      - kolejne punkty połączone są prostymi
+    - krzywa dla każdej liczności populacji ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor krzywej odpowiada, której liczności populacji
+6. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
+
 
 #### Scenariusz negatywny
 
