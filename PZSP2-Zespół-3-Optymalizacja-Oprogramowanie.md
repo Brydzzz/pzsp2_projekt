@@ -111,7 +111,7 @@ Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepoprawnym forma
 2. Użytkownik uruchamia terminal
 3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
 4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> c-comp --load-data <nazwa-pliku-z-danymi>` (`<nazwa-pliku-z-danymi>` oznacza nazwę pliku w folderze `c-comp-data`, nie trzeba dodawać do niej `c-comp-data/`).
-5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid data format, look at <example-datafile-c-comp> in examples folder`
+5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid data format, look at example-datafile-c-comp.csv in examples folder`
 6. Program kończy działanie
 
 
@@ -214,7 +214,7 @@ Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepoprawnym forma
 2. Użytkownik uruchamia terminal
 3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
 4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> m-conv --load-data <nazwa-pliku-z-danymi>` (`<nazwa-pliku-z-danymi>` oznacza nazwę pliku w folderze `m-conv-data`, nie trzeba dodawać do niej `m-conv-data/`).
-5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid data format, look at <example-datafile-m-conv> in examples folder`
+5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid data format, look at example-datafile-m-conv.csv in examples folder`
 6. Program kończy działanie
 
 Analogicznie dla zbieżności w zależnosci od liczności populacji.
@@ -227,7 +227,7 @@ Przypadek, gdy użytkownik nie posiada plik z wygenerowanymi wcześniej danymi, 
 2. Użytkownik uruchamia terminal
 3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
 4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> m-conv --algorithm <nazwa-algorytmu> --load-graph <nazwa-pliku-z-grafem>` (`<nazwa-pliku-z-grafem>` oznacza nazwę pliku w folderze `graphs`, nie trzeba dodawać do niej `graphs/`)
-5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid data format, look at <example-graph-file> in examples folder`
+5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid graph format, look at example-graph-file.csv in examples folder`
 6. Program kończy działanie
 
 Analogicznie dla zbieżności w zależnosci od liczności populacji.
