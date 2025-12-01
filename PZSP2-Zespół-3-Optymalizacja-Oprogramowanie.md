@@ -105,13 +105,15 @@ Przypadek, gdy użytkownik nie posiada pliku z danymi.
 
 #### Scenariusz negatywny
 
-1. Uruchomienie programu z gotowymi danymi, ale dane są w niepoprawnym formacie
-2. Program informuje o błędnym formacie danych `Invalid data format` kieruje nas do przykładowego pliku `<example-data>` i kończy działanie z kodem -1.
+Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepopranym formacie.
 
----
+1. Jeśli pliku z danymi nie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/c-comp-data` użytkownik kopiuje go tam.
+2. Użytkownik uruchamia terminal
+3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> c-comp --load-data <nazwa-pliku-z-danymi>` (`<nazwa-pliku-z-danymi>` oznacza nazwę pliku w folderze `c-comp-data`, nie trzeba dodawać do niej `c-comp-data/`).
+5. Program wykrywa błędny format danych, wypisuje na terminal wiadomość: `Invalid data format, look at <example-data-file> in examples folder`
+6. Program kończy działanie
 
-1. Uruchomienie programu bez gotowych danych ale dane grafu są w niepoprawnym formacie
-2. Program informuje o błędnym formacie danych `Invalid graph format` kieruje nas do przykładowego pliku `<example-graph>` i kończy działanie z kodem -1.
 
 ### Krzyw zbieżności badanych metryk
 
