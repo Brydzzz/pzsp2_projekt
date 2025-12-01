@@ -78,11 +78,11 @@ Przypadek, gdy użytkownik posiada plik z wygenerowanymi wcześniej danymi do wy
 5. Po uruchomieniu użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajduje się wykres, spełniający poniższe kryteria:
     - liczba węzłów na osi OX
     - czas trwania algorytmów na osi OY
-    - dla każdego z algorytmów ewolucyjnych tworzony jest jeden wykres
+    - dla każdego z algorytmów ewolucyjnych tworzona jest jedna krzywa
       - punkty pomiarowe zaznaczone są kropkami
       - kolejne punkty połączone są prostymi
-    - plot dla każdego z algorytmów ma inny kolor
-    - na wykresie znajduje się legenda wskazująca, na to który kolor wykresu odpowiada, któremu algorytmowi
+    - krzywa dla każdego z algorytmów ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor krzywej odpowiada, któremu algorytmowi
 6. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
 ---
 
@@ -96,11 +96,11 @@ Przypadek, gdy użytkownik nie posiada pliku z danymi.
 6. Następnie użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajduje się wykres, spełniający poniższe kryteria:
     - liczba węzłów na osi OX
     - czas trwania algorytmów na osi OY
-    - dla każdego z algorytmów ewolucyjnych tworzony jest jeden wykres
+    - dla każdego z algorytmów ewolucyjnych tworzona jest jedna krzywa
       - punkty pomiarowe zaznaczone są kropkami
       - kolejne punkty połączone są prostymi
-    - plot dla każdego z algorytmów ma inny kolor
-    - na wykresie znajduje się legenda wskazująca, na to który kolor wykresu odpowiada, któremu algorytmowi
+    - krzywa dla każdego z algorytmów ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor krzywej odpowiada, któremu algorytmowi
 7. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
 
 #### Scenariusz negatywny
@@ -119,8 +119,41 @@ Przypadek, gdy użytkownik posiada gotowe dane, ale są one w niepopranym formac
 
 #### Scenariusze pozytywne
 
-1. Uruchomenie programu z wcześniej wygenerowanymi danymi
-2. Użytkownik uruchamia program jako `<nazwa-programu> m-conv --load-data <nazwa-pliku-z-danymi>` -> z danych utworzone zostaje 8 wykresów, które uruchamiają się w interkatywnym oknie matplotlib, w zależności od prawdpodobieństwa mutacji oraz liczności populacji dla każdej z 4 metryk
+##### Wariant A - zależność zbieżności metryk od p-ństwa mutacji
+
+Przypadek, gdy użytkownik posiada plik z wygenerowanymi wcześniej danymi do wykresów w poprawnym formacie.
+
+1. Jeśli pliku z danymi nie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/m-conv-data` użytkownik kopiuje go tam.
+2. Użytkownik uruchamia terminal
+3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> m-conv --load-data <nazwa-pliku-z-danymi>` (`<nazwa-pliku-z-danymi>` oznacza nazwę pliku w folderze `m-conv-data`, nie trzeba dodawać do niej `m-conv-data/`).
+5. Po uruchomieniu użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajdują się 4 wykresy każdy dla danej metryki w swoim własnym układzie współrzędnych, pojedynczy wykres powinien spełniać poniższe kryteria:
+    - liczba iteracji algorytmu na osi OX
+    - wartość danej metryki na osi OY
+    - dla każdej wartośc p-ństwa mutacji tworzona jest jedna krzywa
+      - punkty pomiarowe zaznaczone są kropkami
+      - kolejne punkty połączone są prostymi
+    - krzywa dla każdego z p-ństwa mutacji ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor krzywej odpowiada, której wartości p-ństwa
+6. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
+
+##### Wariant B - zależność zbieżności metryk od liczności populacji
+
+Przypadek, gdy użytkownik posiada plik z wygenerowanymi wcześniej danymi do wykresów w poprawnym formacie.
+
+1. Jeśli pliku z danymi nie ma jeszcze w folderze `<sciezka-folderu-z-projektem>/p-conv-data` użytkownik kopiuje go tam.
+2. Użytkownik uruchamia terminal
+3. Użytkownik przenosi się do folderu z kodem źródłowym projektu `cd <sciezka-folderu-z-projektem>`
+4. Użytkownik uruchamia program wpisując do terminala `<nazwa-programu> p-conv --load-data <nazwa-pliku-z-danymi>` (`<nazwa-pliku-z-danymi>` oznacza nazwę pliku w folderze `p-conv-data`, nie trzeba dodawać do niej `p-conv-data/`).
+5. Po uruchomieniu użytkownik powinien zobaczyć interaktywne okno matplotlib, w którym znajdują się 4 wykresy każdy dla danej metryki w swoim własnym układzie współrzędnych, pojedynczy wykres powinien spełniać poniższe kryteria:
+    - liczba iteracji algorytmu na osi OX
+    - wartość danej metryki na osi OY
+    - dla każdej liczności populacji tworzona jest jedna krzywa
+      - punkty pomiarowe zaznaczone są kropkami
+      - kolejne punkty połączone są prostymi
+    - krzywa dla każdej liczności populacji ma inny kolor
+    - na wykresie znajduje się legenda wskazująca, na to który kolor krzywej odpowiada, której liczności populacji
+6. Po zamknięciu interaktywnego okna matplotlib, program kończy swoje działanie
 
 ---
 
