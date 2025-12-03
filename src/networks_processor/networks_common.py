@@ -7,10 +7,11 @@ from typing import NamedTuple
 GRAPH_FOLDER = "graphs"
 
 # Edge parametr ranges
-THROUGHPUT_RANGE=(1, 100)
-LOSS_RANGE=(0, 500)
-DELAY_RANGE=(1, 200)
-JITTER_RANGE=(-100, 100)
+THROUGHPUT_RANGE = (1, 100)
+LOSS_RANGE = (0, 500)
+DELAY_RANGE = (1, 200)
+JITTER_RANGE = (-100, 100)
+
 
 class GraphEdge(NamedTuple):
     source: str
@@ -20,6 +21,7 @@ class GraphEdge(NamedTuple):
     jitter: int
     throughput: int
 
+
 def generate_edge_params() -> tuple[int, int, int, int]:
     throughput = random.randint(1, 100)
     loss = random.randint(0, 500)
@@ -27,10 +29,11 @@ def generate_edge_params() -> tuple[int, int, int, int]:
     jitter = random.randint(-100, 100)
     return throughput, loss, delay, jitter
 
-def save_graph_to_csv(graph: list[GraphEdge], graph_name: str) -> str | None:
+
+def save_graph_to_csv(graph: list[GraphEdge], graph_name: str) -> Path | None:
     if not graph:
         return None
-    
+
     cwd = Path.cwd()
     graphs_folder_path = cwd / GRAPH_FOLDER
     os.makedirs(graphs_folder_path, exist_ok=True)
@@ -40,4 +43,4 @@ def save_graph_to_csv(graph: list[GraphEdge], graph_name: str) -> str | None:
         writer.writerow(["Source", "Target", "Throughput", "Loss", "Delay", "Jitter"])
         writer.writerows(graph)
 
-    return output_path.name
+    return output_path

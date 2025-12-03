@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 from rich import print
+from pathlib import Path
 from .networks_common import generate_edge_params, save_graph_to_csv, GraphEdge
 
 SNDLIB_URL = "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
@@ -42,6 +43,9 @@ def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
 
 def parse_and_save_sndlib(network_name: str) -> None:
     graph = parse_sndlib_xml(network_name)
-    output_fname = save_graph_to_csv(graph, network_name)
-    if output_fname:
-        print(f"[bold green]Success:[/bold green] Graph saved in graphs folder as {output_fname}")
+    output_path = save_graph_to_csv(graph, network_name)
+    if output_path:
+        file_uri = Path(output_path).resolve().as_uri()
+        print(
+            f"[bold green]Success:[/bold green] Sndlib graph saved in graphs folder as [link={file_uri}]{output_path.name}[/link]"
+        )
