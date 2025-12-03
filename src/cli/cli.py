@@ -3,10 +3,6 @@ import argparse
 from networks_processor.sndlib_parser import parse_and_save_sndlib
 
 
-def bubu(a):
-    print(a)
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Tool for multi-objective telecommunications network optimization",
