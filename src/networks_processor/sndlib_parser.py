@@ -10,6 +10,7 @@ SNDLIB_URL = "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.x
 def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
     url = SNDLIB_URL.format(name=network_name)
 
+    print("[bold yellow]Downloading network from SNDlib...[/bold yellow]")
     response = requests.get(url)
 
     if response.status_code == 404:
@@ -23,6 +24,8 @@ def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
             f"[bold red]Error:[/bold red] Failed to download sndlib network (Status: {response.status_code})"
         )
         return None
+    
+    print("[bold yellow]Parsing network...[/bold yellow]")
 
     # xml namespace
     ns = {"ns": "http://sndlib.zib.de/network"}
