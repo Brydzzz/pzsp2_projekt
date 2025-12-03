@@ -1,6 +1,7 @@
 import argparse
 
 from networks_processor.sndlib_parser import parse_and_save_sndlib
+from networks_processor.fullmesh_generator import generate_and_save_fullmesh
 
 
 def main():
@@ -36,6 +37,6 @@ def main():
         case "parse-sndlib":
             parse_and_save_sndlib(args.network_name)
         case "gen-full-mesh":
-            pass  # TODO
+            generate_and_save_fullmesh(args.node_count)
         case _:
             parser.print_help()

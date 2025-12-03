@@ -6,7 +6,7 @@ from .networks_common import generate_edge_params, save_graph_to_csv
 SNDLIB_URL = "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
 
 
-def parse_sndlib_xml(network_name: str) -> list[tuple[str]]:
+def parse_sndlib_xml(network_name: str) -> list[tuple[str, str, int, int, int, int]]:
     url = SNDLIB_URL.format(name=network_name)
 
     response = requests.get(url)

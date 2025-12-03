@@ -19,7 +19,7 @@ def generate_edge_params() -> tuple[int, int, int, int]:
     jitter = random.randint(-100, 100)
     return throughput, loss, delay, jitter
 
-def save_graph_to_csv(graph: list[tuple[str]], graph_name: str) -> str | None:
+def save_graph_to_csv(graph: list[tuple[str, str, int, int, int, int]], graph_name: str) -> str | None:
     if not graph:
         return None
     
