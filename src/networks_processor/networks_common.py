@@ -2,7 +2,7 @@ import os
 import csv
 import random
 from pathlib import Path
-
+from typing import NamedTuple
 
 GRAPH_FOLDER = "graphs"
 
@@ -12,6 +12,14 @@ LOSS_RANGE=(0, 500)
 DELAY_RANGE=(1, 200)
 JITTER_RANGE=(-100, 100)
 
+class GraphEdge(NamedTuple):
+    source: str
+    target: str
+    loss: int
+    delay: int
+    jitter: int
+    throughput: int
+
 def generate_edge_params() -> tuple[int, int, int, int]:
     throughput = random.randint(1, 100)
     loss = random.randint(0, 500)
@@ -19,7 +27,7 @@ def generate_edge_params() -> tuple[int, int, int, int]:
     jitter = random.randint(-100, 100)
     return throughput, loss, delay, jitter
 
-def save_graph_to_csv(graph: list[tuple[str, str, int, int, int, int]], graph_name: str) -> str | None:
+def save_graph_to_csv(graph: list[GraphEdge], graph_name: str) -> str | None:
     if not graph:
         return None
     

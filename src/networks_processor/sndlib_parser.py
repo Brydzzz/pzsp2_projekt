@@ -1,12 +1,12 @@
 import requests
 import xml.etree.ElementTree as ET
 from rich import print
-from .networks_common import generate_edge_params, save_graph_to_csv
+from .networks_common import generate_edge_params, save_graph_to_csv, GraphEdge
 
 SNDLIB_URL = "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
 
 
-def parse_sndlib_xml(network_name: str) -> list[tuple[str, str, int, int, int, int]]:
+def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
     url = SNDLIB_URL.format(name=network_name)
 
     response = requests.get(url)
@@ -34,7 +34,8 @@ def parse_sndlib_xml(network_name: str) -> list[tuple[str, str, int, int, int, i
     for link in links_root:
         source = link.find("ns:source", ns).text
         target = link.find("ns:target", ns).text
-        graph.append((source, target, *generate_edge_params()))
+        edge_params = generate_edge_params()
+        graph.append(GraphEdge(source, target, *edge_params))
 
     return graph
 
