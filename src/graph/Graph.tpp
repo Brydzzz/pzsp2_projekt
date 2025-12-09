@@ -1,7 +1,7 @@
 //
 // Created by tomek on 11/15/25.
 //
-#pragma once
+
 #include "Graph.h"
 #include <stdexcept>
 
@@ -68,7 +68,7 @@ void Graph<T>::addEdge(Node& node1, Node& node2, T weight) {
 template<typename T>
 T Graph<T>::getWeightBetween(Node& node1, Node& node2) {
     for (int i = 0; i < adjacencyList[node1].size(); i++) {
-        if (adjacencyList[node1][i].first_node == node1 && adjacencyList[node1][i].second_node == node2 || adjacencyList[node1][i].first_node == node2 && adjacencyList[node1][i].second_node == node1) {
+        if ((adjacencyList[node1][i].first_node == node1 && adjacencyList[node1][i].second_node == node2) || (adjacencyList[node1][i].first_node == node2 && adjacencyList[node1][i].second_node == node1)) {
             return adjacencyList[node1][i].weight;
         }
     }
