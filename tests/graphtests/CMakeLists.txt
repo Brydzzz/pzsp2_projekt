@@ -1,5 +1,7 @@
 add_executable(graphtest GraphTests.cpp
-        ../../src/graph/Graph.h ../../src/graph/Graph.tpp)
+        ../../src/graph/Graph.h ../../src/graph/Graph.tpp
+        ../../src/graph/Edge.h
+        ../../src/graph/Node.h)
 
 target_include_directories(graphtest PRIVATE ../../src/graph)
 
