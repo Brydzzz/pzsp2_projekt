@@ -23,14 +23,5 @@ public:
     }
 
 };
-namespace std {
-    template<>
-    struct numeric_limits<NetStat> {
-        static constexpr NetStat max() noexcept {
-            return NetStat(UINT_MAX, UINT_MAX, UINT_MAX, INT_MAX);
-        }
-    };
-}
-
 
 #endif //NETSTAT_H
