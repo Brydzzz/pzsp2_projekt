@@ -5,8 +5,6 @@
 #include <vector>
 #include <limits>
 
-#ifndef GRAPH_H
-#define GRAPH_H
 #include "Edge.h"
 template <typename T> class Graph {
     std::map<Node, std::vector<Edge<T>>> adjacencyList;
@@ -15,8 +13,8 @@ template <typename T> class Graph {
 public:
     Graph();
     Graph(std::vector<Node>& nodes);
-    Graph(std::vector<Node>& nodes, std::map<Node, std::vector<Edge<T>>>);
-    Graph(std::vector<Node>& nodes, std::vector<Edge<T>>);
+    Graph(std::vector<Node>& nodes, std::map<Node, std::vector<Edge<T>>> adjacencyList);
+    Graph(std::vector<Node>& nodes, std::vector<Edge<T>> edges);
     int getNodes();
     void addEdge(Node& node1, Node& node2, T weight);
     T getWeightBetween(Node& node1, Node& node2);
@@ -25,4 +23,3 @@ public:
 
 
 #include "Graph.tpp"
-#endif //GRAPH_H

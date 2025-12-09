@@ -10,11 +10,7 @@ public:
     Node first_node;
     Node second_node;
     T weight;
-    Edge(Node& node1, Node& node2, T weight) {
-        first_node = node1;
-        second_node = node2;
-        this->weight = weight;
-    }
+    Edge(Node& node1, Node& node2, T weight) : first_node(node1), second_node(node2), weight(weight) {}
 };
 
 
