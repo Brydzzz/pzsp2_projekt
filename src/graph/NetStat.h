@@ -8,20 +8,18 @@
 #include <limits>
 
 class NetStat {
-public:
+  public:
     unsigned int throughput, loss, delay;
     int jitter;
 
-    NetStat(unsigned int  throughput, unsigned int loss,unsigned int delay, int jitter) {
+    NetStat(unsigned int throughput, unsigned int loss, unsigned int delay,
+            int jitter) {
         this->throughput = throughput;
         this->loss = loss;
         this->delay = delay;
         this->jitter = jitter;
     }
-    NetStat() : NetStat(0,0,0,0) {
-
-    }
-
+    NetStat() : NetStat(0, 0, 0, 0) {}
 };
 
-#endif //NETSTAT_H
+#endif // NETSTAT_H

@@ -3,34 +3,45 @@
 //
 
 #include "Graph.h"
+#include <algorithm>
+#include <iterator>
+#include <optional>
+#include <random>
 #include <stdexcept>
 
-template<typename T>
-Graph<T>::Graph(std::vector<Node>& nodes, std::map<Node, std::vector<Edge<T>>>) {
-    this->nodes=nodes;
+template <typename T>
+Graph<T>::Graph(std::vector<Node> &nodes,
+                std::map<Node, std::vector<Edge<T>>>) {
+    this->nodes = nodes;
     for (auto edge : adjacencyList) {
-        if (std::find(this->nodes.begin(), this->nodes.end(), edge.first_node) == this->nodes.end()) {
-            throw std::invalid_argument("Node " + edge.first_node.name + " doesn't exist in this graph");
+        if (std::ranges::find(this->nodes.begin(), this->nodes.end(),
+                              edge.first_node) == this->nodes.end()) {
+            throw std::invalid_argument("Node " + edge.first_node.name +
+                                        " doesn't exist in this graph");
         }
-        if (std::find(this->nodes.begin(), this->nodes.end(), edge.second_node) == this->nodes.end()) {
-            throw std::invalid_argument("Node " + edge.second_node.name + " doesn't exist in this graph");
+        if (std::ranges::find(this->nodes.begin(), this->nodes.end(),
+                              edge.second_node) == this->nodes.end()) {
+            throw std::invalid_argument("Node " + edge.second_node.name +
+                                        " doesn't exist in this graph");
         }
     }
     this->adjacencyList = adjacencyList;
 }
 
-template<typename T>
-void Graph<T>::check_node_existance(Node& node) {
-    if (std::find(this->nodes.begin(), this->nodes.end(), node) == this->nodes.end()) {
-        throw std::invalid_argument("Node " + node.name + " doesn't exist in this graph");
+template <typename T>
+void Graph<T>::check_node_existance(Node &node) {
+    if (std::ranges::find(this->nodes.begin(), this->nodes.end(), node) ==
+        this->nodes.end()) {
+        throw std::invalid_argument("Node " + node.name +
+                                    " doesn't exist in this graph");
     }
 }
-template<typename T>
-Graph<T>::Graph(std::vector<Node>& nodes, std::vector<Edge<T>> adjacencyList) {
-    this->nodes=nodes;
-    for (auto node: this->nodes) {
+template <typename T>
+Graph<T>::Graph(std::vector<Node> &nodes, std::vector<Edge<T>> adjacencyList) {
+    this->nodes = nodes;
+    for (auto node : this->nodes) {
         this->adjacencyList[node] = std::vector<Edge<T>>();
-}
+    }
     for (auto edge : adjacencyList) {
         check_node_existance(edge.first_node);
         check_node_existance(edge.second_node);
@@ -39,40 +50,91 @@ Graph<T>::Graph(std::vector<Node>& nodes, std::vector<Edge<T>> adjacencyList) {
     }
 }
 
-template<typename T>
-Graph<T>::Graph(std::vector<Node>& nodes) {
-    this->nodes=nodes;
+template <typename T>
+Graph<T>::Graph(std::vector<Node> &nodes) {
+    this->nodes = nodes;
 }
 
-
-template<typename T>
+template <typename T>
 Graph<T>::Graph() {
     this->nodes = std::vector<Node>();
     this->adjacencyList = std::map<Node, std::vector<Edge<T>>>();
 }
 
-template<typename T>
+template <typename T>
 int Graph<T>::getNodes() {
     return nodes.size();
 }
 
-template<typename T>
-void Graph<T>::addEdge(Node& node1, Node& node2, T weight) {
+template <typename T>
+void Graph<T>::addEdge(Node &node1, Node &node2, T weight) {
     check_node_existance(node1);
     check_node_existance(node2);
     adjacencyList[node1].push_back(Edge(node1, node2, weight));
     adjacencyList[node2].push_back(Edge(node1, node2, weight));
 }
 
-
-template<typename T>
-T Graph<T>::getWeightBetween(Node& node1, Node& node2) {
+template <typename T>
+T Graph<T>::getWeightBetween(Node &node1, Node &node2) {
     for (int i = 0; i < adjacencyList[node1].size(); i++) {
-        if ((adjacencyList[node1][i].first_node == node1 && adjacencyList[node1][i].second_node == node2) || (adjacencyList[node1][i].first_node == node2 && adjacencyList[node1][i].second_node == node1)) {
+        if ((adjacencyList[node1][i].first_node == node1 &&
+             adjacencyList[node1][i].second_node == node2) ||
+            (adjacencyList[node1][i].first_node == node2 &&
+             adjacencyList[node1][i].second_node == node1)) {
             return adjacencyList[node1][i].weight;
         }
     }
     throw std::invalid_argument("There isn't an edge between those nodes");
 }
 
+template <typename T>
+bool Graph<T>::haveEdge(Node &from, Node &to) {
+    for (auto &edge : adjacencyList[from]) {
+        if (edge.second_node == to)
+            return true;
+    }
+    return false;
+}
 
+template <typename T>
+std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
+    check_node_existance(startNode);
+    check_node_existance(endNode);
+
+    std::vector<Node> path;
+    std::map<Node, std::vector<int>> pathChoices;
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+
+    std::set<Node> usedNodes;
+    usedNodes.insert(startNode);
+    path.push_back(startNode);
+    while (path.size() and path.back() != endNode) {
+        if (pathChoices.find(path.back()) == pathChoices.end()) {
+            for (int i = 0; i < adjacencyList[path.back()].size(); i++) {
+                pathChoices[path.back()].push_back(i);
+            }
+            std::shuffle(pathChoices[path.back()].begin(),
+                         pathChoices[path.back()].end(), g);
+        }
+        std::optional<Node> nextNode = std::nullopt;
+        while (pathChoices[path.back()].size()) {
+            int pathChoice = pathChoices[path.back()].back();
+            pathChoices[path.back()].pop_back();
+            nextNode = adjacencyList[path.back()][pathChoice].second_node;
+            if (usedNodes.find(nextNode.value()) != usedNodes.end()) {
+                nextNode = std::nullopt;
+                continue;
+            }
+            break;
+        }
+        if (nextNode) {
+            path.push_back(nextNode.value());
+            continue;
+        }
+        path.pop_back();
+    }
+
+    return path;
+}

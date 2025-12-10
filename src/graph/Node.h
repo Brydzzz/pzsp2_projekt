@@ -6,18 +6,14 @@
 #define NODE_H
 #include <string>
 
-
 class Node {
-public:
+  public:
     std::string name;
     bool operator==(const Node &other) const {
         return this->name == other.name;
     }
-    bool operator<(const Node &other) const {
-        return this->name < other.name;
-    }
+    bool operator!=(const Node &other) const { return !(*this == other); }
+    bool operator<(const Node &other) const { return this->name < other.name; }
 };
 
-
-
-#endif //NODE_H
+#endif // NODE_H
