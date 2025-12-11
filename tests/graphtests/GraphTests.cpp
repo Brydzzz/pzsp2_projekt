@@ -33,7 +33,7 @@ TEST(GraphTests, testGraphConstructorList) {
 }
 
 
-TEST(GraphTests, testGraphConstructorInvalidMatrix) {
+TEST(GraphTests, testGraphConstructorInvalidAdjacencyList) {
     std::vector nodes = {node1, node2, node3};
     std::vector<Edge<int>> adjacencyList = {Edge<int>(node4, node2, 1), Edge<int>(node2, node3, 2),Edge<int>(node3, node1, 3),};
     ASSERT_ANY_THROW(auto graph = Graph(nodes, adjacencyList));
