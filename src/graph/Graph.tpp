@@ -9,10 +9,10 @@ template<typename T>
 Graph<T>::Graph(std::vector<Node>& nodes, std::map<Node, std::vector<Edge<T>>>) {
     this->nodes=nodes;
     for (auto edge : adjacencyList) {
-        if (std::find(this->nodes.begin(), this->nodes.end(), edge.first_node) == this->nodes.end()) {
+        if (std::ranges::find(this->nodes.begin(), this->nodes.end(), edge.first_node) == this->nodes.end()) {
             throw std::invalid_argument("Node " + edge.first_node.name + " doesn't exist in this graph");
         }
-        if (std::find(this->nodes.begin(), this->nodes.end(), edge.second_node) == this->nodes.end()) {
+        if (std::ranges::find(this->nodes.begin(), this->nodes.end(), edge.second_node) == this->nodes.end()) {
             throw std::invalid_argument("Node " + edge.second_node.name + " doesn't exist in this graph");
         }
     }
@@ -21,7 +21,7 @@ Graph<T>::Graph(std::vector<Node>& nodes, std::map<Node, std::vector<Edge<T>>>) 
 
 template<typename T>
 void Graph<T>::check_node_existance(Node& node) {
-    if (std::find(this->nodes.begin(), this->nodes.end(), node) == this->nodes.end()) {
+    if (std::ranges::find(this->nodes.begin(), this->nodes.end(), node) == this->nodes.end()) {
         throw std::invalid_argument("Node " + node.name + " doesn't exist in this graph");
     }
 }
