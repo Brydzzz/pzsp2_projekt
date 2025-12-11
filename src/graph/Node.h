@@ -13,7 +13,7 @@ class Node {
         return this->name == other.name;
     }
     bool operator<(const Node &other) const { return this->name < other.name; }
-    Node(const std::string &name) : name(name) {};
+    explicit Node(const std::string &name) : name(name) {};
 };
 
 #endif // NODE_H

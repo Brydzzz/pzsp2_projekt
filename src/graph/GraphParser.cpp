@@ -25,9 +25,10 @@ Graph<NetStat> GraphParser::parseCSVToGraph(std::istream &source_stream) {
         edges.push_back(edge);
     };
     if (edges.empty()) {
-        throw CSVParserException("CSV source contains header but no data rows.");
+        throw CSVParserException(
+            "CSV source contains header but no data rows.");
     }
 
     std::vector<Node> nodes_vec(nodes.begin(), nodes.end());
-    return Graph<NetStat>(nodes_vec, edges);
+    return {nodes_vec, edges};
 }

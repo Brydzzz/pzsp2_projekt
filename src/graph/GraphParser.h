@@ -1,5 +1,4 @@
 #pragma once
-#include "Edge.h"
 #include "Graph.h"
 #include "NetStat.h"
 #include <istream>

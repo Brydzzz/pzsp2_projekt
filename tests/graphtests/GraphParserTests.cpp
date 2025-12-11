@@ -10,12 +10,12 @@ TEST(GraphParserTests, ParseValidSimpleCSV) {
         "271,15,72\n1,2,38,270,11,42\n";
     std::istringstream graphStream(csv_data);
 
-    Node node0 = Node("0");
-    Node node1 = Node("1");
-    Node node2 = Node("2");
-    NetStat true_stat01 = NetStat(32, 274, 10, 52);
-    NetStat true_stat02 = NetStat(30, 271, 15, 72);
-    NetStat true_stat12 = NetStat(38, 270, 11, 42);
+    auto node0 = Node("0");
+    auto node1 = Node("1");
+    auto node2 = Node("2");
+    auto true_stat01 = NetStat(32, 274, 10, 52);
+    auto true_stat02 = NetStat(30, 271, 15, 72);
+    auto true_stat12 = NetStat(38, 270, 11, 42);
 
     Graph<NetStat> graph = GraphParser::parseCSVToGraph(graphStream);
     ASSERT_EQ(graph.getNodes(), 3);
@@ -60,22 +60,22 @@ TEST(GraphParserTests, ThrowsOnMissingHeaderColumns){
     EXPECT_THROW(GraphParser::parseCSVToGraph(graphStream), io::error::missing_column_in_header);
 }
 
-TEST(GraphParserTests, ThrowsOnNoHeader){
-    std::string csv_data = "0,1,32,274,10,52\n";
+TEST(GraphParserTests, ThrowsOnNoHeader) {
+    const std::string csv_data = "0,1,32,274,10,52\n";
     std::istringstream graphStream(csv_data);
 
     EXPECT_THROW(GraphParser::parseCSVToGraph(graphStream), io::error::extra_column_in_header);
 }
 
-TEST(GraphParserTests, ThrowsOnEmpyStream){
-    std::string csv_data = "";
+TEST(GraphParserTests, ThrowsOnEmpyStream) {
+    const std::string csv_data;
     std::istringstream graphStream(csv_data);
 
     EXPECT_THROW(GraphParser::parseCSVToGraph(graphStream), io::error::header_missing);
 }
 
 TEST(GraphParserTests, ThrowsOnIllegalString) {
-    std::string csv_data =
+    const std::string csv_data =
         "Source,Target,Throughput,Loss,Delay,Jitter\n"
         "0,1,Two,274,10,52\n"
         "0,2,30,271,15,72\n"
@@ -86,7 +86,7 @@ TEST(GraphParserTests, ThrowsOnIllegalString) {
 }
 
 TEST(GraphParserTests, ThrowsOnIllegalNegativeInt) {
-    std::string csv_data =
+    const std::string csv_data =
         "Source,Target,Throughput,Loss,Delay,Jitter\n"
         "0,1,12,274,-10,52\n"
         "0,2,30,271,15,72\n"
