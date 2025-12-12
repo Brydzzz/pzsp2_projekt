@@ -1,10 +1,13 @@
-import requests
 import xml.etree.ElementTree as ET
-from rich import print
-from pathlib import Path
-from .networks_common import generate_edge_params, save_graph_to_csv, GraphEdge
 
-SNDLIB_URL = "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
+import requests
+from rich import print
+
+from .networks_common import GraphEdge, save_graph_to_csv
+
+SNDLIB_URL = (
+    "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
+)
 
 
 def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
@@ -24,7 +27,7 @@ def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
             f"[bold red]Error:[/bold red] Failed to download sndlib network (Status: {response.status_code})"
         )
         return None
-    
+
     print("[bold yellow]Parsing network...[/bold yellow]")
 
     # xml namespace
@@ -34,21 +37,26 @@ def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:
     network_structure_node = root.find("ns:networkStructure", ns)
     links_root = network_structure_node.find("ns:links", ns)
 
-    graph = []
-    for link in links_root:
-        source = link.find("ns:source", ns).text
-        target = link.find("ns:target", ns).text
-        edge_params = generate_edge_params()
-        graph.append(GraphEdge(source, target, *edge_params))
+    graph = [
+        GraphEdge.from_source_and_target(
+            link.find("ns:source", ns).text,
+            link.find("ns:target", ns).text,
+        )
+        for link in links_root
+    ]
 
     return graph
 
 
 def parse_and_save_sndlib(network_name: str) -> None:
     graph = parse_sndlib_xml(network_name)
-    output_path = save_graph_to_csv(graph, network_name)
-    if output_path:
-        file_uri = Path(output_path).resolve().as_uri()
+    if graph is None:
+        return
+    result = save_graph_to_csv(graph, network_name)
+    if result:
+        output_path, clickable_path = result
         print(
-            f"[bold green]Success:[/bold green] Sndlib graph saved in graphs folder as [link={file_uri}]{output_path.name}[/link]"
+            f"[bold green]Success:[/bold green] Sndlib graph saved in graphs folder as [link={clickable_path}]{output_path.name}[/link]"
         )
+    else:
+        print("Failed to saved parsed network.")
