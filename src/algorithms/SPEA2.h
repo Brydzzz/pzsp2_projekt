@@ -6,8 +6,8 @@
 
 #include "Evolutionary_Algorithm.h"
 
-
-class SPEA2 : public Evol_Algo {
+template <typename T>
+class SPEA2 : public Evolutionary_Algorithm<T> {
 
 };
 
