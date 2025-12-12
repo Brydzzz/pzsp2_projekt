@@ -3,14 +3,16 @@
 //
 # pragma once
 #include <vector>
-
+#include <functional>
+//T will represent the individual, strategies need to be parsed into the functions below as function pointers and they require the population and parameteres, which for now are int only because maybe that will be enough
 template <typename T>
 class Evol_Algo {
    int population_size = 0;
+    using strategy = std::function<std::vector<T>(const std::vector<T>&)>;
 public:
     virtual std::vector<T> generate_init_pop();
-    virtual std::vector<T> selection(std::vector<T>(*sel_strat)(std::vector<T>,std::vector<int>));
-    virtual std::vector<T> mutation(std::vector<T>(*mut_strat)(std::vector<T>,std::vector<int>));
-    virtual std::vector<T> crossover(std::vector<T>(*cross_strat)(std::vector<T>,std::vector<int>));
-    virtual std::vector<T> succsesion(std::vector<T>(*succ_strat)(std::vector<T>,std::vector<int>));
+    virtual std::vector<T> selection(strategy, std::vector<T> population, const std::vector<int>& params);
+    virtual std::vector<T> mutation(strategy,std::vector<T> population, const std::vector<int>& params);
+    virtual std::vector<T> crossover(strategy,std::vector<T> population, const std::vector<int>& params);
+    virtual std::vector<T> succsesion(strategy,std::vector<T> population, const std::vector<int>& params);
 };
