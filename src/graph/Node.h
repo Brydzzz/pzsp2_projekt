@@ -8,6 +8,7 @@
 
 class Node {
   public:
+    Node(std::string _name) : name(_name) {}
     std::string name;
     bool operator==(const Node &other) const {
         return this->name == other.name;

@@ -24,7 +24,8 @@ class Graph {
     Graph(std::vector<Node> &nodes,
           std::map<Node, std::vector<Edge<T>>> adjacencyList);
     Graph(std::vector<Node> &nodes, std::vector<Edge<T>> edges);
-    int getNodes();
+    int countNodes();
+    std::vector<Node> getNodes();
     void addEdge(Node &node1, Node &node2, T weight);
     T getWeightBetween(Node &node1, Node &node2);
     bool haveEdge(Node &from, Node &to);

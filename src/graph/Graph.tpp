@@ -62,8 +62,13 @@ Graph<T>::Graph() {
 }
 
 template <typename T>
-int Graph<T>::getNodes() {
+int Graph<T>::countNodes() {
     return nodes.size();
+}
+
+template <typename T>
+std::vector<Node> Graph<T>::getNodes() {
+    return nodes;
 }
 
 template <typename T>
@@ -76,7 +81,7 @@ void Graph<T>::addEdge(Node &node1, Node &node2, T weight) {
 
 template <typename T>
 T Graph<T>::getWeightBetween(Node &node1, Node &node2) {
-    for (int i = 0; i < adjacencyList[node1].size(); i++) {
+    for (unsigned i = 0; i < adjacencyList[node1].size(); i++) {
         if ((adjacencyList[node1][i].first_node == node1 &&
              adjacencyList[node1][i].second_node == node2) ||
             (adjacencyList[node1][i].first_node == node2 &&
@@ -112,7 +117,8 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     path.push_back(startNode);
     while (path.size() and path.back() != endNode) {
         if (pathChoices.find(path.back()) == pathChoices.end()) {
-            for (int i = 0; i < adjacencyList[path.back()].size(); i++) {
+            for (unsigned int i = 0; i < adjacencyList[path.back()].size();
+                 i++) {
                 pathChoices[path.back()].push_back(i);
             }
             std::shuffle(pathChoices[path.back()].begin(),
@@ -139,7 +145,7 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     return path;
 }
 
-template<typename T>
+template <typename T>
 std::optional<Edge<T>> Graph<T>::getEdgeBetween(Node &fromNode, Node &toNode) {
     check_node_existance(fromNode);
     check_node_existance(toNode);

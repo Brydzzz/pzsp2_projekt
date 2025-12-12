@@ -7,7 +7,7 @@
 #include "gtest/gtest.h"
 
 bool isPathGood(Graph<int> &graph, std::vector<Node> &path) {
-    for (int i = 1; i < path.size(); i++) {
+    for (int i = 1; i < (int)path.size(); i++) {
         if (!graph.haveEdge(path[i - 1], path[i]))
             return false;
     }
@@ -27,13 +27,13 @@ Node node10 = Node("Poznań3");
 
 TEST(GraphTests, testGraphConstructor) {
     auto graph = Graph<int>();
-    ASSERT_EQ(graph.getNodes(), 0);
+    ASSERT_EQ(graph.countNodes(), 0);
 }
 
 TEST(GraphTests, testGraphConstructorManyNodes) {
     std::vector nodes = {node1, node2, node3};
     auto graph = Graph<int>(nodes);
-    ASSERT_EQ(graph.getNodes(), 3);
+    ASSERT_EQ(graph.countNodes(), 3);
 }
 
 TEST(GraphTests, testGraphConstructorList) {
@@ -44,7 +44,7 @@ TEST(GraphTests, testGraphConstructorList) {
         Edge<int>(node3, node1, 3),
     };
     auto graph = Graph(nodes, adjacencyList);
-    ASSERT_EQ(graph.getNodes(), 3);
+    ASSERT_EQ(graph.countNodes(), 3);
     ASSERT_EQ(graph.getWeightBetween(node1, node2), 1);
     ASSERT_EQ(graph.getWeightBetween(node2, node3), 2);
     ASSERT_EQ(graph.getWeightBetween(node3, node1), 3);
@@ -88,7 +88,7 @@ TEST(GraphTests, randomPathGeneratorTest) {
     };
     auto graph = Graph(nodes, adjacencyList);
     std::vector<Node> path = graph.generateRandomPath(nodes[2], nodes.back());
-    ASSERT_GT(path.size(), 0);
+    ASSERT_GT(path.size(), 2);
     ASSERT_EQ(path[0], nodes[2]);
     ASSERT_EQ(path.back(), nodes.back());
     ASSERT_EQ(isPathGood(graph, path), true);
