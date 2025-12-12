@@ -31,19 +31,13 @@ class TestGenerateFullMesh:
         with pytest.raises(ValueError) as excinfo:
             generate_full_mesh(1)
 
-        assert (
-            str(excinfo.value)
-            == "node_count has to be greater than or equal to 2"
-        )
+        assert str(excinfo.value) == "node_count has to be greater than or equal to 2"
 
     def test_zero_nodes_throws_value_error(self):
         with pytest.raises(ValueError) as excinfo:
             generate_full_mesh(0)
 
-        assert (
-            str(excinfo.value)
-            == "node_count has to be greater than or equal to 2"
-        )
+        assert str(excinfo.value) == "node_count has to be greater than or equal to 2"
 
     def test_two_nodes_creates_one_edge(self):
         graph = generate_full_mesh(2)
@@ -71,9 +65,7 @@ class TestGenerateFullMesh:
 
         for edge in graph:
             assert isinstance(edge, GraphEdge)
-            assert (
-                THROUGHPUT_RANGE[0] <= edge.throughput <= THROUGHPUT_RANGE[1]
-            )
+            assert THROUGHPUT_RANGE[0] <= edge.throughput <= THROUGHPUT_RANGE[1]
             assert LOSS_RANGE[0] <= edge.loss <= LOSS_RANGE[1]
             assert DELAY_RANGE[0] <= edge.delay <= DELAY_RANGE[1]
             assert JITTER_RANGE[0] <= edge.jitter <= JITTER_RANGE[1]
@@ -87,9 +79,7 @@ class TestGenerateFullMesh:
 
 
 class TestGenerateAndSaveFullmesh:
-    def test_prints_success_message_when_save_succeeds(
-        self, monkeypatch, capsys
-    ):
+    def test_prints_success_message_when_save_succeeds(self, monkeypatch, capsys):
         def mock_save(graph, network_name):
             return (
                 Path(f"{GRAPH_FOLDER}/full_mesh_13.csv"),

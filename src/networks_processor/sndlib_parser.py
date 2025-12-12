@@ -5,9 +5,7 @@ from rich import print
 
 from .networks_common import GraphEdge, save_graph_to_csv
 
-SNDLIB_URL = (
-    "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
-)
+SNDLIB_URL = "https://sndlib.put.poznan.pl/download/sndlib-networks-xml/{name}.xml"
 
 
 def parse_sndlib_xml(network_name: str) -> list[GraphEdge]:

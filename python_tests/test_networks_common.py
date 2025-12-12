@@ -53,9 +53,7 @@ class TestSaveGraphToCSV:
             GraphEdge("0", "2", 15, 101, 101, 1),
             GraphEdge("0", "1", 20, 102, 102, 2),
         ]
-        result = save_graph_to_csv(
-            sample_graph, "sample_graph", output_dir=tmp_path
-        )
+        result = save_graph_to_csv(sample_graph, "sample_graph", output_dir=tmp_path)
         assert result is not None
         output_path, clickable_path = result
 
@@ -89,9 +87,7 @@ class TestSaveGraphToCSV:
         sample_graph = [
             GraphEdge("1", "2", 10, 100, 100, 0),
         ]
-        result = save_graph_to_csv(
-            sample_graph, "sample_graph", output_dir=tmp_path
-        )
+        result = save_graph_to_csv(sample_graph, "sample_graph", output_dir=tmp_path)
 
         assert result is None
         captured = capsys.readouterr()

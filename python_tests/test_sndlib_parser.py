@@ -89,9 +89,7 @@ class TestParseSndlibXml:
             in captured.out.replace("\n", "")
         )
 
-    def test_network_download_failed(
-        self, monkeypatch, capsys, incorrect_network_name
-    ):
+    def test_network_download_failed(self, monkeypatch, capsys, incorrect_network_name):
         class MockResponse:
             def __init__(self):
                 self.status_code = 500
@@ -146,9 +144,7 @@ class TestParseAndSaveSndlib:
         assert "Sndlib graph saved in graphs folder as" in output
         assert f"{network_name}.csv" in output
 
-    def test_handles_save_failure(
-        self, monkeypatch, capsys, network_name
-    ):
+    def test_handles_save_failure(self, monkeypatch, capsys, network_name):
         def mock_save(graph, net_name):
             return None
 
@@ -172,10 +168,7 @@ class TestParseAndSaveSndlib:
 
         assert "Failed to saved parsed network." in output
 
-    def test_handles_parse_failure(
-        self, monkeypatch, capsys, network_name
-    ):
-
+    def test_handles_parse_failure(self, monkeypatch, capsys, network_name):
         def mock_parse_sndlib(net_name):
             return None
 
