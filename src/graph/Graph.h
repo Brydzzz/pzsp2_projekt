@@ -4,6 +4,7 @@
 #pragma once
 #include <vector>
 #include <limits>
+#include <map>
 
 #include "Edge.h"
 template <typename T> class Graph {
