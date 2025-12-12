@@ -138,3 +138,20 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
 
     return path;
 }
+
+template<typename T>
+std::optional<Edge<T>> Graph<T>::getEdgeBetween(Node &fromNode, Node &toNode) {
+    check_node_existance(fromNode);
+    check_node_existance(toNode);
+
+    auto adjacencyListIterator = adjacencyList.find(fromNode);
+    if (adjacencyListIterator == adjacencyList.end()) {
+        return std::nullopt;
+    }
+    for (Edge<T> edge : adjacencyListIterator->second) {
+        if (edge.second_node == toNode) {
+            return edge;
+        }
+    }
+    return std::nullopt;
+}
