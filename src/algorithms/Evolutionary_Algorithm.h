@@ -10,7 +10,8 @@ class Evol_Algo {
    int population_size = 0;
     using strategy = std::function<std::vector<T>(const std::vector<T>&)>;
 public:
-    virtual std::vector<T> generate_init_pop();
+   virtual ~Evol_Algo() = default;
+   virtual std::vector<T> generate_init_pop();
     virtual std::vector<T> selection(strategy, std::vector<T> population, const std::vector<int>& params);
     virtual std::vector<T> mutation(strategy,std::vector<T> population, const std::vector<int>& params);
     virtual std::vector<T> crossover(strategy,std::vector<T> population, const std::vector<int>& params);
