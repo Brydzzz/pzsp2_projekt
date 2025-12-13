@@ -50,7 +50,7 @@ TEST(GraphTests, testGraphConstructorList) {
     ASSERT_EQ(graph.getWeightBetween(node3, node1), 3);
 }
 
-TEST(GraphTests, testGraphConstructorInvalidMatrix) {
+TEST(GraphTests, testGraphConstructorInvalidEdgesList) {
     std::vector nodes = {node1, node2, node3};
     std::vector<Edge<int>> adjacencyList = {
         Edge<int>(node4, node2, 1),
