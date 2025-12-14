@@ -47,7 +47,6 @@ TEST(IntentTests, randomizingIntentByPath) {
     Intent testing_intent;
     Graph<NetStat> graph(allNodes);
     graph.addEdge(node1, node2, NetStat{10, 10, 10, 10});
-    graph.addEdge(node2, node1, NetStat{10, 10, 10, 10});
     testing_intent.randomizeIntent(graph);
     int demand12 = testing_intent.getDemand(node1, node2);
     int demand21 = testing_intent.getDemand(node2, node1);
@@ -62,11 +61,8 @@ TEST(IntentTests, randomizingIntentByPath2) {
     Intent testing_intent;
     Graph<NetStat> graph(allNodes);
     graph.addEdge(node1, node2, NetStat{10, 10, 10, 10});
-    graph.addEdge(node2, node1, NetStat{10, 10, 10, 10});
     graph.addEdge(node1, node3, NetStat{10, 10, 10, 10});
-    graph.addEdge(node3, node1, NetStat{10, 10, 10, 10});
     graph.addEdge(node3, node2, NetStat{10, 10, 10, 10});
-    graph.addEdge(node2, node3, NetStat{10, 10, 10, 10});
     testing_intent.randomizeIntent(graph);
     int demand12 = testing_intent.getDemand(node1, node2);
     int demand21 = testing_intent.getDemand(node2, node1);
