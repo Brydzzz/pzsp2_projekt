@@ -1,5 +1,6 @@
 add_executable(spea2test Spea2Tests.cpp
-        ../../src/algorithms/SPEA2.h ../../src/algorithms/SPEA2.cpp)
+        ../../src/algorithms/Evolutionary_Algorithm.h
+        ../../src/algorithms/SPEA2.h ../../src/algorithms/SPEA2.tpp)
 
 
 target_include_directories(spea2test PRIVATE ../../src/algorithms)

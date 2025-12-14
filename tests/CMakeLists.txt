@@ -13,3 +13,4 @@ FetchContent_Declare(
         GIT_TAG main
 )
 FetchContent_MakeAvailable(googletest)
+add_subdirectory(spea2tests)

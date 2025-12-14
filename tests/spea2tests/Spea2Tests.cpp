@@ -15,11 +15,31 @@ std::vector<float> mock_target(int number) {
 }
 
 std::vector<int> mock_population(int number) {
-    return {1, 2, 3, 4};
+    number++;
+    return {1, 2, 3, 0};
 }
 
+template <typename T>
+class SPEA2Wrapper : SPEA2<T> {
+public:
+    std::vector<int> wrap_calculate_strength(
+        target_function<T> target, std::vector<T> pop) {
 
-TEST(SPEA2Tests, testBasicUsage) {
-    auto spea2 = SPEA2<int>();
-    spea2.solve(mock_target, mock_population(4), );
+        return this->calculate_strength(target, pop);
+    }
+};
+
+
+// TEST(SPEA2Tests, testBasicUsage) {
+//     auto spea2 = SPEA2<int>();
+//     spea2.solve(mock_target, mock_population(4), );
+// }
+
+
+TEST(SPEA2Tests, test_calculate_strength) {
+    auto spea2 = SPEA2Wrapper<int>();
+    std::vector<int> pop = {1, -2, 3, 0};
+    std::vector strength = spea2.wrap_calculate_strength(mock_target, pop);
+    std::vector results = {1, 1, 0, 2};
+    ASSERT_TRUE(std::equal(strength.begin(), strength.end(), results.end()));
 }

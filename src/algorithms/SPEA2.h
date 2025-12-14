@@ -9,10 +9,9 @@
 
 template <typename T>
 class SPEA2 : public Evolutionary_Algorithm<T> {
-private:
+protected:
     std::vector<T>
     generate_init_pop(population_generator<T> generator, int pop) override;
-    std::vector<std::vector<float>> calculate_fitness();
     std::vector<T> selection(strategy<T> strat, std::vector<T> population,
                              const std::vector<float> &params) override;
     std::vector<float> calculate_fitness(target_function<T> target,
@@ -20,12 +19,16 @@ private:
                                          std::vector<T> &set);
     std::vector<int> calculate_strength(target_function<T> target,
                                         std::vector<T> &population);
+    std::vector<int> calculate_raw_fitness(
+        std::vector<T> &combined, std::vector<int> &strengths);
 
 public:
-    T solve(target_function<T> target, population_generator<T> population_gen,
+    T solve(int popsize, target_function<T> target,
+            population_generator<T> population_gen,
             strategy<T> select_strat, strategy<T> cross_stat,
             strategy<T> succ_strat, std::vector<float> &params) override;
 
 };
 
 
+#include "SPEA2.tpp"
