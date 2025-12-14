@@ -101,10 +101,6 @@ TEST(GraphTests, randomPathGeneratorTest2) {
     ASSERT_EQ(path[0], nodes[0]);
     ASSERT_EQ(path.back(), nodes.back());
     ASSERT_EQ(isPathGood(graph, path), true);
-
-    ASSERT_ANY_THROW(graph.generateRandomPath(nodes.front(), node5));
-    path = graph.generateRandomPath(nodes.front(), node4);
-    ASSERT_EQ(path.size(), 0);
 }
 
 TEST(GraphTests, randomPathGeneratorTestNonExistantPaths) {
