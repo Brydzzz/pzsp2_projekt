@@ -37,16 +37,15 @@ void Graph<T>::check_node_existance(Node &node) {
     }
 }
 template <typename T>
-Graph<T>::Graph(std::vector<Node> &nodes, std::vector<Edge<T>> adjacencyList) {
-    this->nodes = nodes;
+Graph<T>::Graph(std::vector<Node> &nodes, std::vector<Edge<T>> adjacencyList)
+    : nodes(nodes) {
     for (auto node : this->nodes) {
         this->adjacencyList[node] = std::vector<Edge<T>>();
     }
     for (auto edge : adjacencyList) {
         check_node_existance(edge.first_node);
         check_node_existance(edge.second_node);
-        this->adjacencyList[edge.first_node].push_back(edge);
-        this->adjacencyList[edge.second_node].push_back(edge);
+        addEdge(edge.first_node, edge.second_node, edge.weight);
     }
 }
 
