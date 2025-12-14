@@ -3,21 +3,28 @@
 //
 
 #pragma once
-
+#include <pareto/front.h>
+#include <pareto/kd_tree.h>
 #include "Evolutionary_Algorithm.h"
 
 template <typename T>
 class SPEA2 : public Evolutionary_Algorithm<T> {
 private:
-    std::vector<T> generate_init_pop(population_generator) override;
+    std::vector<T>
+    generate_init_pop(population_generator<T> generator, int pop) override;
     std::vector<std::vector<float>> calculate_fitness();
-    std::vector<T> selection(strategy strat, std::vector<T> population,
+    std::vector<T> selection(strategy<T> strat, std::vector<T> population,
                              const std::vector<float> &params) override;
+    std::vector<float> calculate_fitness(target_function<T> target,
+                                         std::vector<T> &population,
+                                         std::vector<T> &set);
+    std::vector<int> calculate_strength(target_function<T> target,
+                                        std::vector<T> &population);
 
 public:
-    T solve(target_function target, population_generator population_gen,
-            strategy select_strat, strategy cross_stat,
-            strategy succ_strat, std::vector<float> &params) override;
+    T solve(target_function<T> target, population_generator<T> population_gen,
+            strategy<T> select_strat, strategy<T> cross_stat,
+            strategy<T> succ_strat, std::vector<float> &params) override;
 
 };
 

@@ -5,7 +5,8 @@ add_executable(graphtest GraphTests.cpp
 
 target_include_directories(graphtest PRIVATE ../../src/graph)
 
-target_link_libraries(graphtest gtest gtest_main)
+target_link_libraries(graphtest PRIVATE gtest gtest_main)
+
 
 include(GoogleTest)
 gtest_discover_tests(graphtest)

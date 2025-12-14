@@ -16,14 +16,19 @@ template <typename T>
 class Evolutionary_Algorithm {
 public:
     virtual ~Evolutionary_Algorithm() = default;
-    virtual std::vector<T> generate_init_pop(population_generator);
-    virtual std::vector<T> selection(strategy strat, std::vector<T> population,
+    virtual std::vector<T> generate_init_pop(population_generator<T> generator,
+                                             int pop);
+    virtual std::vector<T> selection(strategy<T> strat,
+                                     std::vector<T> population,
                                      const std::vector<float> &params);
-    virtual std::vector<T> crossover(strategy strat, std::vector<T> population,
+    virtual std::vector<T> crossover(strategy<T> strat,
+                                     std::vector<T> population,
                                      const std::vector<float> &params);
-    virtual std::vector<T> succsesion(strategy strat, std::vector<T> population,
+    virtual std::vector<T> succession(strategy<T> strat,
+                                      std::vector<T> population,
                                       const std::vector<float> &params);
-    virtual T solve(target_function target, population_generator population_gen,
-                    strategy select_strat, strategy cross_stat,
-                    strategy succ_strat, std::vector<float> &params);
+    virtual T solve(int popsize, target_function<T> target,
+                    population_generator<T> population_gen,
+                    strategy<T> select_strat, strategy<T> cross_stat,
+                    strategy<T> succ_strat, std::vector<float> &params);
 };
