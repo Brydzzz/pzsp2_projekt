@@ -8,7 +8,7 @@
 
 bool isPathGood(Graph<int> &graph, std::vector<Node> &path) {
     for (int i = 1; i < (int)path.size(); i++) {
-        if (!graph.haveEdge(path[i - 1], path[i]))
+        if (!graph.hasEdge(path[i - 1], path[i]))
             return false;
     }
     return true;
@@ -68,14 +68,6 @@ TEST(GraphTests, addEdgeTest) {
     ASSERT_EQ(graph.getWeightBetween(node2, node1), 2);
 }
 
-TEST(GraphTests, addEdgeTest2) {
-    std::vector nodes = {node1, node2, node3};
-    auto graph = Graph<int>(nodes);
-    graph.addEdge(node1, node2, 2);
-    ASSERT_EQ(graph.getWeightBetween(node1, node2), 2);
-    ASSERT_EQ(graph.getWeightBetween(node2, node1), 2);
-}
-
 TEST(GraphTests, randomPathGeneratorTest) {
     std::vector nodes = {node1, node2, node3, node4, node5,
                          node6, node7, node8, node9, node10};
@@ -113,4 +105,32 @@ TEST(GraphTests, randomPathGeneratorTest2) {
     ASSERT_ANY_THROW(graph.generateRandomPath(nodes.front(), node5));
     path = graph.generateRandomPath(nodes.front(), node4);
     ASSERT_EQ(path.size(), 0);
+}
+
+TEST(GraphTests, randomPathGeneratorTestNonExistantPaths) {
+    std::vector nodes = {node1, node2, node4, node3};
+    std::vector<Edge<int>> adjacencyList = {
+        Edge<int>(node1, node2, 1),
+        Edge<int>(node2, node3, 2),
+        Edge<int>(node1, node3, 3),
+        Edge<int>(node3, node1, 1),
+    };
+    auto graph = Graph(nodes, adjacencyList);
+
+    ASSERT_ANY_THROW(graph.generateRandomPath(nodes.front(), node5));
+    auto path = graph.generateRandomPath(nodes.front(), node4);
+    ASSERT_EQ(path.size(), 0);
+}
+
+TEST(GraphTests, randomPathGeneratorTestNonExistantNode) {
+    std::vector nodes = {node1, node2, node4, node3};
+    std::vector<Edge<int>> adjacencyList = {
+        Edge<int>(node1, node2, 1),
+        Edge<int>(node2, node3, 2),
+        Edge<int>(node1, node3, 3),
+        Edge<int>(node3, node1, 1),
+    };
+    auto graph = Graph(nodes, adjacencyList);
+
+    ASSERT_ANY_THROW(graph.generateRandomPath(nodes.front(), node5));
 }

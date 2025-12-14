@@ -76,7 +76,7 @@ void Graph<T>::addEdge(Node &node1, Node &node2, T weight) {
     check_node_existance(node1);
     check_node_existance(node2);
     adjacencyList[node1].push_back(Edge(node1, node2, weight));
-    adjacencyList[node2].push_back(Edge(node1, node2, weight));
+    adjacencyList[node2].push_back(Edge(node2, node1, weight));
 }
 
 template <typename T>
@@ -93,7 +93,7 @@ T Graph<T>::getWeightBetween(Node &node1, Node &node2) {
 }
 
 template <typename T>
-bool Graph<T>::haveEdge(Node &from, Node &to) {
+bool Graph<T>::hasEdge(Node &from, Node &to) {
     for (auto &edge : adjacencyList[from]) {
         if (edge.second_node == to)
             return true;
@@ -137,8 +137,10 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
         }
         if (nextNode) {
             path.push_back(nextNode.value());
+            usedNodes.insert(path.back());
             continue;
         }
+        usedNodes.erase(path.back());
         path.pop_back();
     }
 

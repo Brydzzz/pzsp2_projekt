@@ -4,9 +4,9 @@
 #pragma once
 #include <limits>
 #include <map>
+#include <optional>
 #include <set>
 #include <vector>
-#include <optional>
 
 #include "Edge.h"
 #include "NetStat.h"
@@ -28,10 +28,9 @@ class Graph {
     std::vector<Node> getNodes();
     void addEdge(Node &node1, Node &node2, T weight);
     T getWeightBetween(Node &node1, Node &node2);
-    bool haveEdge(Node &from, Node &to);
+    bool hasEdge(Node &from, Node &to);
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);
-
 };
 
 #include "Graph.tpp"
