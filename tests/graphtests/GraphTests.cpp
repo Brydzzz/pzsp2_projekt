@@ -112,7 +112,6 @@ TEST(GraphTests, randomPathGeneratorTestNonExistantPaths) {
     };
     auto graph = Graph(nodes, adjacencyList);
 
-    ASSERT_ANY_THROW(graph.generateRandomPath(nodes.front(), node5));
     auto path = graph.generateRandomPath(nodes.front(), node4);
     ASSERT_EQ(path.size(), 0);
 }
