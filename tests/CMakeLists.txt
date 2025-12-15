@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(tests)
 set(CMAKE_CXX_STANDARD 23)
 
-enable_testing()
+add_compile_options(-g -Wall -Werror)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -17,4 +17,6 @@ FetchContent_Declare(
   GIT_TAG master
 )
 FetchContent_MakeAvailable(googletest csvReader)
+
 add_subdirectory(graphtests)
+add_subdirectory(intenttests)
