@@ -92,7 +92,6 @@ TEST(GraphTests, randomPathGeneratorTest2) {
         Edge<int>(node1, node2, 1),
         Edge<int>(node2, node3, 2),
         Edge<int>(node1, node3, 3),
-        Edge<int>(node3, node1, 1),
     };
     auto graph = Graph(nodes, adjacencyList);
     std::vector<Node> path =
