@@ -1,4 +1,4 @@
-include_directories("${csvreader_SOURCE_DIR}")
+include_directories(${csvreader_SOURCE_DIR})
 
 add_executable(graphtest GraphTests.cpp
         ../../src/graph/Graph.tpp
@@ -14,7 +14,7 @@ add_executable(graphParserTest GraphParserTests.cpp
         ../../src/graph/Edge.h
         ../../src/graph/Node.h)
 
-target_include_directories(graphParserTest PRIVATE ../../src/graph ${csvReader_SOURCE_DIR})
+target_include_directories(graphParserTest PRIVATE ../../src/graph ${csvreader_SOURCE_DIR})
 target_link_libraries(graphParserTest gtest gtest_main)
 
 

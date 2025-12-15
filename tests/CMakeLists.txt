@@ -4,10 +4,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_compile_options(-g -Wall -Werror)
 
-add_subdirectory(graphtests)
-add_subdirectory(intenttests)
-
-
 include(FetchContent)
 FetchContent_Declare(
         googletest
@@ -21,4 +17,6 @@ FetchContent_Declare(
   GIT_TAG master
 )
 FetchContent_MakeAvailable(googletest csvReader)
+
 add_subdirectory(graphtests)
+add_subdirectory(intenttests)
