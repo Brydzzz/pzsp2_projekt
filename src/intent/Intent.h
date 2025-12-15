@@ -1,5 +1,4 @@
-#ifndef INTENT_H
-#define INTENT_H
+#pragma once
 
 #include <vector>
 
@@ -19,5 +18,3 @@ class Intent {
     std::vector<std::vector<unsigned int>>
     getIntentInNodeOrder(std::vector<Node> &nodes);
 };
-
-#endif

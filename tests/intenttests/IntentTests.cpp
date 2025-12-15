@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <vector>
 
-#include "../graph/Graph.h"
-#include "../graph/NetStat.h"
-#include "../graph/Node.h"
-#include "Intent.h"
+#include "../intent/Intent.h"
+#include "Graph.h"
+#include "NetStat.h"
+#include "Node.h"
 #include "gtest/gtest.h"
 
 Node node1 = Node("Warszawa");

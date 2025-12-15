@@ -17,6 +17,9 @@ class Graph {
     std::vector<Node> nodes;
 
     void check_node_existance(Node &node);
+    std::vector<Node> resolvePath(Node &startNode, Node &endNode,
+                                  std::map<Node, Node *> comingFrom);
+    int getNextPathChoice(std::vector<int> &pathChoices);
 
   public:
     Graph();
@@ -30,6 +33,7 @@ class Graph {
     T getWeightBetween(Node &node1, Node &node2);
     bool hasEdge(Node &from, Node &to);
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode);
+    std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);
 };
 

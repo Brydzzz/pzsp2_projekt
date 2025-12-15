@@ -2,8 +2,7 @@
 // Created by tomek on 12/9/25.
 //
 
-#ifndef NODE_H
-#define NODE_H
+#pragma once
 #include <string>
 
 class Node {
@@ -16,5 +15,3 @@ class Node {
     bool operator!=(const Node &other) const { return !(*this == other); }
     bool operator<(const Node &other) const { return this->name < other.name; }
 };
-
-#endif // NODE_H

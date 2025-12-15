@@ -2,8 +2,8 @@
 // Created by tomek on 12/9/25.
 //
 
-#ifndef EDGE_H
-#define EDGE_H
+#pragma once
+
 #include "Node.h"
 template <typename T>
 class Edge {
@@ -14,5 +14,3 @@ class Edge {
     Edge(Node &node1, Node &node2, T weight)
         : first_node(node1), second_node(node2), weight(weight) {}
 };
-
-#endif // EDGE_H

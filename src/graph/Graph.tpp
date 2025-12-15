@@ -2,10 +2,14 @@
 // Created by tomek on 11/15/25.
 //
 
+#include "../utils/utils.hpp"
+#include "Edge.h"
 #include "Graph.h"
+#include "defines.h"
 #include <algorithm>
 #include <iterator>
 #include <optional>
+#include <queue>
 #include <random>
 #include <stdexcept>
 
@@ -101,33 +105,38 @@ bool Graph<T>::hasEdge(Node &from, Node &to) {
 }
 
 template <typename T>
+int Graph<T>::getNextPathChoice(std::vector<int> &pathChoices) {
+    int pathChoice = pathChoices.back();
+    pathChoices.pop_back();
+    return pathChoice;
+}
+
+template <typename T>
 std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     check_node_existance(startNode);
     check_node_existance(endNode);
 
     std::vector<Node> path;
+    // to keep the adjacencyList intact we create a permutations for each node,
+    // so that the order in which we take edges is randomized resulting in
+    // random paths
     std::map<Node, std::vector<int>> pathChoices;
 
-    std::random_device rd;
-    std::mt19937 g(rd());
+    std::mt19937 randomDevice = createRandomDevice();
 
     std::set<Node> usedNodes;
     usedNodes.insert(startNode);
     path.push_back(startNode);
     while (path.size() and path.back() != endNode) {
-        if (pathChoices.find(path.back()) == pathChoices.end()) {
-            for (unsigned int i = 0; i < adjacencyList[path.back()].size();
-                 i++) {
-                pathChoices[path.back()].push_back(i);
-            }
-            std::shuffle(pathChoices[path.back()].begin(),
-                         pathChoices[path.back()].end(), g);
+        auto lastNode = path.back();
+        if (pathChoices.find(lastNode) == pathChoices.end()) {
+            pathChoices[lastNode] = createRandomizedPermutation(
+                adjacencyList[lastNode].size(), randomDevice);
         }
         std::optional<Node> nextNode = std::nullopt;
-        while (pathChoices[path.back()].size()) {
-            int pathChoice = pathChoices[path.back()].back();
-            pathChoices[path.back()].pop_back();
-            nextNode = adjacencyList[path.back()][pathChoice].second_node;
+        while (pathChoices[lastNode].size()) {
+            int pathChoice = getNextPathChoice(pathChoices[lastNode]);
+            nextNode = adjacencyList[lastNode][pathChoice].second_node;
             if (usedNodes.find(nextNode.value()) != usedNodes.end()) {
                 nextNode = std::nullopt;
                 continue;
@@ -144,6 +153,55 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     }
 
     return path;
+}
+
+template <typename T>
+std::vector<Node> Graph<T>::generateWidestPath(Node &startNode, Node &endNode) {
+    check_node_existance(startNode);
+    check_node_existance(endNode);
+
+    struct NodePriorityQueueData {
+        unsigned int throughput;
+        Node *cameFrom;
+        Node *at;
+
+        bool operator==(const NodePriorityQueueData &other) const {
+            return this->throughput == other.throughput;
+        }
+        bool operator<(const NodePriorityQueueData &other) const {
+            return this->throughput < other.throughput;
+        }
+    };
+
+    std::set<Node> usedNodes;
+    std::map<Node, Node *> cameFrom;
+    std::priority_queue<NodePriorityQueueData> nodeHeap;
+
+    nodeHeap.push(NodePriorityQueueData{
+        .throughput = THROUGHPUT_MAX, .cameFrom = nullptr, .at = &startNode});
+
+    while (nodeHeap.size()) {
+        auto currentState = nodeHeap.top();
+        if (*currentState.at == endNode) {
+            return resolvePath(startNode, endNode, cameFrom);
+        }
+        nodeHeap.pop();
+        if (usedNodes.find(*currentState.at) != usedNodes.end()) {
+            continue;
+        }
+        usedNodes.insert(*currentState.at);
+        cameFrom[*currentState.at] = *currentState.cameFrom;
+
+        for (auto edge : adjacencyList[&currentState.at]) {
+            nodeHeap.push(NodePriorityQueueData{
+                .throughput =
+                    std::min(currentState.throughput, edge.weight.throughput),
+                .cameFrom = currentState.at,
+                .at = &edge.second_node});
+        }
+    }
+
+    return {};
 }
 
 template <typename T>

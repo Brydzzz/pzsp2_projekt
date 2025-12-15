@@ -3,7 +3,7 @@ add_executable(intenttests IntentTests.cpp
         ../../src/intent/Intent.cpp
 )
 
-target_include_directories(intenttests PRIVATE ../../src/intent)
+target_include_directories(intenttests PRIVATE ../../src/graph)
 
 target_link_libraries(intenttests gtest gtest_main)
 
