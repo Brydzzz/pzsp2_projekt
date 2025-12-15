@@ -155,51 +155,11 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     return path;
 }
 
+// TODO: implement this function properly
 template <typename T>
 std::vector<Node> Graph<T>::generateWidestPath(Node &startNode, Node &endNode) {
     check_node_existance(startNode);
     check_node_existance(endNode);
-
-    struct NodePriorityQueueData {
-        unsigned int throughput;
-        Node *cameFrom;
-        Node *at;
-
-        bool operator==(const NodePriorityQueueData &other) const {
-            return this->throughput == other.throughput;
-        }
-        bool operator<(const NodePriorityQueueData &other) const {
-            return this->throughput < other.throughput;
-        }
-    };
-
-    std::set<Node> usedNodes;
-    std::map<Node, Node *> cameFrom;
-    std::priority_queue<NodePriorityQueueData> nodeHeap;
-
-    nodeHeap.push(NodePriorityQueueData{
-        .throughput = THROUGHPUT_MAX, .cameFrom = nullptr, .at = &startNode});
-
-    while (nodeHeap.size()) {
-        auto currentState = nodeHeap.top();
-        if (*currentState.at == endNode) {
-            return resolvePath(startNode, endNode, cameFrom);
-        }
-        nodeHeap.pop();
-        if (usedNodes.find(*currentState.at) != usedNodes.end()) {
-            continue;
-        }
-        usedNodes.insert(*currentState.at);
-        cameFrom[*currentState.at] = *currentState.cameFrom;
-
-        for (auto edge : adjacencyList[&currentState.at]) {
-            nodeHeap.push(NodePriorityQueueData{
-                .throughput =
-                    std::min(currentState.throughput, edge.weight.throughput),
-                .cameFrom = currentState.at,
-                .at = &edge.second_node});
-        }
-    }
 
     return {};
 }
