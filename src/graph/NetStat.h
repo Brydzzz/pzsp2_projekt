@@ -12,6 +12,12 @@ class NetStat {
     unsigned int throughput, loss, delay;
     int jitter;
 
+    bool operator==(const NetStat &other) const {
+        return this->throughput == other.throughput &&
+               this->loss == other.loss && this->delay == other.delay &&
+               this->jitter == other.jitter;
+    }
+
     NetStat(unsigned int throughput, unsigned int loss, unsigned int delay,
             int jitter) {
         this->throughput = throughput;
