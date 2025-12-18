@@ -25,11 +25,12 @@ protected:
     std::vector<int> calculate_raw_fitness(
         std::vector<T>& combined, std::vector<int>& strengths);
     std::pair<std::vector<float>, std::vector<std::vector<float>>> calculate_distances(std::vector<T>& combined);
-    std::vector<int> get_newset(int setsize, target_function<T> target,
-                                std::vector<T>& population,
-                                std::vector<T>& set,
-                                std::vector<float>& distances,
-                                std::vector<float>& fitness);
+    std::vector<T> get_newset(int setsize, target_function<T> target, std::vector<T>& population,
+                              std::vector<T>& set, std::vector<std::vector<float>>& distances,
+                              std::vector<float>& fitness);
+    std::vector<T> binary_tournament_selection(int poolsize, std::vector<T>& set);
+    std::vector<T> choose_final_pool(target_function<T> target, int poolsize, std::vector<T>& pool1,
+                                     std::vector<T>& pool2);
 
 public:
     SPEA2<T>();

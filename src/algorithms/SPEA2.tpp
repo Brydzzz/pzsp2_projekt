@@ -27,17 +27,63 @@ T SPEA2<T>::solve(int popsize, target_function<T> target,
                                             initial_pop, external_set);
     auto combined_fitness = fitness_result.first;
     auto distances = fitness_result.second;
-    std::vector<int> newset =
+    std::vector<T> newset =
         get_newpop(setsize, target, initial_pop, external_set, distances, combined_fitness);
-    std::vector<int>
+    std::vector<T> pool1 = binary_tournament_selection(popsize, external_set);
+    std::vector<T> pool2 = binary_tournament_selection(popsize, external_set);
+    std::vector<T> final_pool = choose_final_pool(target, popsize, pool1, pool2);
     return T();
 }
 
 
 template <typename T>
-std::vector<int> get_newpop(int setsize, target_function<T> target, std::vector<T>& population,
-                            std::vector<T>& set, std::vector<std::vector<float>>& distances,
-                            std::vector<float>& fitness)
+std::vector<T> SPEA2<T>::choose_final_pool(target_function<T> target, int poolsize, std::vector<T>& pool1,
+                                           std::vector<T>& pool2)
+{
+    auto fitness_result = calculate_fitness(target,
+                                            pool1, pool2);
+    pool1.insert(pool1.end(), pool2.begin(), pool2.end());
+    std::vector<size_t> indices(pool1.size());
+    std::iota(indices.begin(), indices.end(), 0);
+    std::sort(indices.begin(), indices.end(),
+              [&](size_t a, size_t b)
+              {
+                  return fitness_result[a] < fitness_result[b];
+              });
+    std::vector<T> result;
+    for (int i = 0; i < poolsize; i++)
+    {
+        result.push_back(pool1[indices[i]]);
+    }
+    return result;
+}
+
+
+template <typename T>
+std::vector<T> SPEA2<T>::binary_tournament_selection(int poolsize, std::vector<T>& set)
+{
+    std::vector<T> result;
+    while (result.size() != poolsize)
+    {
+        auto first = set[std::rand(set.size())];
+        auto second = set[std::rand(set.size())];
+        if (first > second)
+        {
+            result.push_back(first);
+        }
+        else
+        {
+            result.push_back(second);
+        }
+        poolsize++;
+    }
+    return result;
+}
+
+template <typename T>
+std::vector<T> SPEA2<T>::get_newset(int setsize, target_function<T> target, std::vector<T>& population,
+                                    std::vector<T>& set, std::vector<std::vector<float>>& distances,
+                                    std::vector<float>& fitness)
 {
     std::vector<T> combined = population;
     combined.insert(combined.end(), set.begin(), set.end());
@@ -105,7 +151,12 @@ std::vector<int> get_newpop(int setsize, target_function<T> target, std::vector<
             }
         }
     }
-    return non_dominated;
+    std::vector<T> result;
+    for (int i = 0; i < non_dominated.size(); i++)
+    {
+        result.push_back(non_dominated[i]);
+    }
+    return result;
 }
 
 
