@@ -7,39 +7,34 @@
 #include <pareto/kd_tree.h>
 #include "Evolutionary_Algorithm.h"
 
-template <typename T>
-using distance_function = std::function<float(T, T)>;
-
 
 template <typename T>
-class SPEA2 : public Evolutionary_Algorithm<T> {
-    distance_function<T> distance_function;
-
+class SPEA2 : public Evolutionary_Algorithm<T>
+{
 protected:
     std::vector<T>
     generate_init_pop(population_generator<T> generator, int pop) override;
-    std::vector<T> selection(strategy<T> strat, std::vector<T> population,
-                             const std::vector<float> &params) override;
-    std::vector<float> calculate_fitness(target_function<T> target,
-                                         std::vector<T> &population,
-                                         std::vector<T> &set);
+    std::pair<std::vector<float>, std::vector<float>> calculate_fitness(
+        std::vector<T>& population,
+        std::vector<T>& set);
     std::vector<int> calculate_strength(target_function<T> target,
-                                        std::vector<T> &population);
+                                        std::vector<T>& population);
+    std::pair<std::vector<float>, std::vector<std::vector<float>>> calculate_fitness(
+        target_function<T> target,
+        std::vector<T>& population, std::vector<T>& set);
     std::vector<int> calculate_raw_fitness(
-        std::vector<T> &combined, std::vector<int> &strengths);
-    std::vector<float> calculate_distances(std::vector<T> &combined);
-    std::vector<T> get_newpop(target_function<T> target,
-                              std::vector<T> &population,
-                              std::vector<T> &set,
-                              std::vector<float> &fitness);
+        std::vector<T>& combined, std::vector<int>& strengths);
+    std::pair<std::vector<float>, std::vector<std::vector<float>>> calculate_distances(std::vector<T>& combined);
+    std::vector<int> get_newset(int setsize, target_function<T> target,
+                                std::vector<T>& population,
+                                std::vector<T>& set,
+                                std::vector<float>& distances,
+                                std::vector<float>& fitness);
 
 public:
-    SPEA2<T>(distance_function<T> distance_function);
+    SPEA2<T>();
     T solve(int popsize, target_function<T> target,
-            population_generator<T> population_gen,
-            strategy<T> select_strat, strategy<T> cross_stat,
-            strategy<T> succ_strat, std::vector<float> &params) override;
-
+            population_generator<T> population_gen, std::vector<float>& params) override;
 };
 
 
