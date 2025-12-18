@@ -4,11 +4,12 @@
 # pragma once
 #include <vector>
 #include <functional>
-
 template <typename T>
 using population_generator = std::function<std::vector<T>(int)>;
 template <typename T>
 using target_function = std::function<std::vector<float>(T)>;
+template <typename T>
+using strategy = std::function<std::vector<T>(const std::vector<T>&)>;
 
 
 template <typename T>
@@ -21,12 +22,12 @@ public:
     // virtual std::vector<T> selection(strategy<T> strat,
     //                                  std::vector<T> population,
     //                                  const std::vector<float>& params);
-    // virtual std::vector<T> crossover(strategy<T> strat,
-    //                                  std::vector<T> population,
-    //                                  const std::vector<float>& params);
+    virtual std::vector<T> crossover(strategy<T> strat,
+                                     std::vector<T> population,
+                                     const std::vector<float>& params);
     // virtual std::vector<T> succession(strategy<T> strat,
     //                                   std::vector<T> population,
     //                                   const std::vector<float>& params);
-    virtual T solve(int popsize, target_function<T> target,
-                    population_generator<T> population_gen, std::vector<float>& params);
+    virtual std::vector<T> solve(int popsize, int iterations, target_function<T> target,
+                                 population_generator<T> population_gen, std::vector<float>& params);
 };

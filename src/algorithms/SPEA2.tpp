@@ -14,25 +14,37 @@ std::vector<T> SPEA2<T>::generate_init_pop(population_generator<T> generator,
 
 
 template <typename T>
-T SPEA2<T>::solve(int popsize, target_function<T> target,
-                  population_generator<T> population_gen, std::vector<float>& params)
+std::vector<T> SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
+                               population_generator<T> population_gen, std::vector<float>& params)
 {
     params[0] = 0;
+    int t = 0;
     int setsize = popsize / 2;
-    std::vector<T> initial_pop = generate_init_pop(population_gen, popsize);
+    std::vector<T> population = generate_init_pop(population_gen, popsize);
     std::vector<T> external_set = {};
-    std::vector<T> combined = initial_pop;
-    combined.insert(combined.end(), external_set.begin(), external_set.end());
-    auto fitness_result = calculate_fitness(target,
-                                            initial_pop, external_set);
-    auto combined_fitness = fitness_result.first;
-    auto distances = fitness_result.second;
-    std::vector<T> newset =
-        get_newpop(setsize, target, initial_pop, external_set, distances, combined_fitness);
-    std::vector<T> pool1 = binary_tournament_selection(popsize, external_set);
-    std::vector<T> pool2 = binary_tournament_selection(popsize, external_set);
-    std::vector<T> final_pool = choose_final_pool(target, popsize, pool1, pool2);
-    return T();
+    while (true)
+    {
+        std::vector<T> combined = population;
+        combined.insert(combined.end(), external_set.begin(), external_set.end());
+        auto fitness_result = calculate_fitness(target,
+                                                population, external_set);
+        auto combined_fitness = fitness_result.first;
+        auto distances = fitness_result.second;
+        std::vector<T> newset =
+            get_newpop(setsize, target, population, external_set, distances, combined_fitness);
+        if (t > iterations)
+        {
+            return newset;
+        }
+        std::vector<T> pool1 = binary_tournament_selection(popsize, external_set);
+        std::vector<T> pool2 = binary_tournament_selection(popsize, external_set);
+        std::vector<T> final_pool = choose_final_pool(target, popsize, pool1, pool2);
+        std::vector<T> next_pop = crossover(final_pool, pool1, pool2);
+        external_set = newset;
+        population = crossover(population, params);
+        t++;
+    }
+    return std::vector<T>();
 }
 
 

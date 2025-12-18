@@ -14,6 +14,9 @@ class SPEA2 : public Evolutionary_Algorithm<T>
 protected:
     std::vector<T>
     generate_init_pop(population_generator<T> generator, int pop) override;
+    std::vector<T> crossover(strategy<T> strat,
+                             std::vector<T> population,
+                             const std::vector<float>& params) override;
     std::pair<std::vector<float>, std::vector<float>> calculate_fitness(
         std::vector<T>& population,
         std::vector<T>& set);
@@ -34,8 +37,8 @@ protected:
 
 public:
     SPEA2<T>();
-    T solve(int popsize, target_function<T> target,
-            population_generator<T> population_gen, std::vector<float>& params) override;
+    std::vector<T> solve(int popsize, int iterations, target_function<T> target,
+                         population_generator<T> population_gen, std::vector<float>& params) override;
 };
 
 
