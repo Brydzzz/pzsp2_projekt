@@ -6,7 +6,6 @@
 #include <numeric>
 #include <vector>
 
-#include "SPEA2.h"
 
 // template <typename T>
 // using point = pareto::front<float, 3, T>;

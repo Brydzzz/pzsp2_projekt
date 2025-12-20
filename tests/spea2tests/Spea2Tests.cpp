@@ -19,8 +19,7 @@ std::vector<float> mock_target(int number)
 
 std::vector<int> mock_population(int number)
 {
-    number++;
-    return {1, 2, 3, 0};
+    return {1, 1 + number, 3, 0};
 }
 
 float distance(int n1, int n2)
