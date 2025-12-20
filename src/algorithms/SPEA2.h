@@ -11,6 +11,8 @@
 template <typename T>
 class SPEA2 : public Evolutionary_Algorithm<T>
 {
+    std::function<float(T, T)> distance_function;
+
 protected:
     std::vector<T>
     generate_init_pop(population_generator<T> generator, int pop) override;
@@ -25,19 +27,22 @@ protected:
     std::pair<std::vector<float>, std::vector<std::vector<float>>> calculate_fitness(
         target_function<T> target,
         std::vector<T>& population, std::vector<T>& set);
-    std::vector<int> calculate_raw_fitness(
-        std::vector<T>& combined, std::vector<int>& strengths);
+    std::vector<int> calculate_raw_fitness(target_function<T> target,
+                                           std::vector<T>& combined, std::vector<int>& strengths);
     std::pair<std::vector<float>, std::vector<std::vector<float>>> calculate_distances(std::vector<T>& combined);
-    std::vector<T> get_newset(int setsize, target_function<T> target, std::vector<T>& population,
+    std::vector<T> get_newset(unsigned int setsize, target_function<T> target, std::vector<T>& population,
                               std::vector<T>& set, std::vector<std::vector<float>>& distances,
                               std::vector<float>& fitness);
-    std::vector<T> binary_tournament_selection(int poolsize, std::vector<T>& set);
+    std::vector<T> binary_tournament_selection(unsigned int poolsize, std::vector<T>& set);
     std::vector<T> choose_final_pool(target_function<T> target, int poolsize, std::vector<T>& pool1,
                                      std::vector<T>& pool2);
 
 public:
-    SPEA2<T>();
-    std::vector<T> solve(int popsize, int iterations, target_function<T> target,
+    SPEA2(std::function<float(T, T)> distance) : distance_function(distance)
+    {
+    }
+
+    std::vector<T> solve(int popsize, int iterations, target_function<T> target, strategy<T> cross_strat,
                          population_generator<T> population_gen, std::vector<float>& params) override;
 };
 
