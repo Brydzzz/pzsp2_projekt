@@ -7,7 +7,7 @@
 #include <optional>
 #include <set>
 #include <vector>
-
+#include <algorithm>
 #include "Edge.h"
 #include "NetStat.h"
 template <typename T>
@@ -15,13 +15,14 @@ class Graph {
   protected:
     std::map<Node, std::vector<Edge<T>>> adjacencyList;
     std::vector<Node> nodes;
-    std::map<Edge<T>, int> flow_left;
+
     void check_node_existance(Node &node);
     std::vector<Node> resolvePath(Node &startNode, Node &endNode,
                                   std::map<Node, Node *> comingFrom);
     int getNextPathChoice(std::vector<int> &pathChoices);
   void updateEdgeFlows(std::vector<Node> path, unsigned int intent);
   public : Graph();
+    std::map<Edge<T>, int> flow_left;
     Graph(std::vector<Node> &nodes);
     Graph(std::vector<Node> &nodes,
           std::map<Node, std::vector<Edge<T>>> adjacencyList);
@@ -34,6 +35,14 @@ class Graph {
     std::vector<Node> generateRandomPath(const Node &startNode,const Node &endNode, unsigned int intent);
     std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);
+    void addNode(Node &node) { nodes.push_back(node); }
+    bool hasNode(Node &node) {
+        // This will now work because <algorithm> is included
+        if (std::find(nodes.begin(), nodes.end(), node) == nodes.end()) {
+            return false;
+        }
+        return true;
+    }
 };
 
 #include "Graph.tpp"

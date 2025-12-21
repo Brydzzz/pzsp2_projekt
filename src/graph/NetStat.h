@@ -17,8 +17,8 @@ class NetStat {
                this->loss == other.loss && this->delay == other.delay &&
                this->jitter == other.jitter;
     }
-    int operator+(const NetStat& n) const{
-      return static_cast<int>(throughput);
+    int operator+(const int n) const{
+      return static_cast<int>(throughput + n);
     }
     NetStat(unsigned int throughput, unsigned int loss, unsigned int delay,
             int jitter) {

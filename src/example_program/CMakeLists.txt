@@ -13,12 +13,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(csvReader)
 
+FetchContent_Declare(pareto
+        GIT_REPOSITORY https://github.com/alandefreitas/pareto
+        GIT_TAG origin/master
+)
+FetchContent_MakeAvailable(pareto)
+
 add_executable(exampleProgram example_program.cpp ../../src/intent/Intent.cpp ../../src/graph/GraphParser.cpp
-        ../../src/graph/Graph.h ../../src/graph/Graph.tpp)
+        ../../src/graph/Graph.h ../../src/graph/Graph.tpp ../../src/algorithms/SPEA2.h)
+
+target_link_libraries(exampleProgram PRIVATE pareto)
 
 include_directories(${csvreader_SOURCE_DIR})
 
-target_include_directories(exampleProgram PRIVATE ../../src/graph ../../src/intent ${csvreader_SOURCE_DIR})
+target_include_directories(exampleProgram PRIVATE ../../src/graph ../../src/intent ../../src/algorithms ${csvreader_SOURCE_DIR})
 
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/full_mesh_10.csv"
         DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

@@ -8,7 +8,7 @@
 template <typename T>
 class Edge {
   public:
-  int toInt(return T + 0);
+  int toInt(){return weight + 0;};
     Node first_node;
     Node second_node;
     T weight;

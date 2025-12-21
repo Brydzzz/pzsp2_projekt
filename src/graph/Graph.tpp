@@ -114,8 +114,7 @@ int Graph<T>::getNextPathChoice(std::vector<int> &pathChoices) {
     pathChoices.pop_back();
     return pathChoice;
 }
-
-
+template<typename T>
 void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent){
     for(unsigned int i = 0; i < path.size()-1; i++){
         flow_left[getEdgeBetween(path[i], path[i+1])] -= intent;
