@@ -243,8 +243,11 @@ std::vector<int> SPEA2<T>::calculate_strength(target_function<T> target,
     {
         for (auto pop2 : population)
         {
-            if (pareto::point<float, 3>(target(pop1).begin(), target(pop1).end()).strongly_dominates(
-                pareto::point<float, 3>(target(pop2).begin(), target(pop2).end())))
+            auto target_pop1 = target(pop1);
+            auto target_pop2 = target(pop2);
+            auto point1 = pareto::point<float, 3>(target_pop1.begin(), target_pop1.end());
+            auto point2 = pareto::point<float, 3>(target_pop2.begin(), target_pop2.end());
+            if ((point1).strongly_dominates(point2))
             {
                 strength[i]++;
             }
