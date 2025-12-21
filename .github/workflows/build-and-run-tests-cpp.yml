@@ -23,7 +23,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: 'file'  # Use .clang-format config file
-          # tidy-checks: '' # Use .clang-tidy config file
+          tidy-checks: '' # Use .clang-tidy config file
+          files-changed-only: false
+          lines-changed-only: false
+          extensions: 'cpp,hpp,c,h,cc,tpp'
           # only 'update' a single comment in a pull request thread.
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
       - name: Fail fast?!
