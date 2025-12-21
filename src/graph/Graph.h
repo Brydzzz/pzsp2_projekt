@@ -15,12 +15,12 @@ class Graph {
   protected:
     std::map<Node, std::vector<Edge<T>>> adjacencyList;
     std::vector<Node> nodes;
-    std::map<Edge, int> flow_left;
+    std::map<Edge<T>, int> flow_left;
     void check_node_existance(Node &node);
     std::vector<Node> resolvePath(Node &startNode, Node &endNode,
                                   std::map<Node, Node *> comingFrom);
     int getNextPathChoice(std::vector<int> &pathChoices);
-  void updateEdgeFlows(std::vector<Node> path);
+  void updateEdgeFlows(std::vector<Node> path, unsigned int intent);
   public : Graph();
     Graph(std::vector<Node> &nodes);
     Graph(std::vector<Node> &nodes,
@@ -31,7 +31,7 @@ class Graph {
     void addEdge(Node &node1, Node &node2, T weight);
     T getWeightBetween(Node &node1, Node &node2);
     bool hasEdge(Node &from, Node &to);
-    std::vector<Node> generateRandomPath(Node &startNode, Node &endNode);
+    std::vector<Node> generateRandomPath(const Node &startNode,const Node &endNode, unsigned int intent);
     std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);
 };

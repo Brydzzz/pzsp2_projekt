@@ -123,7 +123,7 @@ void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent){
 }
 
 template <typename T>
-std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode, unsigned int intent) {
+std::vector<Node> Graph<T>::generateRandomPath(const Node &startNode,const Node &endNode, unsigned int intent) {
     check_node_existance(startNode);
     check_node_existance(endNode);
 

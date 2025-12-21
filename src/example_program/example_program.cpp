@@ -16,6 +16,19 @@ int main() {
     intentGenerator.randomizeIntent(graph);
     auto nodes = graph.getNodes();
     auto intents = intentGenerator.getIntentInNodeOrder(nodes);
+    auto generate_random_paths =
+        [&](int pop_num) -> std::vector<std::vector<Node>> {
+        std::vector<std::vector<Node>> paths;
+        for (auto intent : intentGenerator.intents) {
+            paths.push_back(graph.generateRandomPath(intent.first.first, intent.first.second, intent.second));
+        }
+        return paths;
+    };
+    auto cross_over_ =
+    [&](std::vector<std::vector<Node>> , std::vector<float> params){
+        
+    }
+
     // call algorithm here
     return 0;
 }
