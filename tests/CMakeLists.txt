@@ -18,6 +18,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest csvReader)
 
+enable_testing()
+
 add_subdirectory(graphtests)
 add_subdirectory(intenttests)
 add_subdirectory(spea2tests)
+
