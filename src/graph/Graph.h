@@ -15,14 +15,13 @@ class Graph {
   protected:
     std::map<Node, std::vector<Edge<T>>> adjacencyList;
     std::vector<Node> nodes;
-
+    std::map<Edge, int> flow_left;
     void check_node_existance(Node &node);
     std::vector<Node> resolvePath(Node &startNode, Node &endNode,
                                   std::map<Node, Node *> comingFrom);
     int getNextPathChoice(std::vector<int> &pathChoices);
-
-  public:
-    Graph();
+  void updateEdgeFlows(std::vector<Node> path);
+  public : Graph();
     Graph(std::vector<Node> &nodes);
     Graph(std::vector<Node> &nodes,
           std::map<Node, std::vector<Edge<T>>> adjacencyList);
