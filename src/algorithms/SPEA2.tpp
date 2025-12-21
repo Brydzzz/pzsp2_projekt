@@ -29,6 +29,7 @@ std::vector<T> SPEA2<T>::solve(int popsize, int iterations, target_function<T> t
     std::vector<T> external_set = {};
     while (true)
     {
+        std::cout <<t << std::endl;
         std::vector<T> combined = population;
         combined.insert(combined.end(), external_set.begin(), external_set.end());
         auto fitness_result = calculate_fitness(target,
@@ -41,8 +42,10 @@ std::vector<T> SPEA2<T>::solve(int popsize, int iterations, target_function<T> t
         {
             return newset;
         }
-        std::vector<T> pool1 = binary_tournament_selection(popsize, external_set);
-        std::vector<T> pool2 = binary_tournament_selection(popsize, external_set);
+        std::vector<T> combined_set = newset;
+        combined_set.insert(combined_set.end(), external_set.begin(), external_set.end());
+        std::vector<T> pool1 = binary_tournament_selection(popsize, external_set, target);
+        std::vector<T> pool2 = binary_tournament_selection(popsize, combined_set, target);
         std::vector<T> final_pool = choose_final_pool(target, popsize, pool1, pool2);
         std::vector<T> next_pop = crossover(cross_strat, final_pool, params);
         external_set = newset;
@@ -85,22 +88,26 @@ std::vector<T> SPEA2<T>::choose_final_pool(target_function<T> target, int poolsi
 
 
 template <typename T>
-std::vector<T> SPEA2<T>::binary_tournament_selection(unsigned int poolsize, std::vector<T>& set)
+std::vector<T> SPEA2<T>::binary_tournament_selection(unsigned int poolsize, std::vector<T>& set, target_function<T> target)
 {
     std::vector<T> result;
+    if (set.empty()) {
+        return set;
+    }
     while (result.size() != poolsize)
     {
         auto first = set[std::rand() % set.size()];
         auto second = set[std::rand() % set.size()];
-        if (first > second)
-        {
+        auto target1 = target(first);
+        auto target2 = target(first);
+        auto point1 = pareto::point<float, 3>(target1.begin(), target1.end());
+        auto point2 = pareto::point<float, 3>(target2.begin(), target2.end());
+        if (point1.strongly_dominates(point2,
+                    true)) {
             result.push_back(first);
-        }
-        else
-        {
+        } else {
             result.push_back(second);
         }
-        poolsize++;
     }
     return result;
 }
@@ -112,7 +119,7 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize, target_function<T> tar
 {
     std::vector<T> combined = population;
     combined.insert(combined.end(), set.begin(), set.end());
-    std::vector<T> non_dominated;
+    std::vector<int> non_dominated;
     for (unsigned int i = 0; i < combined.size(); i++)
     {
         if (fitness[i] < 1)
@@ -123,7 +130,8 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize, target_function<T> tar
     if (non_dominated.size() > setsize)
     {
         int worst = 0;
-        for (unsigned int u = 0; u < non_dominated.size() - setsize; u++)
+        unsigned int old_nd_size = non_dominated.size();
+        for (unsigned int u = 0; u < old_nd_size - setsize; u++)
         {
             for (unsigned int j = 0; j < non_dominated.size(); j++)
             {
@@ -140,13 +148,17 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize, target_function<T> tar
                     else
                     {
                         j++;
+                        if(j  >= non_dominated.size()){
+                            break;
+                        }
                         l = 1;
                     }
                 }
             }
+            auto to_remove = std::find(non_dominated.begin(), non_dominated.end(), worst);
+            non_dominated.erase(to_remove);
         }
-        auto to_remove = std::find(non_dominated.begin(), non_dominated.end(), worst);
-        non_dominated.erase(to_remove);
+
     }
     else if (non_dominated.size() < setsize)
     {
@@ -159,9 +171,9 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize, target_function<T> tar
         {
             std::vector<int> v(combined.size());
             std::iota(v.begin(), v.end(), 0);
-            std::sort(v.begin(), v.end(), [target, i](const int& a, const int& b)
+            std::sort(v.begin(), v.end(), [target, i,combined](const int& a, const int& b)
             {
-                return target(a)[i] < target(b)[i];
+                return target(combined[a])[i] < target(combined[b])[i];
             });
             for (unsigned int j = 0; j < v.size(); j++)
             {
@@ -173,18 +185,21 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize, target_function<T> tar
             return std::accumulate(a.second.begin(), a.second.end(), 0)
                 < std::accumulate(b.second.begin(), b.second.end(), 0);
         });
-        for (auto it = ranks.begin(); it != std::next(ranks.begin(), setsize - non_dominated.size()); it++)
+        unsigned int old_nd_size = non_dominated.size();
+        for (auto it = ranks.begin(); it != ranks.begin() + (setsize - old_nd_size); it++)
         {
             if (std::find(non_dominated.begin(), non_dominated.end(), it->first) == non_dominated.end())
             {
                 non_dominated.push_back(it->first);
+            }else{
+                old_nd_size--;
             }
         }
     }
     std::vector<T> result;
     for (unsigned int i = 0; i < non_dominated.size(); i++)
     {
-        result.push_back(non_dominated[i]);
+        result.push_back(combined[non_dominated[i]]);
     }
     return result;
 }
@@ -199,6 +214,9 @@ std::pair<std::vector<float>, std::vector<std::vector<float>>> SPEA2<T>::calcula
     combined.insert(combined.end(), set.begin(), set.end());
     std::vector<float> fitness(combined.size());
     std::vector<int> pop_strength = calculate_strength(target, combined);
+    if(combined.size() <= 0 ){
+        std::cout<< "?";
+    }
     std::vector<int> pop_raw_fitness = calculate_raw_fitness(target,
                                                              combined, pop_strength);
     std::pair<std::vector<float>, std::vector<std::vector<float>>> distances_results = calculate_distances(combined);
@@ -218,13 +236,16 @@ std::vector<int> SPEA2<T>::calculate_raw_fitness(target_function<T> target,
     std::vector<int> raw_fitness(combined.size());
     for (unsigned int i = 0; i < combined.size(); i++)
     {
+        auto target_i = target(combined[i]);
+        auto point_i = pareto::point<float, 3>(target_i.begin(),
+                                               target_i.end());
         for (unsigned int j = 0; j < combined.size(); j++)
         {
-            if (pareto::point<float, 3>(
-                    target(combined[j]).begin(), target(combined[j]).end()).strongly_dominates(
-                    pareto::point<float, 3>(target(combined[i]).begin(), target(combined[j]).end()), true)
-            )
-            {
+            auto target_j = target(combined[j]);
+            auto point_j =
+                pareto::point<float, 3>(target_j.begin(),
+                                        target_j.end());
+            if (point_j.strongly_dominates(point_i)) {
                 raw_fitness[i] += strengths[j];
             }
         }
