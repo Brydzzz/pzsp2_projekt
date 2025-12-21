@@ -15,10 +15,10 @@ class Edge {
     Edge(Node &node1, Node &node2, T weight)
         : first_node(node1), second_node(node2), weight(weight) {}
     bool operator<(const Edge &other) const {
-        int min = std::min(first_node.name, second_node.name);
-        int max = std::max(first_node.name, second_node.name);
-        int other_min = std::min(other.first_node.name, other.second_node.name);
-        int other_max = std::max(other.first_node.name, other.second_node.name);
+        const std::string min = std::min(first_node.name, second_node.name);
+        const std::string max = std::max(first_node.name, second_node.name);
+        const std::string other_min = std::min(other.first_node.name, other.second_node.name);
+        const std::string other_max = std::max(other.first_node.name, other.second_node.name);
         if (min != other_min) {
             return min < other_min;
         }

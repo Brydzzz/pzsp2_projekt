@@ -12,13 +12,8 @@ FetchContent_Declare(pareto
         GIT_TAG origin/master # or whatever tag you want
 )
 
-FetchContent_GetProperties(pareto)
-if (NOT pareto_POPULATED)
-    FetchContent_Populate(pareto)
-    add_subdirectory(${pareto_SOURCE_DIR} ${pareto_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif ()
+FetchContent_MakeAvailable(pareto)
 
-# ...
 target_link_libraries(spea2test PRIVATE pareto gtest gtest_main)
 
 include(GoogleTest)

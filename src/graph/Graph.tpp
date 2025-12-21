@@ -78,12 +78,11 @@ template <typename T>
 void Graph<T>::addEdge(Node &node1, Node &node2, T weight) {
     check_node_existance(node1);
     check_node_existance(node2);
-    first_edge = Edge(node1, node2, weight);
-    second_edge = Edge(node2, node1, weight);
+    auto first_edge = Edge(node1, node2, weight);
+    auto second_edge = Edge(node2, node1, weight);
     adjacencyList[node1].push_back(first_edge);
     adjacencyList[node2].push_back(second_edge);
-    flow_left[first_edge] = first_edge.toInt()
-
+    flow_left[first_edge] = first_edge.toInt();
 }
 
 template <typename T>
@@ -154,14 +153,14 @@ std::vector<Node> Graph<T>::generateRandomPath(const Node &startNode,const Node 
             break;
         }
         if (nextNode && flow_left[getEdgeBetween(path.back(), nextNode)] >= intent) {
-            path.push_back(nextNode);
+            path.push_back(nextNode.value());
             usedNodes.insert(path.back());
             continue;
         }
         usedNodes.erase(path.back());
         path.pop_back();
     }
-    update_edge_flows(path, intent);
+    updateEdgeFlows(path, intent);
     return path;
 }
 
