@@ -8,10 +8,10 @@ Graph<NetStat> GraphParser::parseCSVToGraph(std::istream &source_stream) {
                    "Loss", "Delay", "Jitter");
     std::string source;
     std::string target;
-    unsigned int throughput;
-    unsigned int loss;
-    unsigned int delay;
-    int jitter;
+    unsigned int throughput = 0;
+    unsigned int loss = 0;
+    unsigned int delay = 0;
+    int jitter = 0;
 
     std::set<Node> nodes{};
     std::vector<Edge<NetStat>> edges{};
