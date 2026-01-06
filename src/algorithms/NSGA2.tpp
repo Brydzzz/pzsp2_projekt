@@ -15,13 +15,9 @@
 template <typename T>
 std::vector<T> NSGA2<T>::join_vector(std::vector<T> &v1, std::vector<T> &v2) {
     std::vector<T> result;
-    for (T &element_v1 : v1) {
-        result.push_back(element_v1);
-    }
-    for (T &element_v2 : v2) {
-        result.push_back(element_v2);
-    }
-
+    result.reserve(v1.size() + v2.size());
+    result.insert(result.end(), v1.begin(), v1.end());
+    result.insert(result.end(), v2.begin(), v2.end());
     return result;
 }
 
