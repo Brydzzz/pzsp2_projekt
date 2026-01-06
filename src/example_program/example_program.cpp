@@ -1,8 +1,8 @@
 #include "GraphParser.h"
 #include "Intent.h"
+#include "SPEA2.h"
 #include <fstream>
 #include <iostream>
-#include "SPEA2.h"
 class Individual {
   public:
     std::vector<std::vector<Node>> paths;
@@ -12,7 +12,8 @@ class Individual {
 };
 
 template <typename T>
-std::pair<bool, Graph<T>> paths_correct(Individual paths, Intent intentGenerator) {
+std::pair<bool, Graph<T>> paths_correct(Individual paths,
+                                        Intent intentGenerator) {
     Graph<NetStat> checkGraph = paths.graph;
     for (auto path : paths.paths) {
         std::vector<Edge<T>> edges;
@@ -23,16 +24,18 @@ std::pair<bool, Graph<T>> paths_correct(Individual paths, Intent intentGenerator
                 return {false, paths.graph};
             }
 
-            if (checkGraph.flow_left[*edge] <  static_cast<int>(intentGenerator.getDemand(path[0], path[path.size()-1]))) {
+            if (checkGraph.flow_left[*edge] <
+                static_cast<int>(intentGenerator.getDemand(
+                    path[0], path[path.size() - 1]))) {
                 return {false, paths.graph};
             }
             checkGraph.flow_left[*edge] =
-                (*edge).toInt() - intentGenerator.getDemand(path[0], path[path.size()-1]);
+                (*edge).toInt() -
+                intentGenerator.getDemand(path[0], path[path.size() - 1]);
         }
     }
     return {true, checkGraph};
 }
-
 
 int main() {
     std::ifstream f("full_mesh_10.csv");
@@ -58,19 +61,16 @@ int main() {
         }
         return indiv;
     };
-    auto generate_random_paths =
-        [&](int pop_num) -> std::vector<Individual> {
-            std::vector<Individual> pops;
-            for (int i = 0; i < pop_num; i++){
-                pops.push_back(generate_random_path());
-            }
-            return pops;
-        };
-
+    auto generate_random_paths = [&](int pop_num) -> std::vector<Individual> {
+        std::vector<Individual> pops;
+        for (int i = 0; i < pop_num; i++) {
+            pops.push_back(generate_random_path());
+        }
+        return pops;
+    };
 
     auto cross_two_paths = [&](Individual first_paths,
-                               Individual second_paths)
-        -> Individual {
+                               Individual second_paths) -> Individual {
         Individual crossed_paths = first_paths;
         for (unsigned int i = 0; i < first_paths.paths.size(); i++) {
             if (rand() % 10 < 5) {
@@ -112,13 +112,13 @@ int main() {
         int delay = 0;
         int jitter = 0;
         int loss = 0;
-        for (auto path : indiv.paths){
-            for(unsigned int i = 0; i < path.size()-1; i++){
-                auto edge = indiv.graph.getEdgeBetween(path[i], path[i+1]);
-                if(edge.has_value()){
-                delay += (*edge).weight.delay;
-                jitter += (*edge).weight.jitter;
-                loss += (*edge).weight.loss;
+        for (auto path : indiv.paths) {
+            for (unsigned int i = 0; i < path.size() - 1; i++) {
+                auto edge = indiv.graph.getEdgeBetween(path[i], path[i + 1]);
+                if (edge.has_value()) {
+                    delay += (*edge).weight.delay;
+                    jitter += (*edge).weight.jitter;
+                    loss += (*edge).weight.loss;
                 }
             }
         }
@@ -140,7 +140,7 @@ int main() {
     SPEA2<Individual> spea2(distance_function);
     // spea2.distance_function =distance_function
     std::vector<float> params = {5.0};
-    auto indivs = spea2.solve(10, 10, target_function, crossing, generate_random_paths, params);
+    auto indivs = spea2.solve(10, 10, target_function, crossing,
+                              generate_random_paths, params);
     return 0;
 }
-

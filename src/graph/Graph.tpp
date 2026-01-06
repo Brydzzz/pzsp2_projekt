@@ -7,12 +7,12 @@
 #include "Graph.h"
 #include "defines.h"
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <optional>
 #include <queue>
 #include <random>
 #include <stdexcept>
-#include <iostream>
 
 template <typename T>
 Graph<T>::Graph(std::vector<Node> &nodes,
@@ -114,15 +114,16 @@ int Graph<T>::getNextPathChoice(std::vector<int> &pathChoices) {
     pathChoices.pop_back();
     return pathChoice;
 }
-template<typename T>
-void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent){
-    for(unsigned int i = 0; i < path.size()-1; i++){
-        flow_left[*getEdgeBetween(path[i], path[i+1])] -= intent;
+template <typename T>
+void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent) {
+    for (unsigned int i = 0; i < path.size() - 1; i++) {
+        flow_left[*getEdgeBetween(path[i], path[i + 1])] -= intent;
     }
 }
 
 template <typename T>
-std::vector<Node> Graph<T>::generateRandomPath( Node &startNode, Node &endNode, unsigned int intent) {
+std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
+                                               unsigned int intent) {
     check_node_existance(startNode);
     check_node_existance(endNode);
 
@@ -143,8 +144,8 @@ std::vector<Node> Graph<T>::generateRandomPath( Node &startNode, Node &endNode, 
             pathChoices[lastNode] = createRandomizedPermutation(
                 adjacencyList[lastNode].size(), randomDevice);
         }
-        if(endNode.name == "7" || endNode.name == "9"){
-            std::cout<< "oo";
+        if (endNode.name == "7" || endNode.name == "9") {
+            std::cout << "oo";
         }
         std::optional<Node> nextNode = std::nullopt;
         while (pathChoices[lastNode].size()) {
@@ -158,13 +159,12 @@ std::vector<Node> Graph<T>::generateRandomPath( Node &startNode, Node &endNode, 
         }
         // int flow = flow_left[*getEdgeBetween(
         //     path.back(), *(nextNode))];
-         if (nextNode ){
+        if (nextNode) {
             path.push_back(nextNode.value());
             usedNodes.insert(path.back());
             continue;
-        }
-        else{
-            std::cout<< "whaaaaat";
+        } else {
+            std::cout << "whaaaaat";
         }
         usedNodes.erase(path.back());
         path.pop_back();
@@ -173,8 +173,8 @@ std::vector<Node> Graph<T>::generateRandomPath( Node &startNode, Node &endNode, 
     return path;
 }
 
-template<typename T> std::vector<Node>
-Graph<T>::generateRandomPath( Node &startNode, Node &endNode) {
+template <typename T>
+std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     check_node_existance(startNode);
     check_node_existance(endNode);
 
@@ -205,7 +205,7 @@ Graph<T>::generateRandomPath( Node &startNode, Node &endNode) {
             }
             break;
         }
-        if (nextNode){
+        if (nextNode) {
             path.push_back(nextNode.value());
             usedNodes.insert(path.back());
             continue;
