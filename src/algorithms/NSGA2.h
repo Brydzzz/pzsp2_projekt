@@ -18,18 +18,20 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
     std::vector<T> crossover(strategy<T> strat, std::vector<T> population,
                              const std::vector<float> &params) override;
 
-    std::vector<T> mutate(std::vector<T> &population,
-                          const std::vector<float> &params);
-    std::vector<T> selection(std::vector<T> &population,
-                             target_function<T> target,
-                             const std::vector<float> &params);
-
+    std::vector<T> default_selection(std::vector<T> &population,
+                                     std::vector<float> &params,
+                                     target_function<T> target);
+    std::vector<T> default_mutation(std::vector<T> &population,
+                                    std::vector<float> &params);
     std::vector<std::vector<T>>
     sort_nondominated_algorithm(std::vector<T> &population,
                                 target_function<T> target);
 
     std::vector<float> crowding_distance(std::vector<T> &population,
                                          target_function<T> &target);
+
+    std::vector<T> select_best(std::vector<T> &population, int best_size,
+                               target_function<T> target);
 
   public:
     NSGA2() {}
@@ -38,6 +40,11 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
                          strategy<T> cross_strat,
                          population_generator<T> population_gen,
                          std::vector<float> &params) override;
+    std::vector<T> solve2(int popsize, int iterations,
+                          target_function<T> target,
+                          strategy<T> mutation_strategy,
+                          population_generator<T> population_gen,
+                          std::vector<float> &params);
 };
 
 #include "NSGA2.tpp"

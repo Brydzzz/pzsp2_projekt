@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../utils/utils.hpp"
 #include "NSGA2.h"
 
 #include <limits>
@@ -38,6 +39,33 @@ template <typename T>
 std::vector<T> NSGA2<T>::crossover(strategy<T> strat, std::vector<T> population,
                                    const std::vector<float> &params) {
     return population;
+}
+
+// by default the tournament selection is used
+template <typename T>
+std::vector<T> NSGA2<T>::default_selection(std::vector<T> &population,
+                                           std::vector<float> &params,
+                                           target_function<T> target) {
+    int population_size = population.size();
+    int param_count = params.size();
+    int individuals_in_tournament = (param_count >= 1) ? params[0] : 2;
+
+    std::vector<T> result;
+
+    while ((int)result.size() < population_size) {
+        std::vector<T> tournament;
+        while ((int)tournament.size() < individuals_in_tournament) {
+            int id = getRandomFromRange(0, population_size);
+            tournament.push_back(population[id]);
+        }
+
+        auto pareto_fronts = sort_nondominated_algorithm(population, target);
+
+        int id = getRandomFromRange(0, pareto_fronts[0].size());
+        result.push_back(pareto_fronts[0][id]);
+    }
+
+    return result;
 }
 
 template <typename T>
@@ -104,19 +132,6 @@ NSGA2<T>::sort_nondominated_algorithm(std::vector<T> &population,
 }
 
 template <typename T>
-std::vector<T> NSGA2<T>::mutate(std::vector<T> &population,
-                                const std::vector<float> &params) {
-    return population;
-}
-
-template <typename T>
-std::vector<T> NSGA2<T>::selection(std::vector<T> &population,
-                                   target_function<T> target,
-                                   const std::vector<float> &params) {
-    return population;
-}
-
-template <typename T>
 std::vector<float> NSGA2<T>::crowding_distance(std::vector<T> &population,
                                                target_function<T> &target) {
 
@@ -144,13 +159,6 @@ std::vector<float> NSGA2<T>::crowding_distance(std::vector<T> &population,
                  return objective_results[a.second][i] <
                         objective_results[b.second][i];
              });
-        // if (i == 1) {
-        //     std::vector<float> result;
-        //     for (int i = 0; i < population_size; i++) {
-        //         result.push_back(distances[i].second);
-        //     }
-        //     return result;
-        // }
         distances[0].first = inf;
         distances.back().first = inf;
         float denumerator = abs(objective_results[distances[0].second][i] -
@@ -172,6 +180,34 @@ std::vector<float> NSGA2<T>::crowding_distance(std::vector<T> &population,
     return result;
 }
 
+template <typename T>
+std::vector<T> NSGA2<T>::select_best(std::vector<T> &population, int best_size,
+                                     target_function<T> target) {
+    auto pareto_fronts = sort_nondominated_algorithm(population, target);
+    std::vector<T> result;
+    int front_id = 0;
+    while ((int)result.size() + (int)pareto_fronts[front_id].size() <=
+           best_size) {
+        for (auto &v : pareto_fronts[front_id]) {
+            result.push_back(v);
+        }
+        front_id++;
+    }
+    auto distance = crowding_distance(pareto_fronts[front_id], target);
+    std::vector<int> sorted_data;
+    for (int i = 0; i < (int)pareto_fronts[front_id].size(); i++) {
+        sorted_data.push_back(i);
+    }
+    sort(sorted_data.begin(), sorted_data.end(),
+         [&](int a, int b) { return distance[a] < distance[b]; });
+
+    while ((int)result.size() < best_size) {
+        result.push_back(pareto_fronts[front_id][sorted_data.back()]);
+        sorted_data.pop_back();
+    }
+    return result;
+}
+
 //
 // public functions
 //
@@ -182,39 +218,31 @@ NSGA2<T>::solve(int popsize, int iterations, target_function<T> target,
                 strategy<T> cross_strat, population_generator<T> population_gen,
                 std::vector<float> &params) {
     std::vector<T> population = generate_init_pop(population_gen, popsize);
-    std::vector<T> offspring = selection(population, target, params);
-    offspring = mutate(population, params);
+    for (int iter = 0; iter < iterations; iter++) {
+        auto new_population = generate_init_pop(population_gen, popsize);
+        auto combined_population = join_vector(population, new_population);
+        auto best = select_best(combined_population, popsize, target);
+        population = best;
+    }
+    return population;
+}
 
-    // for (int _ = 0; _ < iterations; _++) {
-    //     std::vector<T> combined = join_vector(population, offspring);
-    //     auto pareto_fronts = sort_nondominated_algorithm(combined, target);
-    //     std::vector<T> new_population;
-
-    //     int i = 1;
-    //     while ((int)new_population.size() < popsize and
-    //            (int) new_population.size() + (int)pareto_fronts[i].size() <=
-    //                popsize) {
-    //         auto crowding_distances =
-    //             crowding_distance(pareto_fronts[i], target);
-    //         for (auto &individual : pareto_fronts[i]) {
-    //             new_population.push_back(individual);
-    //         }
-    //         i++;
-    //     }
-    //     if ((int)new_population.size() < popsize) {
-    //         auto crowding_distances =
-    //             crowding_distance(pareto_fronts[i], target);
-    //         sort(crowding_distances.begin(), crowding_distances.end());
-    //         while ((int)new_population.size() < popsize) {
-    //             new_population.push_back(
-    //                 population[crowding_distances.back().second]);
-    //             crowding_distances.pop_back();
-    //         }
-    //     }
-
-    //     offspring = selection(new_population, target, params);
-    //     offspring = mutate(new_population, params);
-    //     population = new_population;
-    // }
+template <typename T>
+std::vector<T> NSGA2<T>::solve2(int popsize, int iterations,
+                                target_function<T> target,
+                                strategy<T> mutation_strategy,
+                                population_generator<T> population_gen,
+                                std::vector<float> &params) {
+    std::vector<T> population = generate_init_pop(population_gen, popsize);
+    auto new_population = generate_init_pop(population_gen, popsize);
+    auto combined_population = join_vector(population, new_population);
+    for (int iter = 0; iter < iterations; iter++) {
+        auto best = select_best(combined_population, popsize, target);
+        population = best;
+        if (iter + 1 < iterations) {
+            new_population = mutation_strategy(population, params);
+            combined_population = join_vector(population, new_population);
+        }
+    }
     return population;
 }
