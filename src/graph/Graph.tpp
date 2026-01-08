@@ -144,9 +144,6 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
             pathChoices[lastNode] = createRandomizedPermutation(
                 adjacencyList[lastNode].size(), randomDevice);
         }
-        if (endNode.name == "7" || endNode.name == "9") {
-            std::cout << "oo";
-        }
         std::optional<Node> nextNode = std::nullopt;
         while (pathChoices[lastNode].size()) {
             int pathChoice = getNextPathChoice(pathChoices[lastNode]);
@@ -163,8 +160,6 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
             path.push_back(nextNode.value());
             usedNodes.insert(path.back());
             continue;
-        } else {
-            std::cout << "whaaaaat";
         }
         usedNodes.erase(path.back());
         path.pop_back();

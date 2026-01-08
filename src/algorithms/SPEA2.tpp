@@ -191,9 +191,6 @@ SPEA2<T>::calculate_fitness(target_function<T> target,
     combined.insert(combined.end(), set.begin(), set.end());
     std::vector<float> fitness(combined.size());
     std::vector<int> pop_strength = calculate_strength(target, combined);
-    if (combined.size() <= 0) {
-        std::cout << "?";
-    }
     std::vector<int> pop_raw_fitness =
         calculate_raw_fitness(target, combined, pop_strength);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
