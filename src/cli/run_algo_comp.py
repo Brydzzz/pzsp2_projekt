@@ -1,6 +1,3 @@
-
-
-
 def run_algo_comp(
     graph_fname: str,
     intents_fname: str,
