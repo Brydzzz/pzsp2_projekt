@@ -92,7 +92,7 @@ std::vector<T> SPEA2<T>::binary_tournament_selection(
         auto first = set[std::rand() % set.size()];
         auto second = set[std::rand() % set.size()];
         auto target1 = target(first);
-        auto target2 = target(first);
+        auto target2 = target(second);
         auto point1 = pareto::point<float, 3>(target1.begin(), target1.end());
         auto point2 = pareto::point<float, 3>(target2.begin(), target2.end());
         if (point1.strongly_dominates(point2, true)) {
@@ -110,8 +110,8 @@ SPEA2<T>::get_newset(unsigned int setsize, target_function<T> target,
                      std::vector<T> &population, std::vector<T> &set,
                      std::vector<std::vector<float>> &distances,
                      std::vector<float> &fitness) {
-    std::vector<T> combined = population;
-    combined.insert(combined.end(), set.begin(), set.end());
+    std::vector<T> combined = set;
+    combined.insert(combined.end(), population.begin(), population.end());
     std::vector<int> non_dominated;
     for (unsigned int i = 0; i < combined.size(); i++) {
         if (fitness[i] < 1) {
@@ -122,11 +122,14 @@ SPEA2<T>::get_newset(unsigned int setsize, target_function<T> target,
         int worst = 0;
         unsigned int old_nd_size = non_dominated.size();
         for (unsigned int u = 0; u < old_nd_size - setsize; u++) {
-            for (unsigned int j = 0; j < non_dominated.size(); j++) {
-                for (unsigned int l = 1; l < distances[0].size(); l++) {
-                    if (distances[j][l] < distances[worst][l]) {
+            for (unsigned int j = 1; j < non_dominated.size(); j++) {
+                for (unsigned int l = 0; l < distances[0].size(); l++) {
+                    if (distances[non_dominated[j]][l] <
+                            distances[non_dominated[worst]][l] &&
+                        l != static_cast<unsigned int>(non_dominated[j])) {
                         worst = j;
-                    } else if (distances[j][l] == distances[worst][l]) {
+                    } else if (distances[non_dominated[j]][l] ==
+                               distances[non_dominated[worst]][l]) {
                         continue;
                     } else {
                         j++;
@@ -137,9 +140,7 @@ SPEA2<T>::get_newset(unsigned int setsize, target_function<T> target,
                     }
                 }
             }
-            auto to_remove =
-                std::find(non_dominated.begin(), non_dominated.end(), worst);
-            non_dominated.erase(to_remove);
+            non_dominated.erase(non_dominated.begin() + worst);
         }
 
     } else if (non_dominated.size() < setsize) {
@@ -261,7 +262,7 @@ SPEA2<T>::calculate_distances(std::vector<T> &combined) {
     for (unsigned int i = 0; i < distances.size(); i++) {
         auto sorted_distances = distances[i];
         std::sort(sorted_distances.begin(), sorted_distances.end());
-        result_distances[i] = 1 / (distances[i][k] + 2);
+        result_distances[i] = 1 / (sorted_distances[k] + 2);
     }
     return {result_distances, distances};
 }
