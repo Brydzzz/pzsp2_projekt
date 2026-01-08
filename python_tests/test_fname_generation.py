@@ -1,6 +1,7 @@
 from datetime import datetime
 from src.cli.folder_and_fnames import generate_true_pareto_fname
 
+
 class TestFilenamesGeneration:
     class MockDatetime:
         @classmethod
