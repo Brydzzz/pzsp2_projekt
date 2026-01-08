@@ -7,12 +7,14 @@ from src.networks_processor.fullmesh_generator import (
     generate_full_mesh,
 )
 from src.networks_processor.networks_common import (
+    GraphEdge,
+)
+from src.cli.folder_and_fnames import GRAPH_FOLDER
+from src.networks_processor.constants import (
     DELAY_RANGE,
-    GRAPH_FOLDER,
     JITTER_RANGE,
     LOSS_RANGE,
     THROUGHPUT_RANGE,
-    GraphEdge,
 )
 
 

@@ -3,7 +3,8 @@ from pathlib import Path
 import pytest
 import requests
 
-from src.networks_processor.networks_common import GRAPH_FOLDER, GraphEdge
+from src.cli.folder_and_fnames import GRAPH_FOLDER
+from src.networks_processor.networks_common import GraphEdge
 from src.networks_processor.sndlib_parser import (
     parse_and_save_sndlib,
     parse_sndlib_xml,
