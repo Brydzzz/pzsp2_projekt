@@ -4,10 +4,12 @@
 
 #pragma once
 #include "Evolutionary_Algorithm.h"
+#include "Evolutionary_Algorithm.h"
 #include <pareto/front.h>
 #include <pareto/kd_tree.h>
 
 template <typename T>
+class SPEA2 : public Evolutionary_Algorithm<T> {
 class SPEA2 : public Evolutionary_Algorithm<T> {
     std::function<float(T, T)> distance_function;
 
@@ -18,7 +20,18 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                              const std::vector<float> &params) override;
     std::pair<std::vector<float>, std::vector<float>>
     calculate_fitness(std::vector<T> &population, std::vector<T> &set);
+  protected:
+    std::vector<T> generate_init_pop(population_generator<T> generator,
+                                     int pop) override;
+    std::vector<T> crossover(strategy<T> strat, std::vector<T> population,
+                             const std::vector<float> &params) override;
+    std::pair<std::vector<float>, std::vector<float>>
+    calculate_fitness(std::vector<T> &population, std::vector<T> &set);
     std::vector<int> calculate_strength(target_function<T> target,
+                                        std::vector<T> &population);
+    std::pair<std::vector<float>, std::vector<std::vector<float>>>
+    calculate_fitness(target_function<T> target, std::vector<T> &population,
+                      std::vector<T> &set);
                                         std::vector<T> &population);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     calculate_fitness(target_function<T> target, std::vector<T> &population,
@@ -41,7 +54,13 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
 
   public:
     SPEA2(std::function<float(T, T)> distance) : distance_function(distance) {}
+  public:
+    SPEA2(std::function<float(T, T)> distance) : distance_function(distance) {}
 
+    std::vector<T> solve(int popsize, int iterations, target_function<T> target,
+                         strategy<T> cross_strat,
+                         population_generator<T> population_gen,
+                         std::vector<float> &params) override;
     std::vector<T> solve(int popsize, int iterations, target_function<T> target,
                          strategy<T> cross_strat,
                          population_generator<T> population_gen,

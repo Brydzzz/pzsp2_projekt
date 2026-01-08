@@ -26,12 +26,18 @@ std::vector<int> mock_cross(std::vector<int> pop, std::vector<float> params) {
 }
 
 float distance(int n1, int n2) { return std::abs(n1 - n2); }
+float distance(int n1, int n2) { return std::abs(n1 - n2); }
 
 template <typename T>
 class SPEA2Wrapper : SPEA2<T> {
   public:
     SPEA2Wrapper(std::function<float(T, T)> distance) : SPEA2<T>(distance) {}
+class SPEA2Wrapper : SPEA2<T> {
+  public:
+    SPEA2Wrapper(std::function<float(T, T)> distance) : SPEA2<T>(distance) {}
 
+    std::vector<int> wrap_calculate_strength(target_function<T> target,
+                                             std::vector<T> pop) {
     std::vector<int> wrap_calculate_strength(target_function<T> target,
                                              std::vector<T> pop) {
         return this->calculate_strength(target, pop);
@@ -79,12 +85,14 @@ class SPEA2Wrapper : SPEA2<T> {
                            population_gen, params);
     }
 };
+};
 
 // TEST(SPEA2Tests, testBasicUsage) {
 //     auto spea2 = SPEA2<int>();
 //     spea2.solve(mock_target, mock_population(4), );
 // }
 
+TEST(SPEA2Tests, test_calculate_strength) {
 TEST(SPEA2Tests, test_calculate_strength) {
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<int> pop = {1, -2, 3, 0};
