@@ -2,14 +2,14 @@
 // Created by tomek on 11/15/25.
 //
 #pragma once
+#include "Edge.h"
+#include "NetStat.h"
+#include <algorithm>
 #include <limits>
 #include <map>
 #include <optional>
 #include <set>
 #include <vector>
-#include <algorithm>
-#include "Edge.h"
-#include "NetStat.h"
 template <typename T>
 class Graph {
   protected:
@@ -20,8 +20,10 @@ class Graph {
     std::vector<Node> resolvePath(Node &startNode, Node &endNode,
                                   std::map<Node, Node *> comingFrom);
     int getNextPathChoice(std::vector<int> &pathChoices);
-  void updateEdgeFlows(std::vector<Node> path, unsigned int intent);
-  public : Graph();
+    void updateEdgeFlows(std::vector<Node> path, unsigned int intent);
+
+  public:
+    Graph();
     std::map<Edge<T>, int> flow_left;
     Graph(std::vector<Node> &nodes);
     Graph(std::vector<Node> &nodes,
@@ -32,9 +34,9 @@ class Graph {
     void addEdge(Node &node1, Node &node2, T weight);
     T getWeightBetween(Node &node1, Node &node2);
     bool hasEdge(Node &from, Node &to);
-    std::vector<Node> generateRandomPath(Node &startNode,Node &endNode, unsigned int intent);
-    std::vector<Node> generateRandomPath( Node &startNode,
-                                          Node &endNode);
+    std::vector<Node> generateRandomPath(Node &startNode, Node &endNode,
+                                         unsigned int intent);
+    std::vector<Node> generateRandomPath(Node &startNode, Node &endNode);
 
     std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);

@@ -8,7 +8,7 @@
 template <typename T>
 class Edge {
   public:
-  int toInt(){return weight + 0;};
+    int toInt() { return weight + 0; };
     Node first_node;
     Node second_node;
     T weight;
@@ -17,8 +17,10 @@ class Edge {
     bool operator<(const Edge &other) const {
         const std::string min = std::min(first_node.name, second_node.name);
         const std::string max = std::max(first_node.name, second_node.name);
-        const std::string other_min = std::min(other.first_node.name, other.second_node.name);
-        const std::string other_max = std::max(other.first_node.name, other.second_node.name);
+        const std::string other_min =
+            std::min(other.first_node.name, other.second_node.name);
+        const std::string other_max =
+            std::max(other.first_node.name, other.second_node.name);
         if (min != other_min) {
             return min < other_min;
         }
