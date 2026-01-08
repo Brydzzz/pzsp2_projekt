@@ -19,8 +19,7 @@ FetchContent_Declare(pareto
 )
 FetchContent_MakeAvailable(pareto)
 
-add_executable(exampleProgram example_program.cpp ../../src/intent/Intent.cpp ../../src/graph/GraphParser.cpp
-        ../../src/graph/Graph.h ../../src/graph/Graph.tpp ../../src/algorithms/SPEA2.h)
+add_executable(exampleProgram example_program.cpp ../../src/intent/Intent.cpp ../../src/graph/GraphParser.cpp ../../src/graph/Graph.tpp)
 
 target_link_libraries(exampleProgram PRIVATE pareto)
 
