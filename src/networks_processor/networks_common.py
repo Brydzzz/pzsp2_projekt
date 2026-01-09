@@ -8,7 +8,7 @@ from typing import Optional
 
 from rich import print
 
-from src.cli.folder_and_fnames import GRAPH_FOLDER
+from cli.folder_and_fnames import GRAPH_FOLDER
 
 from .constants import (
     DELAY_RANGE,
