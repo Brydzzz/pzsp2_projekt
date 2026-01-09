@@ -21,8 +21,8 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
     std::vector<int> calculate_strength(target_function<T> target,
                                         std::vector<T> &population);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-    calculate_fitness(target_function<T> target, std::vector<T> &population,
-                      std::vector<T> &set);
+    calculate_fitness(target_function<T> target, const std::vector<T> &population,
+                      const std::vector<T> &set);
     std::vector<int> calculate_raw_fitness(target_function<T> target,
                                            std::vector<T> &combined,
                                            std::vector<int> &strengths);
@@ -34,7 +34,7 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                               std::vector<float> &fitness);
     std::vector<T> binary_tournament_selection(unsigned int poolsize,
                                                std::vector<T> &set,
-                                               target_function<T> target);
+                                               std::vector<float> fitness);
     std::vector<T> choose_final_pool(target_function<T> target, int poolsize,
                                      std::vector<T> &pool1,
                                      std::vector<T> &pool2);
