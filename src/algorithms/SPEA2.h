@@ -21,7 +21,8 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
     std::vector<int> calculate_strength(target_function<T> target,
                                         std::vector<T> &population);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-    calculate_fitness(target_function<T> target, const std::vector<T> &population,
+    calculate_fitness(target_function<T> target,
+                      const std::vector<T> &population,
                       const std::vector<T> &set);
     std::vector<int> calculate_raw_fitness(target_function<T> target,
                                            std::vector<T> &combined,
