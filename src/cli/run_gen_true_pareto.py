@@ -1,10 +1,19 @@
 import subprocess
 
 from rich import print
+from rich.table import Table
 
 
 def run_gen_true_pareto(graph_fname: str, intents_fname: str) -> None:
     print("[bold yellow]Generating true pareto front...[/bold yellow]")
+    config_table = Table(title="Configuration")
+    config_table.add_column("Parameter")
+    config_table.add_column("Value")
+    config_table.add_row("Graph", graph_fname)
+    config_table.add_row("Intents", intents_fname)
+    print(config_table)
+
+    # TODO replace with C++ program
     result = subprocess.run(["echo", "hello from true pareto program :)"])
     if result.returncode != 0:
         print(
