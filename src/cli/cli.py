@@ -1,7 +1,7 @@
 import argparse
 
-from networks_processor.fullmesh_generator import generate_and_save_fullmesh
-from networks_processor.sndlib_parser import parse_and_save_sndlib
+from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
+from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
 from .folder_and_fnames import ALGO_COMPARE_FOLDER, GRAPH_FOLDER
 from .run_algo_comp import run_algo_comp
