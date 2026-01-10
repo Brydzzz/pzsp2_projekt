@@ -122,11 +122,37 @@ int main() {
                 }
             }
         }
+        for (auto edge = indiv.graph.flow_left.begin();
+             edge != indiv.graph.flow_left.end(); edge++) {
+            if (edge->second < 0) {
+                delay += edge->second * 10;
+                loss += edge->second * 10;
+                jitter += edge->second * 10;
+            }
+        }
         return std::vector<float>{static_cast<float>(delay),
                                   static_cast<float>(loss),
                                   static_cast<float>(jitter)};
     };
 
+    auto proper_target = [&](Individual indiv) {
+        int delay = 0;
+        int jitter = 0;
+        int loss = 0;
+        for (auto path : indiv.paths) {
+            for (unsigned int i = 0; i < path.size() - 1; i++) {
+                auto edge = indiv.graph.getEdgeBetween(path[i], path[i + 1]);
+                if (edge.has_value()) {
+                    delay += (*edge).weight.delay;
+                    jitter += (*edge).weight.jitter;
+                    loss += (*edge).weight.loss;
+                }
+            }
+        }
+        return std::vector<float>{static_cast<float>(delay),
+                                  static_cast<float>(loss),
+                                  static_cast<float>(jitter)};
+    };
     auto distance_function = [&](const Individual &first,
                                  const Individual &second) {
         double distance = 0.0;
@@ -140,7 +166,13 @@ int main() {
     SPEA2<Individual> spea2(distance_function);
     // spea2.distance_function =distance_function
     std::vector<float> params = {5.0};
-    auto indivs = spea2.solve(10, 10, target_function, crossing,
+    auto indivs = spea2.solve(30, 40, target_function, crossing,
                               generate_random_paths, params);
+    for (auto indiv : indivs) {
+        auto vals = proper_target(indiv);
+        for (auto v : vals)
+            std::cout << v << " ";
+        std::cout << std::endl;
+    }
     return 0;
 }
