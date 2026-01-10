@@ -16,13 +16,23 @@ std::vector<T> SPEA2<T>::generate_init_pop(population_generator<T> generator,
 }
 
 template <typename T>
+std::vector<std::vector<float>> calculate_targets(target_function<T> target,
+                                                  std::vector<T> &combined) {
+    std::vector<std::vector<float>> objectives(combined.size());
+    for (unsigned int i = 0; i < combined.size(); i++) {
+        objectives[i] = target(combined[i]);
+    }
+    return objectives;
+}
+
+template <typename T>
 std::vector<T>
 SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
                 strategy<T> cross_strat, population_generator<T> population_gen,
                 std::vector<float> &params) {
-    params[0] = 0;
+    // params[0] = 0;
     int t = 0;
-    int setsize = popsize / 2;
+    int setsize = popsize;
     std::vector<T> population = generate_init_pop(population_gen, popsize);
     std::vector<T> external_set = {};
     while (true) {
@@ -30,25 +40,26 @@ SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
         std::vector<T> combined = population;
         combined.insert(combined.end(), external_set.begin(),
                         external_set.end());
-        auto fitness_result =
-            calculate_fitness(target, population, external_set);
+        auto objectives = calculate_targets(target, combined);
+        auto fitness_result = calculate_fitness(objectives, combined);
         auto combined_fitness = fitness_result.first;
         auto distances = fitness_result.second;
-        std::vector<T> newset =
-            get_newset(setsize, target, population, external_set, distances,
-                       combined_fitness);
+        std::vector<T> newset = get_newset(setsize, objectives, combined,
+                                           distances, combined_fitness);
         if (t > iterations) {
             return newset;
         }
         std::vector<T> combined_set = newset;
         combined_set.insert(combined_set.end(), external_set.begin(),
                             external_set.end());
+        auto objectives_pool1 = calculate_targets(target, external_set);
         std::vector<T> pool1 = binary_tournament_selection(
             popsize, external_set,
-            calculate_fitness(target, external_set, {}).first);
+            calculate_fitness(objectives_pool1, external_set).first);
+        auto objectives_pool2 = calculate_targets(target, combined_set);
         std::vector<T> pool2 = binary_tournament_selection(
             popsize, combined_set,
-            calculate_fitness(target, combined_set, {}).first);
+            calculate_fitness(objectives_pool2, combined_set).first);
         std::vector<T> final_pool =
             choose_final_pool(target, popsize, pool1, pool2);
         std::vector<T> next_pop = crossover(cross_strat, final_pool, params);
@@ -69,8 +80,9 @@ template <typename T>
 std::vector<T> SPEA2<T>::choose_final_pool(target_function<T> target,
                                            int poolsize, std::vector<T> &pool1,
                                            std::vector<T> &pool2) {
-    auto fitness_result = calculate_fitness(target, pool1, pool2);
     pool1.insert(pool1.end(), pool2.begin(), pool2.end());
+    auto objectives = calculate_targets(target, pool1);
+    auto fitness_result = calculate_fitness(objectives, pool1);
     std::vector<size_t> indices(pool1.size());
     std::iota(indices.begin(), indices.end(), 0);
     std::sort(indices.begin(), indices.end(), [&](size_t a, size_t b) {
@@ -103,13 +115,11 @@ std::vector<T> SPEA2<T>::binary_tournament_selection(
 }
 
 template <typename T>
-std::vector<T>
-SPEA2<T>::get_newset(unsigned int setsize, target_function<T> target,
-                     std::vector<T> &population, std::vector<T> &set,
-                     std::vector<std::vector<float>> &distances,
-                     std::vector<float> &fitness) {
-    std::vector<T> combined = set;
-    combined.insert(combined.end(), population.begin(), population.end());
+std::vector<T> SPEA2<T>::get_newset(unsigned int setsize,
+                                    std::vector<std::vector<float>> &objectives,
+                                    std::vector<T> &combined,
+                                    std::vector<std::vector<float>> &distances,
+                                    std::vector<float> &fitness) {
     std::vector<int> non_dominated;
     for (unsigned int i = 0; i < combined.size(); i++) {
         if (fitness[i] < 1) {
@@ -148,14 +158,12 @@ SPEA2<T>::get_newset(unsigned int setsize, target_function<T> target,
         for (size_t i = 0; i < ranks.size(); ++i) {
             ranks[i].first = i;
         }
-        for (unsigned int i = 0; i < target(combined[non_dominated[0]]).size();
-             i++) {
+        for (unsigned int i = 0; i < objectives[0].size(); i++) {
             std::vector<int> v(combined.size());
             std::iota(v.begin(), v.end(), 0);
             std::sort(v.begin(), v.end(),
-                      [target, i, combined](const int &a, const int &b) {
-                          return target(combined[a])[i] <
-                                 target(combined[b])[i];
+                      [objectives, i](const int &a, const int &b) {
+                          return objectives[a][i] < objectives[b][i];
                       });
             for (unsigned int j = 0; j < v.size(); j++) {
                 ranks[v[j]].second.push_back(static_cast<int>(j));
@@ -185,15 +193,12 @@ SPEA2<T>::get_newset(unsigned int setsize, target_function<T> target,
 
 template <typename T>
 std::pair<std::vector<float>, std::vector<std::vector<float>>>
-SPEA2<T>::calculate_fitness(target_function<T> target,
-                            const std::vector<T> &population,
-                            const std::vector<T> &set) {
-    std::vector<T> combined = population;
-    combined.insert(combined.end(), set.begin(), set.end());
+SPEA2<T>::calculate_fitness(std::vector<std::vector<float>> &objectives,
+                            std::vector<T> &combined) {
     std::vector<float> fitness(combined.size());
-    std::vector<int> pop_strength = calculate_strength(target, combined);
+    std::vector<int> pop_strength = calculate_strength(objectives, combined);
     std::vector<int> pop_raw_fitness =
-        calculate_raw_fitness(target, combined, pop_strength);
+        calculate_raw_fitness(objectives, combined, pop_strength);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
         distances_results = calculate_distances(combined);
     std::vector<float> distances = distances_results.first;
@@ -204,16 +209,17 @@ SPEA2<T>::calculate_fitness(target_function<T> target,
 }
 
 template <typename T>
-std::vector<int> SPEA2<T>::calculate_raw_fitness(target_function<T> target,
-                                                 std::vector<T> &combined,
-                                                 std::vector<int> &strengths) {
+std::vector<int>
+SPEA2<T>::calculate_raw_fitness(std::vector<std::vector<float>> &objectives,
+                                std::vector<T> &combined,
+                                std::vector<int> &strengths) {
     std::vector<int> raw_fitness(combined.size());
     for (unsigned int i = 0; i < combined.size(); i++) {
-        auto target_i = target(combined[i]);
+        auto target_i = objectives[i];
         auto point_i =
             pareto::point<float, 3>(target_i.begin(), target_i.end());
         for (unsigned int j = 0; j < combined.size(); j++) {
-            auto target_j = target(combined[j]);
+            auto target_j = objectives[j];
             auto point_j =
                 pareto::point<float, 3>(target_j.begin(), target_j.end());
             if (point_j.strongly_dominates(point_i)) {
@@ -225,14 +231,15 @@ std::vector<int> SPEA2<T>::calculate_raw_fitness(target_function<T> target,
 }
 
 template <typename T>
-std::vector<int> SPEA2<T>::calculate_strength(target_function<T> target,
-                                              std::vector<T> &population) {
+std::vector<int>
+SPEA2<T>::calculate_strength(std::vector<std::vector<float>> &objectives,
+                             std::vector<T> &population) {
     std::vector<int> strength(population.size());
     int i = 0;
-    for (auto pop1 : population) {
-        for (auto pop2 : population) {
-            auto target_pop1 = target(pop1);
-            auto target_pop2 = target(pop2);
+    for (size_t j = 0; j < population.size(); j++) {
+        for (size_t k = 0; k < population.size(); k++) {
+            auto target_pop1 = objectives[j];
+            auto target_pop2 = objectives[k];
             auto point1 =
                 pareto::point<float, 3>(target_pop1.begin(), target_pop1.end());
             auto point2 =

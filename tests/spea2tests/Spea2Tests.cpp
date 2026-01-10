@@ -9,7 +9,14 @@
 using ::testing::FloatNear;
 using ::testing::Pointwise;
 #include <cmath>
-
+std::vector<std::vector<float>> calculate_targets(target_function<int> target,
+                                                  std::vector<int> &combined) {
+    std::vector<std::vector<float>> objectives(combined.size());
+    for (unsigned int i = 0; i < combined.size(); i++) {
+        objectives[i] = target(combined[i]);
+    }
+    return objectives;
+}
 std::vector<float> mock_target(int number) {
     return std::vector{static_cast<float>(std::pow(number, 2)),
                        static_cast<float>(std::pow(number, 3)),
@@ -32,32 +39,32 @@ class SPEA2Wrapper : SPEA2<T> {
   public:
     SPEA2Wrapper(std::function<float(T, T)> distance) : SPEA2<T>(distance) {}
 
-    std::vector<int> wrap_calculate_strength(target_function<T> target,
-                                             std::vector<T> pop) {
-        return this->calculate_strength(target, pop);
+    std::vector<int>
+    wrap_calculate_strength(std::vector<std::vector<float>> objectives,
+                            std::vector<T> pop) {
+        return this->calculate_strength(objectives, pop);
     }
-    std::vector<int> wrap_calculate_raw_fitness(target_function<T> target,
-                                                std::vector<T> combined,
-                                                std::vector<T> pop_strength) {
-        return this->calculate_raw_fitness(target, combined, pop_strength);
+    std::vector<int>
+    wrap_calculate_raw_fitness(std::vector<std::vector<float>> objectives,
+                               std::vector<T> combined,
+                               std::vector<T> pop_strength) {
+        return this->calculate_raw_fitness(objectives, combined, pop_strength);
     }
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     wrap_calculate_distances(std::vector<T> pop) {
         return this->calculate_distances(pop);
     }
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-    wrap_calculate_fitness(target_function<T> target,
-                           const std::vector<T> &population,
-                           const std::vector<T> &set) {
-        return this->calculate_fitness(target, population, set);
+    wrap_calculate_fitness(std::vector<std::vector<float>> objectives,
+                           std::vector<T> &population) {
+        return this->calculate_fitness(objectives, population);
     }
     std::vector<int> wrap_get_newset(unsigned int setsize,
-                                     target_function<T> target,
+                                     std::vector<std::vector<float>> objectives,
                                      std::vector<T> &population,
-                                     std::vector<T> &set,
                                      std::vector<std::vector<float>> &distances,
                                      std::vector<float> &fitness) {
-        return this->get_newset(setsize, target, population, set, distances,
+        return this->get_newset(setsize, objectives, population, distances,
                                 fitness);
     }
     std::vector<int> wrap_binary_tour(int popsize, std::vector<T> &external_set,
@@ -90,7 +97,8 @@ class SPEA2Wrapper : SPEA2<T> {
 TEST(SPEA2Tests, test_calculate_strength) {
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<int> pop = {1, -2, 3, 0};
-    std::vector strength = spea2.wrap_calculate_strength(mock_target, pop);
+    auto objectives = calculate_targets(mock_target, pop);
+    std::vector strength = spea2.wrap_calculate_strength(objectives, pop);
     std::vector results = {1, 1, 0, 2};
     ASSERT_EQ(strength, results);
 }
@@ -98,9 +106,10 @@ TEST(SPEA2Tests, test_calculate_strength) {
 TEST(SPEA2Tests, test_calculate_raw_fitness) {
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<int> pop = {1, -2, 3, 0};
-    std::vector strength = spea2.wrap_calculate_strength(mock_target, pop);
+    auto objectives = calculate_targets(mock_target, pop);
+    std::vector strength = spea2.wrap_calculate_strength(objectives, pop);
     std::vector raw_fitnesses =
-        spea2.wrap_calculate_raw_fitness(mock_target, pop, strength);
+        spea2.wrap_calculate_raw_fitness(objectives, pop, strength);
     std::vector results = {2, 0, 4, 0};
     ASSERT_EQ(raw_fitnesses, results);
 }
@@ -119,41 +128,32 @@ TEST(SPEA2Tests, test_calculate_distances) {
 
 TEST(SPEA2Tests, test_calculate_fitness) {
     auto spea2 = SPEA2Wrapper<int>(distance);
-    std::vector<int> pop = {
-        1,
-        -2,
-    };
-    std::vector<int> set = {3, 0};
+    std::vector<int> pop = {1, -2, 3, 0};
+    auto objectives = calculate_targets(mock_target, pop);
     std::vector<float> fitness =
-        spea2.wrap_calculate_fitness(mock_target, set, pop).first;
-    std::vector<float> results = {4.2, 0.25, 2.25, 0.2};
+        spea2.wrap_calculate_fitness(objectives, pop).first;
+    std::vector<float> results = {2.25, 0.2, 4.2, 0.25};
     EXPECT_THAT(results, Pointwise(FloatNear(1e-4), fitness));
 }
 
 TEST(SPEA2Tests, test_get_newset_not_enough) {
     auto spea2 = SPEA2Wrapper<int>(distance);
-    std::vector<int> pop = {
-        1,
-        -2,
-    };
-    std::vector<int> set = {3, 0};
-    auto fitness_result = spea2.wrap_calculate_fitness(mock_target, set, pop);
+    std::vector<int> pop = {1, -2, 3, 0};
+    auto objectives = calculate_targets(mock_target, pop);
+    auto fitness_result = spea2.wrap_calculate_fitness(objectives, pop);
     std::vector<int> newset = spea2.wrap_get_newset(
-        3, mock_target, pop, set, fitness_result.second, fitness_result.first);
-    std::vector<int> result = {0, -2, 1};
+        3, objectives, pop, fitness_result.second, fitness_result.first);
+    std::vector<int> result = {-2, 0, 1};
     ASSERT_EQ(result, newset);
 }
 
 TEST(SPEA2Tests, test_get_newset_too_many) {
     auto spea2 = SPEA2Wrapper<int>(distance);
-    std::vector<int> pop = {
-        1,
-        -2,
-    };
-    std::vector<int> set = {3, 0};
-    auto fitness_result = spea2.wrap_calculate_fitness(mock_target, set, pop);
+    std::vector<int> pop = {1, -2, 3, 0};
+    auto objectives = calculate_targets(mock_target, pop);
+    auto fitness_result = spea2.wrap_calculate_fitness(objectives, pop);
     std::vector<int> newset = spea2.wrap_get_newset(
-        1, mock_target, pop, set, fitness_result.second, fitness_result.first);
+        1, objectives, pop, fitness_result.second, fitness_result.first);
     std::vector<int> result = {-2};
     ASSERT_EQ(result, newset);
 }
@@ -162,7 +162,8 @@ TEST(SPEA2Tests, test_binary_tornament_selection) {
     std::srand(42);
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<int> set = {1, -2, 3, 0};
-    auto fitness = spea2.wrap_calculate_fitness(mock_target, set, {}).first;
+    auto objectives = calculate_targets(mock_target, set);
+    auto fitness = spea2.wrap_calculate_fitness(objectives, set).first;
     std::vector<int> pool = spea2.wrap_binary_tour(4, set, fitness);
     std::vector<int> result = {1, -2, 1, -2};
     ASSERT_EQ(result, pool);
@@ -185,6 +186,6 @@ TEST(SPEA2Tests, test_solve) {
     std::vector<float> params = {0.0};
     auto solved = spea2.wrap_solve(4, 1, mock_target, mock_cross,
                                    mock_population, params);
-    std::vector<int> result = {-2, -2};
+    std::vector<int> result = {0, -2, -2, 0};
     ASSERT_EQ(result, solved);
 }
