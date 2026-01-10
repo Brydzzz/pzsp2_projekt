@@ -47,7 +47,8 @@ class SPEA2Wrapper : SPEA2<T> {
     }
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     wrap_calculate_fitness(target_function<T> target,
-                           std::vector<T> &population, std::vector<T> &set) {
+                           const std::vector<T> &population,
+                           const std::vector<T> &set) {
         return this->calculate_fitness(target, population, set);
     }
     std::vector<int> wrap_get_newset(unsigned int setsize,
@@ -60,8 +61,9 @@ class SPEA2Wrapper : SPEA2<T> {
                                 fitness);
     }
     std::vector<int> wrap_binary_tour(int popsize, std::vector<T> &external_set,
-                                      target_function<T> target) {
-        return this->binary_tournament_selection(popsize, external_set, target);
+                                      std::vector<float> fitness) {
+        return this->binary_tournament_selection(popsize, external_set,
+                                                 fitness);
     }
     std::vector<int> wrap_choose_final_pool(target_function<T> target,
                                             int pooolsize,
@@ -160,8 +162,9 @@ TEST(SPEA2Tests, test_binary_tornament_selection) {
     std::srand(42);
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<int> set = {1, -2, 3, 0};
-    std::vector<int> pool = spea2.wrap_binary_tour(4, set, mock_target);
-    std::vector<int> result = {1, -2, 1, 1};
+    auto fitness = spea2.wrap_calculate_fitness(mock_target, set, {}).first;
+    std::vector<int> pool = spea2.wrap_binary_tour(4, set, fitness);
+    std::vector<int> result = {1, -2, 1, -2};
     ASSERT_EQ(result, pool);
 }
 
@@ -182,6 +185,6 @@ TEST(SPEA2Tests, test_solve) {
     std::vector<float> params = {0.0};
     auto solved = spea2.wrap_solve(4, 1, mock_target, mock_cross,
                                    mock_population, params);
-    std::vector<int> result = {-2, 0};
+    std::vector<int> result = {-2, -2};
     ASSERT_EQ(result, solved);
 }
