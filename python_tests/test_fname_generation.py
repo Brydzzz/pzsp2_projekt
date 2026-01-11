@@ -40,7 +40,9 @@ class TestFilenamesGeneration:
         assert results == expected
 
     def test_generate_alg_comp_plots_fname(self):
-        results_fname = "alg_compare_results__poland__poland_intent_10__25it__20260108_204531.csv"
+        results_fname = (
+            "alg_compare_results__poland__poland_intent_10__25it__20260108_204531.csv"
+        )
         results = generate_alg_comp_plots_fname(results_fname)
         expected = [
             "alg_compare_plot_objectives__poland__poland_intent_10__25it__20260108_204531.csv",
