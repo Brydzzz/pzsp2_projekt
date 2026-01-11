@@ -46,7 +46,7 @@ def run_algo_comp(
     raw_data_fname = generate_alg_comp_raw_data_fname(
         graph_fname, intents_fname, iterations
     )
-    raw_data_output_path = output_dir / f"{raw_data_fname}"
+    raw_data_output_path = output_dir / raw_data_fname
     raw_data_abs_path = raw_data_output_path.resolve()
 
     # TODO replace with C++ program - remember pass the absolute output path to it
@@ -75,8 +75,8 @@ def run_algo_comp(
     if not is_raw_data_format_valid(raw_data):
         print("[bold red]Incorrect raw data format[/bold red].")
 
-    # TODO: read true pareto front from file
-    true_pf = np.loadtxt(f"{PF_FOLDER}/example_true_pf.csv", delimiter=",", skiprows=1)
+    pf_path = Path.cwd() / PF_FOLDER / true_pareto_fname
+    true_pf = np.loadtxt(pf_path, delimiter=",", skiprows=1)
 
     fronts_df = get_fronts_by_run(raw_data)
     metrics_summary = calculate_metrics(fronts_df, true_pf)
