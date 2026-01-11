@@ -45,7 +45,7 @@ class TestFilenamesGeneration:
         )
         results = generate_alg_comp_plots_fname(results_fname)
         expected = [
-            "alg_compare_plot_objectives__poland__poland_intent_10__25it__20260108_204531.csv",
-            "alg_compare_plot_gdmetrics__poland__poland_intent_10__25it__20260108_204531.csv",
+            "alg_compare_plot_objectives__poland__poland_intent_10__25it__20260108_204531.png",
+            "alg_compare_plot_gdmetrics__poland__poland_intent_10__25it__20260108_204531.png",
         ]
         assert results == expected
