@@ -3,7 +3,7 @@ import argparse
 from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
 from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
-from .folder_and_fnames import ALGO_COMPARE_FOLDER, GRAPH_FOLDER
+from .folder_and_fnames import ALGO_COMPARE_FOLDER, GRAPH_FOLDER, PF_FOLDER
 from .run_algo_comp import run_algo_comp
 from .run_gen_true_pareto import run_gen_true_pareto
 
@@ -14,7 +14,7 @@ def main():
     The program expects files in specific subdirectories. Use FILENAMES only:
         - Graphs                            ->  /{GRAPH_FOLDER}/
         - Intents                           ->  /intents-files/
-        - True Pareto                       ->  /pareto-fronts/
+        - True Pareto                       ->  /{PF_FOLDER}/
         - Algorithms Comparison Results     ->  /{ALGO_COMPARE_FOLDER}/
         - ... (more coming soon)
     """
@@ -79,7 +79,7 @@ def main():
     )
     parser_algo_comp.add_argument(
         "true_pareto",
-        help="True pareto front file generated for given graph and intents. Filename in 'pareto-fronts/'",
+        help=f"True pareto front file generated for given graph and intents. Filename in '{PF_FOLDER}/'",
     )
     parser_algo_comp.add_argument(
         "iterations", type=int, help="Number of iterations each algorithm will be run."

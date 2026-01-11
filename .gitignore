@@ -1,5 +1,7 @@
 .venv/
 graph_csv_files/
+algo_compare/
+pareto_fronts/
 __pycache__/
 .ruff_cache/
 .idea/
