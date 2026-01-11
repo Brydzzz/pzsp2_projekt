@@ -56,7 +56,7 @@ def main():
         ),
     )
     parser_gen_pareto.add_argument(
-        "graph", help="CSV file with graph. Filename in 'graph-files/'"
+        "graph", help=f"CSV file with graph. Filename in '{GRAPH_FOLDER}/'"
     )
     parser_gen_pareto.add_argument(
         "intents",
@@ -71,7 +71,7 @@ def main():
         ),
     )
     parser_algo_comp.add_argument(
-        "graph", help="CSV file with graph. Filename in 'graph-files/'"
+        "graph", help=f"CSV file with graph. Filename in '{GRAPH_FOLDER}/'"
     )
     parser_algo_comp.add_argument(
         "intents",
