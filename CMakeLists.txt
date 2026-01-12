@@ -27,12 +27,15 @@ set(COMMON_INCLUDES
     ${csvreader_SOURCE_DIR}
 )
 
-include_directories(${csvreader_SOURCE_DIR})
-
 
 add_executable(gen_intents
     ./src/cli_tools/gen_intents.cpp
     ${COMMON_SOURCES}
-    ./src/graph/Graph.tpp
 )
 target_include_directories(gen_intents PRIVATE ${COMMON_INCLUDES})
+
+add_executable(gen_true_pf
+    ./src/cli_tools/gen_true_pf.cpp
+    ${COMMON_SOURCES}
+)
+target_include_directories(gen_true_pf PRIVATE ${COMMON_INCLUDES})

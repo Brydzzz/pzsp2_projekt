@@ -5,7 +5,12 @@ from pathlib import Path
 from rich import print
 from rich.table import Table
 
-from src.cli.folder_and_fnames import PF_FOLDER, generate_true_pareto_fname
+from src.cli.folder_and_fnames import (
+    GRAPH_FOLDER,
+    INTENTS_FOLDER,
+    PF_FOLDER,
+    generate_true_pareto_fname,
+)
 
 
 def run_gen_true_pareto(graph_fname: str, intents_fname: str) -> None:
@@ -23,18 +28,20 @@ def run_gen_true_pareto(graph_fname: str, intents_fname: str) -> None:
     output_path = output_dir / fname
     abs_output_path = output_path.resolve()
 
-    # TODO replace with C++ program - remember pass the absolute output path to it
+    abs_graph_path = (Path(GRAPH_FOLDER) / graph_fname).resolve()
+    abs_intents_path = (Path(INTENTS_FOLDER) / intents_fname).resolve()
+
     result = subprocess.run(
         [
-            "echo",
-            "hello from true pareto program :)",
-            "Path to tpf output: ",
+            "./build/gen_true_pf",
+            abs_graph_path,
+            abs_intents_path,
             abs_output_path,
         ]
     )
     if result.returncode != 0:
         print(
-            f"[bold red]Error running true pareto front generation.[/bold red] Error code: {result.returncode}"
+            "[bold red]Error running true pareto front generation. See message above.[/bold red]"
         )
     else:
         print(
