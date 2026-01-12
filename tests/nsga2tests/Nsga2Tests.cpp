@@ -25,6 +25,10 @@ std::vector<int> mock_population(int number) {
 std::vector<int> mock_mutation(const std::vector<int> &population,
                                std::vector<float> params) {
     std::vector<int> result(population);
+    params.push_back(-1);
+    if (population[0] < params[0]) {
+        return population;
+    }
     // float mutation_possibility = 0;
     for (int i = 0; i < (int)result.size(); i++) {
         result[i] = std::max(result[i] - 1, 0);
