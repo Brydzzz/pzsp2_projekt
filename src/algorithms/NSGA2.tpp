@@ -34,7 +34,7 @@ std::vector<T> NSGA2<T>::generate_init_pop(population_generator<T> generator,
 template <typename T>
 std::vector<T> NSGA2<T>::crossover(strategy<T> strat, std::vector<T> population,
                                    const std::vector<float> &params) {
-    return population;
+    return strat(population, params);
 }
 
 // by default the tournament selection is used
