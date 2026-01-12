@@ -28,11 +28,10 @@ int main(int argc, char *argv[]) {
     Intent intent;
     intent.randomizeIntent(graph);
 
-
     std::ofstream outFile(outputPath);
     if (!outFile.is_open()) {
-        std::cerr << "Error: Could not open intent output file at " << outputPath
-                  << std::endl;
+        std::cerr << "Error: Could not open intent output file at "
+                  << outputPath << std::endl;
         return 1;
     }
 

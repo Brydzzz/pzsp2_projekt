@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     intentsFile >> intent;
     intentsFile.close();
 
-    std::cout << "Geneating true pf..." << std::endl;
+    std::cout << "Pareto generating logic goes brrrrrrrrrr" << std::endl;
 
     return 0;
 }
