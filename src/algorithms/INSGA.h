@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Evolutionary_Algorithm.h"
-
+#include "MutationOperators.h"
 
 
 enum class QoSCriterion {
@@ -14,6 +14,15 @@ enum class QoSCriterion {
     Delay
 };
 
+template<typename T>
+struct INSGASortThroughputComparator;
+
+template<typename T>
+struct INSGASortLossComparator;
+
+template<typename T>
+struct INSGASortDelayComparator;
+
 template <typename T> class INSGA : public Evolutionary_Algorithm<T>
 {
     using Population = std::vector<T>;
@@ -21,6 +30,7 @@ template <typename T> class INSGA : public Evolutionary_Algorithm<T>
     using Fronts = std::vector<Front>;
 
     private:
+    QoSCriterion _w;
 
     protected:
     Population random_initialization(int n, population_generator<T> population_gen) const;
@@ -31,7 +41,7 @@ template <typename T> class INSGA : public Evolutionary_Algorithm<T>
     Population elite_parent_selection(const Fronts& sorted_fronts) const;
     Population selection(const Population& base_new_population) const;
     Population crossover_insga(const Population& offspring_selected, double crossover_probability) const;
-    Population mutation(const Population& offspring_selected, double mutation_probability) const;
+    Population mutation(const Population& offspring_selected, double mutation_probabilit, strategy<T> mutation_strategy) const;
     Population combine(const Population& offspring_selected, const Population& crossovered_population, 
                         const Population& mutated_population) const;
     Front get_first_front(const Fronts& fronts) const;

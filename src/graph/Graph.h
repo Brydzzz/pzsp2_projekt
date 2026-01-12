@@ -35,6 +35,8 @@ class Graph {
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode);
     std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);
+
+    std::vector<Edge<T>> getEdgesOf(const Node& node);
 };
 
 #include "Graph.tpp"

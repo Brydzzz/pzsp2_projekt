@@ -180,3 +180,9 @@ std::optional<Edge<T>> Graph<T>::getEdgeBetween(Node &fromNode, Node &toNode) {
     }
     return std::nullopt;
 }
+
+template <typename T>
+std::vector<Edge<T>> Graph<T>::getEdgesOf(const Node& node)
+{
+    return adjacencyList[node];
+}
