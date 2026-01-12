@@ -1,5 +1,6 @@
 import argparse
 
+from src.cli.run_gen_intents import run_gen_intents
 from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
 from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
@@ -45,6 +46,13 @@ def main():
     )
     parser_full_mesh.add_argument(
         "node_count", type=int, help="Number of nodes in full mesh network"
+    )
+
+    parser_gen_intents = subparsers.add_parser(
+        "gen-intents", help="Generate intents for graph."
+    )
+    parser_gen_intents.add_argument(
+        "graph", help=f"CSV file with graph. Filename in '{GRAPH_FOLDER}/'"
     )
 
     parser_gen_pareto = subparsers.add_parser(
@@ -99,6 +107,8 @@ def main():
             parse_and_save_sndlib(args.network_name)
         case "gen-full-mesh":
             generate_and_save_fullmesh(args.node_count)
+        case "gen-intents":
+            run_gen_intents(args.graph)
         case "gen-true-pareto":
             run_gen_true_pareto(args.graph, args.intents)
         case "algo-compare":

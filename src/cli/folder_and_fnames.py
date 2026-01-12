@@ -5,9 +5,16 @@ from datetime import datetime
 GRAPH_FOLDER = "graph_csv_files"
 ALGO_COMPARE_FOLDER = "algo_compare"
 PF_FOLDER = "pareto_fronts"
+INTENTS_FOLDER = "intents_csv_files"
 
 
 # filename generation
+def generate_intents_fname(graph_fname: str) -> str:
+    g_name = os.path.splitext(os.path.basename(graph_fname))[0]
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"{g_name}__intents__{timestamp}.csv"
+
+
 def generate_true_pareto_fname(graph_fname: str, intents_fname: str) -> str:
     g_name = os.path.splitext(os.path.basename(graph_fname))[0]
     i_name = os.path.splitext(os.path.basename(intents_fname))[0]
