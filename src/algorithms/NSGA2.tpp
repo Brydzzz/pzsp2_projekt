@@ -214,29 +214,13 @@ NSGA2<T>::solve(int popsize, int iterations, target_function<T> target,
                 strategy<T> cross_strat, population_generator<T> population_gen,
                 std::vector<float> &params) {
     std::vector<T> population = generate_init_pop(population_gen, popsize);
-    for (int iter = 0; iter < iterations; iter++) {
-        auto new_population = generate_init_pop(population_gen, popsize);
-        auto combined_population = join_vector(population, new_population);
-        auto best = select_best(combined_population, popsize, target);
-        population = best;
-    }
-    return population;
-}
-
-template <typename T>
-std::vector<T> NSGA2<T>::solve2(int popsize, int iterations,
-                                target_function<T> target,
-                                strategy<T> mutation_strategy,
-                                population_generator<T> population_gen,
-                                std::vector<float> &params) {
-    std::vector<T> population = generate_init_pop(population_gen, popsize);
     auto new_population = generate_init_pop(population_gen, popsize);
     auto combined_population = join_vector(population, new_population);
     for (int iter = 0; iter < iterations; iter++) {
         auto best = select_best(combined_population, popsize, target);
         population = best;
         if (iter + 1 < iterations) {
-            new_population = mutation_strategy(population, params);
+            new_population = cross_strat(population, params);
             combined_population = join_vector(population, new_population);
         }
     }
