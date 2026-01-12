@@ -16,24 +16,26 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                                      int pop) override;
     std::vector<T> crossover(strategy<T> strat, std::vector<T> population,
                              const std::vector<float> &params) override;
-    std::pair<std::vector<float>, std::vector<float>>
-    calculate_fitness(std::vector<T> &population, std::vector<T> &set);
-    std::vector<int> calculate_strength(target_function<T> target,
-                                        std::vector<T> &population);
+    std::vector<int>
+    calculate_strength(std::vector<std::vector<float>> &objectives,
+                       std::vector<T> &population);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-    calculate_fitness(target_function<T> target, std::vector<T> &population,
-                      std::vector<T> &set);
-    std::vector<int> calculate_raw_fitness(target_function<T> target,
-                                           std::vector<T> &combined,
-                                           std::vector<int> &strengths);
+    calculate_fitness(std::vector<std::vector<float>> &objectives,
+                      std::vector<T> &combined);
+    std::vector<int>
+    calculate_raw_fitness(std::vector<std::vector<float>> &objectives,
+                          std::vector<T> &combined,
+                          std::vector<int> &strengths);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     calculate_distances(std::vector<T> &combined);
-    std::vector<T> get_newset(unsigned int setsize, target_function<T> target,
-                              std::vector<T> &population, std::vector<T> &set,
+    std::vector<T> get_newset(unsigned int setsize,
+                              std::vector<std::vector<float>> &objectives,
+                              std::vector<T> &combined,
                               std::vector<std::vector<float>> &distances,
                               std::vector<float> &fitness);
     std::vector<T> binary_tournament_selection(unsigned int poolsize,
-                                               std::vector<T> &set);
+                                               std::vector<T> &set,
+                                               std::vector<float> fitness);
     std::vector<T> choose_final_pool(target_function<T> target, int poolsize,
                                      std::vector<T> &pool1,
                                      std::vector<T> &pool2);

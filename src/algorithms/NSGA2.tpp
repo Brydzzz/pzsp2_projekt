@@ -100,7 +100,7 @@ NSGA2<T>::sort_nondominated_algorithm(std::vector<T> &population,
 
     int k = 0;
     while ((int)pareto_fronts.size() > k) {
-        std::vector<T> next_front;
+        std::vector<int> next_front;
         for (int i : pareto_fronts[k]) {
             for (int j = 0; j < (int)dominates_points[i].size(); j++) {
                 auto other_individual = dominates_points[i][j];
