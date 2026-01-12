@@ -14,4 +14,14 @@ class Node {
     }
     bool operator!=(const Node &other) const { return !(*this == other); }
     bool operator<(const Node &other) const { return this->name < other.name; }
+
+    friend std::ostream &operator<<(std::ostream &os, const Node &node) {
+        os << node.name;
+        return os;
+    }
+
+    friend std::istream &operator>>(std::istream &is, Node &node) {
+        is >> node.name;
+        return is;
+    }
 };

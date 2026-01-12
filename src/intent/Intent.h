@@ -18,4 +18,7 @@ class Intent {
     void randomizeIntent(Graph<NetStat> &graph, int seed = 0);
     std::vector<std::vector<unsigned int>>
     getIntentInNodeOrder(std::vector<Node> &nodes);
+
+    friend std::ostream& operator<<(std::ostream& os, const Intent& intent);
+    friend std::istream& operator>>(std::istream& is, Intent& intent);
 };

@@ -73,3 +73,23 @@ Intent::getIntentInNodeOrder(std::vector<Node> &nodes) {
     }
     return result;
 }
+
+std::ostream &operator<<(std::ostream &os, const Intent &intent) {
+    for (const auto &[nodes, demand] : intent.intents) {
+        os << nodes.first << " " << nodes.second << " " << demand << "\n";
+    }
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Intent& intent) {
+    intent.intents.clear();
+
+    Node source("temp"), dest("temp");
+    unsigned int demand;
+
+    while (is >> source >> dest >> demand) {
+        intent.intents[{source, dest}] = demand;
+    }
+
+    return is;
+}
