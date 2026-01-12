@@ -40,6 +40,8 @@ class Graph {
 
     std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode);
+
+    std::vector<Edge<T>> getEdgesOf(const Node &node);
     void addNode(Node &node) { nodes.push_back(node); }
     bool hasNode(Node &node) {
         // This will now work because <algorithm> is included
