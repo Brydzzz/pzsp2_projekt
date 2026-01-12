@@ -1,0 +1,28 @@
+name: Ruff Fix and Format
+on: [push, pull_request]
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to push fixes back to the repo
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          # We only install it here to use the 'ruff' command in 'run' steps
+          args: "--version" 
+
+      - name: Apply Fixes
+        run: |
+          ruff check --fix .
+          ruff format .
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: ruff auto-fixes"
