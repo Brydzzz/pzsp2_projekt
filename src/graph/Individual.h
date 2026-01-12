@@ -8,10 +8,11 @@
 #include <map.h.
 
 class Individual {
-    public:
+  public:
     std::vector<std::vector<Node>> paths;
-    const Graph<NetStat>& graph;
+    const Graph<NetStat> &graph;
     std::map<Edge<NetStat>, int> flow_left;
 
-    Individual(std::vector<std::vector<Node>> &paths, const Graph<NetStat>& graph);
+    Individual(std::vector<std::vector<Node>> &paths,
+               const Graph<NetStat> &graph);
 };

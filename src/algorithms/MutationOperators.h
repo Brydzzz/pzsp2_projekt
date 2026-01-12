@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "Evolutionary_Algorithm.h"
 #include "../Graph/Indiviudal.h"
+#include "Evolutionary_Algorithm.h"
 
-
-std::vector<Individual> INSGAMutationVariantAStrategy(const std::vector<Individual>& xs, const std::vector<float>& params);
+std::vector<Individual>
+INSGAMutationVariantAStrategy(const std::vector<Individual> &xs,
+                              const std::vector<float> &params);
