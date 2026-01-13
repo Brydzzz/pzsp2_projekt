@@ -2,7 +2,6 @@ import os
 import subprocess
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from rich import print
@@ -23,6 +22,8 @@ from .folder_and_fnames import (
     generate_alg_comp_raw_data_fname,
     generate_alg_comp_results_fname,
 )
+
+OBJECTIVES = ["loss", "delay", "jitter"]
 
 
 def run_algo_comp(
@@ -64,6 +65,7 @@ def run_algo_comp(
         print(
             f"[bold red]Error while comparing algorithms.[/bold red] Error code: {result.returncode}"
         )
+        return
     else:
         print(
             "[bold green]Success:[/bold green] compare algorithms experiment has finished. "
@@ -76,12 +78,16 @@ def run_algo_comp(
     # raw_data = pd.read_csv(abs_path)
     if not is_raw_data_format_valid(raw_data):
         print("[bold red]Incorrect raw data format[/bold red].")
+        return
 
     pf_path = Path.cwd() / PF_FOLDER / true_pareto_fname
-    true_pf = np.loadtxt(pf_path, delimiter=",", skiprows=1)
+    true_pf_df = pd.read_csv(pf_path)
+    if set(true_pf_df.columns) != set(OBJECTIVES):
+        print("[bold red]Incorrect true pareto front data format[/bold red].")
+        return
 
-    fronts_df = get_fronts_by_run(raw_data)
-    metrics_summary = calculate_metrics(fronts_df, true_pf)
+    fronts_df = get_fronts_by_run(raw_data, OBJECTIVES)
+    metrics_summary = calculate_metrics(fronts_df, true_pf_df, OBJECTIVES)
     objectives_summary = calculate_objectives_stats(raw_data)
 
     results = pd.concat([metrics_summary, objectives_summary], axis=1)

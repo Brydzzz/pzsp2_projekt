@@ -8,11 +8,13 @@ from pymoo.indicators.igd_plus import IGDPlus
 from src.cli.folder_and_fnames import ALGO_COMPARE_FOLDER
 
 
-def get_fronts_by_run(df: pd.DataFrame):
-    objectives = ["loss", "delay", "jitter"]
+def get_fronts_by_run(df: pd.DataFrame, objective_names: list[str]):
+    """
+    Groups raw algorithm data into fronts while ensuring objective order.
+    """
 
     fronts = (
-        df.groupby(["algo", "run_id"])[objectives]
+        df.groupby(["algo", "run_id"])[objective_names]
         .apply(lambda x: x.values.tolist())
         .reset_index(name="points")
     )
@@ -20,15 +22,19 @@ def get_fronts_by_run(df: pd.DataFrame):
     return fronts
 
 
-def calculate_metrics(grouped_df: pd.DataFrame, true_pf: np.ndarray) -> pd.DataFrame:
+def calculate_metrics(
+    grouped_df: pd.DataFrame, true_pf_df: pd.DataFrame, objective_names: list[str]
+) -> pd.DataFrame:
     """
     :param grouped_df: DataFrame with columns ['algo', 'run_id', 'points']
     :param true_pf: 2D array shaped of the true pareto front
+    :param objective_names: List of objectives names defining the order of values in 'points' column in grouped_df
     """
-    gd_ind = GD(true_pf)
-    gdp_ind = GDPlus(true_pf)
-    igd_ind = IGD(true_pf)
-    igdp_ind = IGDPlus(true_pf)
+    true_pf_as_array = true_pf_df[objective_names].to_numpy()
+    gd_ind = GD(true_pf_as_array)
+    gdp_ind = GDPlus(true_pf_as_array)
+    igd_ind = IGD(true_pf_as_array)
+    igdp_ind = IGDPlus(true_pf_as_array)
 
     results = []
 
