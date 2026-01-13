@@ -99,43 +99,60 @@ int main(int argc, char *argv[]) {
         return pops;
     };
 
-    auto cross_two_paths = [&](Individual first_paths,
-                               Individual second_paths) -> Individual {
-        Individual crossed_paths = first_paths;
-        for (unsigned int i = 0; i < first_paths.paths.size(); i++) {
-            if (rand() % 10 < 5) {
-                auto try_paths = crossed_paths;
-                try_paths.paths[i] = second_paths.paths[i];
-                auto try_paths_result =
-                    are_paths_correct<NetStat>(try_paths, intentGenerator);
-                if (try_paths_result.first) {
-                    crossed_paths = try_paths;
-                }
-            }
-        }
-        return crossed_paths;
-    };
+    // auto cross_two_paths = [&](Individual first_paths,
+    //                            Individual second_paths) -> Individual {
+    //     Individual crossed_paths = first_paths;
+    //     for (unsigned int i = 0; i < first_paths.paths.size(); i++) {
+    //         if (rand() % 10 < 5) {
+    //             auto try_paths = crossed_paths;
+    //             try_paths.paths[i] = second_paths.paths[i];
+    //             auto try_paths_result =
+    //                 are_paths_correct<NetStat>(try_paths, intentGenerator);
+    //             if (try_paths_result.first) {
+    //                 crossed_paths = try_paths;
+    //             }
+    //         }
+    //     }
+    //     return crossed_paths;
+    // };
+
+    // auto crossing = [&](std::vector<Individual> paths,
+    //                     std::vector<float> params) {
+    //     std::vector<Individual> new_paths;
+    //     new_paths.reserve(paths.size());
+
+    //     if (paths.size() < 2)
+    //         return paths;
+
+    //     for (unsigned int i = 0; i < paths.size(); i++) {
+    //         auto first_paths = paths[i];
+    //         auto second_paths = paths[(i + 1) % paths.size()];
+
+    //         if (rand() % 10 < params[0]) {
+    //             new_paths.push_back(first_paths);
+    //         } else {
+    //             auto crossed_path = cross_two_paths(first_paths,
+    //             second_paths); new_paths.push_back(crossed_path);
+    //         }
+    //     }
+    //     return new_paths;
+    // };
 
     auto crossing = [&](std::vector<Individual> paths,
                         std::vector<float> params) {
-        std::vector<Individual> new_paths;
-        new_paths.reserve(paths.size());
-
-        if (paths.size() < 2)
-            return paths;
-
-        for (unsigned int i = 0; i < paths.size(); i++) {
-            auto first_paths = paths[i];
-            auto second_paths = paths[(i + 1) % paths.size()];
-
-            if (rand() % 10 < params[0]) {
-                new_paths.push_back(first_paths);
-            } else {
-                auto crossed_path = cross_two_paths(first_paths, second_paths);
-                new_paths.push_back(crossed_path);
+        for (auto indiv : paths) {
+            for (auto &path : indiv.paths) {
+                float random = rand();
+                float prec = random / (float)RAND_MAX;
+                if (prec > params[1])
+                    continue;
+                auto start = path.front();
+                auto end = path.back();
+                auto newPath = graph.generateRandomPath(start, end);
+                path = newPath;
             }
         }
-        return new_paths;
+        return paths;
     };
 
     auto target_function = [&](Individual indiv) {
@@ -212,7 +229,7 @@ int main(int argc, char *argv[]) {
         std::cout << "SPEA2 Run No" << i << std::endl;
         auto spea2_indivs = spea2.solve(30, 10, target_function, crossing,
                                         generate_random_paths, spea2_params);
-        for (const auto& indiv : spea2_indivs) {
+        for (const auto &indiv : spea2_indivs) {
             if (are_paths_correct<NetStat>(indiv, intentGenerator).first) {
                 solutions_set.push_back(indiv);
             }
@@ -221,7 +238,7 @@ int main(int argc, char *argv[]) {
         std::cout << "NSGA2 Run No" << i << std::endl;
         auto nsga2_indivs = nsga2.solve(30, 10, target_function, crossing,
                                         generate_random_paths, nsga2_params);
-        for (const auto& indiv : nsga2_indivs) {
+        for (const auto &indiv : nsga2_indivs) {
             if (are_paths_correct<NetStat>(indiv, intentGenerator).first) {
                 solutions_set.push_back(indiv);
             }
