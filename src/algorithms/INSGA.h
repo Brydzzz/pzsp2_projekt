@@ -49,6 +49,7 @@ class INSGA : public Evolutionary_Algorithm<T> {
     Front get_first_front(const Fronts &fronts) const;
 
   public:
+    INSGA(QoSCriterion w);
     Population generate_init_pop(population_generator<T> generator,
                                  int pop) override;
     Population crossover(strategy<T> strat, Population population,

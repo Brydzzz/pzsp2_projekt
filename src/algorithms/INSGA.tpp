@@ -317,3 +317,8 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target, strategy
     }
     return get_first_front(fronts);
 }
+
+template<typename T>
+INSGA<T>::INSGA(QoSCriterion w) : _w(w)
+{
+}
