@@ -36,7 +36,7 @@ SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
     std::vector<T> population = generate_init_pop(population_gen, popsize);
     std::vector<T> external_set = {};
     while (true) {
-        std::cout << t << std::endl;
+        std::cout << "SPEA2 Iteration: " << t << std::endl;
         std::vector<T> combined = population;
         combined.insert(combined.end(), external_set.begin(),
                         external_set.end());
