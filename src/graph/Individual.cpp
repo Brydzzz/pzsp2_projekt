@@ -41,13 +41,10 @@ std::vector<float> individual_target_function(Individual indiv) {
     float delay = 0;
     float jitter = 0;
     float loss = 0.0;
-    for (auto& path : indiv.paths)
-    {
-        for (size_t i = 0; i < path.size() -1; i++)
-        {
-            auto edge = indiv.graph->getEdgeBetween(path[i], path[i+1]);
-            if (edge.has_value())
-            {
+    for (auto &path : indiv.paths) {
+        for (size_t i = 0; i < path.size() - 1; i++) {
+            auto edge = indiv.graph->getEdgeBetween(path[i], path[i + 1]);
+            if (edge.has_value()) {
                 delay += edge->weight.delay;
                 jitter += edge->weight.jitter;
                 loss += edge->weight.loss;
@@ -70,13 +67,10 @@ std::vector<float> individual_proper_target_function(Individual indiv) {
     float delay = 0;
     float jitter = 0;
     float loss = 0.0;
-    for (auto& path : indiv.paths)
-    {
-        for (size_t i = 0; i < path.size() -1; i++)
-        {
-            auto edge = indiv.graph->getEdgeBetween(path[i], path[i+1]);
-            if (edge.has_value())
-            {
+    for (auto &path : indiv.paths) {
+        for (size_t i = 0; i < path.size() - 1; i++) {
+            auto edge = indiv.graph->getEdgeBetween(path[i], path[i + 1]);
+            if (edge.has_value()) {
                 delay += edge->weight.delay;
                 jitter += edge->weight.jitter;
                 loss += edge->weight.loss;
