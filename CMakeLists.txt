@@ -52,3 +52,17 @@ target_compile_options(gen_true_pf PRIVATE
 )
 target_link_libraries(gen_true_pf PRIVATE pareto)
 target_include_directories(gen_true_pf PRIVATE ${COMMON_INCLUDES} ./src/algorithms)
+
+
+add_executable(gen_algo_compare_data
+    ./src/cli_tools/gen_algo_compare_data.cpp
+    ${COMMON_SOURCES}
+    ./src/algorithms/SPEA2.h
+    ./src/algorithms/NSGA2.h
+    # ./src/algorithms/INSGA.h
+)
+target_link_libraries(gen_algo_compare_data PRIVATE pareto)
+target_compile_options(gen_algo_compare_data PRIVATE
+    -Wno-maybe-uninitialized
+)
+target_include_directories(gen_algo_compare_data PRIVATE ${COMMON_INCLUDES} ./src/algorithms)

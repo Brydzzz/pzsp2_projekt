@@ -17,6 +17,8 @@ from src.experiments_data_processing.algo_comp_utils import (
 
 from .folder_and_fnames import (
     ALGO_COMPARE_FOLDER,
+    GRAPH_FOLDER,
+    INTENTS_FOLDER,
     PF_FOLDER,
     generate_alg_comp_plots_fname,
     generate_alg_comp_raw_data_fname,
@@ -52,13 +54,16 @@ def run_algo_comp(
     raw_data_output_path = output_dir / raw_data_fname
     raw_data_abs_path = raw_data_output_path.resolve()
 
-    # TODO replace with C++ program - remember pass the absolute output path to it
+    abs_graph_path = (Path(GRAPH_FOLDER) / graph_fname).resolve()
+    abs_intents_path = (Path(INTENTS_FOLDER) / intents_fname).resolve()
+
     result = subprocess.run(
         [
-            "echo",
-            "hello from algorithm comparison program :)",
-            "Path to raw data output: ",
+            "./build/gen_algo_compare_data",
+            abs_graph_path,
+            abs_intents_path,
             raw_data_abs_path,
+            str(iterations),
         ]
     )
     if result.returncode != 0:
@@ -72,10 +77,7 @@ def run_algo_comp(
             f"Results were saved to {raw_data_fname} in {ALGO_COMPARE_FOLDER} folder"
         )
 
-    # temporary example data for testing purposes
-    raw_data_fname = f"{ALGO_COMPARE_FOLDER}/example_algo_comp_raw_data.csv"
-    raw_data = pd.read_csv(raw_data_fname)
-    # raw_data = pd.read_csv(abs_path)
+    raw_data = pd.read_csv(raw_data_abs_path)
     if not is_raw_data_format_valid(raw_data):
         print("[bold red]Incorrect raw data format[/bold red].")
         return
@@ -85,6 +87,8 @@ def run_algo_comp(
     if set(true_pf_df.columns) != set(OBJECTIVES):
         print("[bold red]Incorrect true pareto front data format[/bold red].")
         return
+
+    # TODO: handle invalid solutions???
 
     fronts_df = get_fronts_by_run(raw_data, OBJECTIVES)
     metrics_summary = calculate_metrics(fronts_df, true_pf_df, OBJECTIVES)
