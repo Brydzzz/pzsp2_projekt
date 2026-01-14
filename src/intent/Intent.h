@@ -6,7 +6,8 @@
 
 class Intent {
 
-    void createIntentForPath(const Graph<NetStat> &graph, std::vector<Node> &path);
+    void createIntentForPath(const Graph<NetStat> &graph,
+                             std::vector<Node> &path);
 
   public:
     Intent() = default;

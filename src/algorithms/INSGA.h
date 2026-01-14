@@ -20,8 +20,6 @@ struct INSGASortLossComparator;
 template <typename T>
 struct INSGASortJitterComparator;
 
-
-
 template <typename T>
 class INSGA : public Evolutionary_Algorithm<T> {
     using Population = std::vector<T>;
@@ -37,9 +35,10 @@ class INSGA : public Evolutionary_Algorithm<T> {
     Population empty_offspring_population() const;
     Population extend_population(const Population &base_population,
                                  const Population &offspring_population) const;
-    Fronts
-    non_dominance_sorting(const Population &base_extended_population, target_function<T> target) const;
-    Fronts sort_insga(const Fronts &fronts, QoSCriterion w, target_function<T> target) const;
+    Fronts non_dominance_sorting(const Population &base_extended_population,
+                                 target_function<T> target) const;
+    Fronts sort_insga(const Fronts &fronts, QoSCriterion w,
+                      target_function<T> target) const;
     Population elite_parent_selection(const Fronts &sorted_fronts, int n) const;
     Population selection(const Population &base_new_population) const;
     Population crossover_insga(const Population &offspring_selected,

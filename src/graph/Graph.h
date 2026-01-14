@@ -22,7 +22,7 @@ class Graph {
     int getNextPathChoice(std::vector<int> &pathChoices) const;
     void updateEdgeFlows(std::vector<Node> path, unsigned int intent);
     void updateEdgeFlows(std::vector<Node> path, unsigned int intent,
-                          std::map<Edge<T>, int>& external_flow_left) const;
+                         std::map<Edge<T>, int> &external_flow_left) const;
 
   public:
     Graph();
@@ -38,9 +38,9 @@ class Graph {
     bool hasEdge(Node &from, Node &to) const;
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode,
                                          unsigned int intent);
-    std::vector<Node> generateRandomPath(Node &startNode, Node &endNode,
-                                         unsigned int intent, 
-                                         std::map<Edge<T>, int>& external_flow_left) const;
+    std::vector<Node>
+    generateRandomPath(Node &startNode, Node &endNode, unsigned int intent,
+                       std::map<Edge<T>, int> &external_flow_left) const;
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode) const;
 
     std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);

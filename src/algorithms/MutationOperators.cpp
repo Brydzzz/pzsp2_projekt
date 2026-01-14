@@ -19,11 +19,9 @@ INSGAMutationVariantAStrategy(const std::vector<Individual> &xs,
         return dist(rng);
     };
 
-
     auto mixByDfs =
-        [&](const Graph<NetStat>* graph,
-            const std::vector<Node> &parentPath, const std::vector<Node>
-                &mutantPath) -> std::vector<Node> {
+        [&](const Graph<NetStat> *graph, const std::vector<Node> &parentPath,
+            const std::vector<Node> &mutantPath) -> std::vector<Node> {
         const Node source = parentPath.front();
         const Node terminal = parentPath.back();
 
