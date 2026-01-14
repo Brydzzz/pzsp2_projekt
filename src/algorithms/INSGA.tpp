@@ -37,7 +37,7 @@ struct INSGASortJitterComparator {
     explicit INSGASortJitterComparator(target_function<T> t) : target(std::move(t)) {}
 
     bool operator()(const T& a, const T& b) const {
-        return target(a)[0] < target(b)[0]; 
+        return target(a)[2] < target(b)[2]; 
     }
 };
 
