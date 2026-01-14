@@ -6,37 +6,35 @@
 #include "INSGA.h"
 #endif
 
+#include "Individual.h"
 #include <vector>
 
-template <typename T>
 struct INSGASortDelayComparator {
-    target_function<T> target;
+    target_function<Individual> target;
 
-    explicit INSGASortDelayComparator(target_function<T> t) : target(std::move(t)) {}
+    explicit INSGASortDelayComparator(target_function<Individual> t) : target(std::move(t)) {}
 
-    bool operator()(const T& a, const T& b) const {
+    bool operator()(const Individual& a, const Individual& b) const {
         return target(a)[0] < target(b)[0]; 
     }
 };
 
-template <typename T>
 struct INSGASortLossComparator {
-    target_function<T> target;
+    target_function<Individual> target;
 
-    explicit INSGASortLossComparator(target_function<T> t) : target(std::move(t)) {}
+    explicit INSGASortLossComparator(target_function<Individual> t) : target(std::move(t)) {}
 
-    bool operator()(const T& a, const T& b) const {
+    bool operator()(const Individual& a, const Individual& b) const {
         return target(a)[1] < target(b)[1]; 
     }
 };
 
-template <typename T>
 struct INSGASortJitterComparator {
-    target_function<T> target;
+    target_function<Individual> target;
 
-    explicit INSGASortJitterComparator(target_function<T> t) : target(std::move(t)) {}
+    explicit INSGASortJitterComparator(target_function<Individual> t) : target(std::move(t)) {}
 
-    bool operator()(const T& a, const T& b) const {
+    bool operator()(const Individual& a, const Individual& b) const {
         return target(a)[2] < target(b)[2]; 
     }
 };
@@ -154,17 +152,17 @@ INSGA<T>::sort_insga(const typename INSGA<T>::Fronts& fronts, QoSCriterion w,
         switch (w) {
             case QoSCriterion::Jitter:
                 std::sort(front.begin(), front.end(),
-                          INSGASortJitterComparator<T>(target));
+                          INSGASortJitterComparator(target));
                 break;
 
             case QoSCriterion::Loss:
                 std::sort(front.begin(), front.end(),
-                          INSGASortLossComparator<T>(target));
+                          INSGASortLossComparator(target));
                 break;
 
             case QoSCriterion::Delay:
                 std::sort(front.begin(), front.end(),
-                          INSGASortDelayComparator<T>(target));
+                          INSGASortDelayComparator(target));
                 break;
 
             default:

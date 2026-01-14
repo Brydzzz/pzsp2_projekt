@@ -11,13 +11,8 @@
 
 enum class QoSCriterion { Delay, Loss, Jitter };
 
-template <typename T>
 struct INSGASortDelayComparator;
-
-template <typename T>
 struct INSGASortLossComparator;
-
-template <typename T>
 struct INSGASortJitterComparator;
 
 template <typename T>
