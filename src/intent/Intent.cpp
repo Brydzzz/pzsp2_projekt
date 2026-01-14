@@ -2,7 +2,12 @@
 #include "../utils/utils.hpp"
 
 unsigned int Intent::getDemand(Node &from, Node &to) {
-    return intents[{from, to}];
+    std::pair<Node, Node> key = {from, to};
+    auto it = intents.find(key);
+    if (it != intents.end()) {
+        return it->second;
+    }
+    return 0;
 }
 
 void Intent::setDemand(Node &from, Node &to, unsigned int demand) {

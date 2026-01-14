@@ -57,6 +57,9 @@ Graph<T>::Graph(std::vector<Node> &nodes, std::vector<Edge<T>> adjacencyList)
 template <typename T>
 Graph<T>::Graph(std::vector<Node> &nodes) {
     this->nodes = nodes;
+    for (auto &node : this->nodes) {
+        this->adjacencyList[node] = std::vector<Edge<T>>();
+    }
 }
 
 template <typename T>
