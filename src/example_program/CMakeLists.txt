@@ -29,3 +29,9 @@ target_include_directories(exampleProgram PRIVATE ../../src/graph ../../src/inte
 
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/full_mesh_10.csv"
         DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+
+add_executable(insga_example_program insga_example_program.cpp ../../src/intent/Intent.cpp ../../src/graph/GraphParser.cpp ../../src/graph/Individual.cpp ../../src/algorithms/MutationOperators.cpp ../../src/graph/Graph.tpp)
+
+target_link_libraries(insga_example_program PRIVATE pareto)
+
+target_include_directories(insga_example_program PRIVATE ../../src/graph ../../src/intent ../../src/algorithms ${csvreader_SOURCE_DIR})

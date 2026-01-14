@@ -2,7 +2,12 @@
 #include "../utils/utils.hpp"
 
 unsigned int Intent::getDemand(Node &from, Node &to) {
-    return intents[{from, to}];
+    std::pair<Node, Node> key = {from, to};
+    auto it = intents.find(key);
+    if (it != intents.end()) {
+        return it->second;
+    }
+    return 0;
 }
 
 void Intent::setDemand(Node &from, Node &to, unsigned int demand) {
@@ -23,7 +28,7 @@ void Intent::randomizeIntent(std::vector<Node> &nodes, int minValue,
     }
 }
 
-void Intent::createIntentForPath(Graph<NetStat> &graph,
+void Intent::createIntentForPath(const Graph<NetStat> &graph,
                                  std::vector<Node> &path) {
     if (path.size() < 2) {
         return;
@@ -44,7 +49,7 @@ void Intent::createIntentForPath(Graph<NetStat> &graph,
     setDemand(path[0], path.back(), getRandomFromRange(0, maxThroughput));
 }
 
-void Intent::randomizeIntent(Graph<NetStat> &graph, int seed) {
+void Intent::randomizeIntent(const Graph<NetStat> &graph, int seed) {
     srand(seed);
     intents.clear();
     for (Node &fromNode : graph.getNodes()) {

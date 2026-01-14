@@ -6,36 +6,35 @@
 #include "INSGA.h"
 #endif
 
+#include "Individual.h"
+#include <vector>
 
-template <typename T>
-struct INSGASortThroughputComparator {
-    target_function<T> target;
+struct INSGASortDelayComparator {
+    target_function<Individual> target;
 
-    explicit INSGASortThroughputComparator(target_function<T> t) : target(std::move(t)) {}
+    explicit INSGASortDelayComparator(target_function<Individual> t) : target(std::move(t)) {}
 
-    bool operator()(const T& a, const T& b) const {
+    bool operator()(const Individual& a, const Individual& b) const {
         return target(a)[0] < target(b)[0]; 
     }
 };
 
-template <typename T>
 struct INSGASortLossComparator {
-    target_function<T> target;
+    target_function<Individual> target;
 
-    explicit INSGASortLossComparator(target_function<T> t) : target(std::move(t)) {}
+    explicit INSGASortLossComparator(target_function<Individual> t) : target(std::move(t)) {}
 
-    bool operator()(const T& a, const T& b) const {
+    bool operator()(const Individual& a, const Individual& b) const {
         return target(a)[1] < target(b)[1]; 
     }
 };
 
-template <typename T>
-struct INSGASortDelayComparator {
-    target_function<T> target;
+struct INSGASortJitterComparator {
+    target_function<Individual> target;
 
-    explicit INSGASortDelayComparator(target_function<T> t) : target(std::move(t)) {}
+    explicit INSGASortJitterComparator(target_function<Individual> t) : target(std::move(t)) {}
 
-    bool operator()(const T& a, const T& b) const {
+    bool operator()(const Individual& a, const Individual& b) const {
         return target(a)[2] < target(b)[2]; 
     }
 };
@@ -52,7 +51,7 @@ template<typename T>
 typename INSGA<T>::Population
 INSGA<T>::empty_offspring_population() const
 {
-    vector<T> empty_population;
+    std::vector<T> empty_population;
     return empty_population;
 }
 
@@ -114,7 +113,7 @@ INSGA<T>::non_dominance_sorting(const typename INSGA<T>::Population& population,
 
     int k = 0;
     while ((int)pareto_fronts.size() > k) {
-        std::vector<T> next_front;
+        std::vector<int> next_front;
         for (int i : pareto_fronts[k]) {
             for (int j = 0; j < (int)dominates_points[i].size(); j++) {
                 auto other_individual = dominates_points[i][j];
@@ -139,6 +138,7 @@ INSGA<T>::non_dominance_sorting(const typename INSGA<T>::Population& population,
     }
 
     return reconstructed_answer;
+
 }
 
 template<typename T>
@@ -150,19 +150,19 @@ INSGA<T>::sort_insga(const typename INSGA<T>::Fronts& fronts, QoSCriterion w,
 
     for (auto& front : sorted) {      
         switch (w) {
-            case QoSCriterion::Throughput:
+            case QoSCriterion::Jitter:
                 std::sort(front.begin(), front.end(),
-                          INSGASortThroughputComparator<T>(target));
+                          INSGASortJitterComparator(target));
                 break;
 
             case QoSCriterion::Loss:
                 std::sort(front.begin(), front.end(),
-                          INSGASortLossComparator<T>(target));
+                          INSGASortLossComparator(target));
                 break;
 
             case QoSCriterion::Delay:
                 std::sort(front.begin(), front.end(),
-                          INSGASortDelayComparator<T>(target));
+                          INSGASortDelayComparator(target));
                 break;
 
             default:
@@ -179,9 +179,9 @@ template<typename T>
 typename INSGA<T>::Population 
 INSGA<T>::elite_parent_selection(const typename INSGA<T>::Fronts& sorted_fronts, int n) const
 {
-    Populaton base_new_population;
-    base_new_population.reserve(static_cast<size_t>(n))
-    
+    typename INSGA<T>::Population base_new_population;
+    base_new_population.reserve(static_cast<size_t>(n));
+
     for (const auto& front : sorted_fronts)
     {
         if (base_new_population.size() >= static_cast<size_t>(n))
@@ -220,11 +220,12 @@ INSGA<T>::crossover_insga(const typename INSGA<T>::Population& offspring_selecte
 }
 
 template<typename T>
-typename INSGA<T>::Population 
-INSGA<T>::mutation(const typename INSGA<T>::Population& offspring_selected, 
-                   double mutation_probability, typename strategy<T> mutation_strategy) const
+typename INSGA<T>::Population
+INSGA<T>::mutation(const typename INSGA<T>::Population& offspring_selected,
+                   double mutation_probability,
+                   strategy<T> mutation_strategy) const
 {
-    std::vector<float> params = {mutation_probability};
+    std::vector<float> params = {(float)mutation_probability};
     auto mutated_population = mutation_strategy(offspring_selected, params);
     return mutated_population;
 }
@@ -306,14 +307,20 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target, strategy
     {
         base_extended_population = extend_population(base_population, offspring_population);
         fronts = non_dominance_sorting(base_extended_population, target);
-        sorted_fronts = sort_insga(fronts, _w);
-        base_new_population = elite_parent_selection(sorted_fronts);
+        sorted_fronts = sort_insga(fronts, _w, target);
+        base_new_population = elite_parent_selection(sorted_fronts, popsize);
         offspring_selected = selection(base_new_population);
         crossovered_population = crossover_insga(offspring_selected, crossover_probability);
         mutated_population = mutation(offspring_selected, mutation_probability, mutation_operator);
         offspring_new_population = combine(offspring_selected, crossovered_population, mutated_population);
         base_population = base_new_population;
         offspring_population = offspring_new_population;
+        iter++;
     }
     return get_first_front(fronts);
+}
+
+template<typename T>
+INSGA<T>::INSGA(QoSCriterion w) : _w(w)
+{
 }
