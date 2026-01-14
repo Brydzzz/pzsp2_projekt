@@ -5,19 +5,19 @@
 #pragma once
 
 #include "Graph.h"
-#include <map.h>
+#include <map>
 
 
 class Individual {
   public:
     std::vector<std::vector<Node>> paths;
-    const Graph<NetStat> &graph;
+    const Graph<NetStat>* graph;
     std::map<Edge<NetStat>, int> flow_left;
 
     Individual(std::vector<std::vector<Node>> &paths,
-               const Graph<NetStat> &graph);
+               const Graph<NetStat>* graph);
 };
 
-std::vector<Individual> individual_population_generator(int population_size);
+std::vector<Individual> individual_population_generator(int population_size, const Graph<NetStat>& graph);
 std::vector<float> individual_target_function(Individual indiv);
 std::vector<float> individual_proper_target_function(Individual indiv);

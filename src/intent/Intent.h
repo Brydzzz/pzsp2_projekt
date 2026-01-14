@@ -6,7 +6,7 @@
 
 class Intent {
 
-    void createIntentForPath(Graph<NetStat> &graph, std::vector<Node> &path);
+    void createIntentForPath(const Graph<NetStat> &graph, std::vector<Node> &path);
 
   public:
     Intent() = default;
@@ -15,7 +15,7 @@ class Intent {
     void setDemand(Node &from, Node &to, unsigned int demand);
     void randomizeIntent(std::vector<Node> &nodes, int minValue = 0,
                          int maxValue = 10, int seed = 0);
-    void randomizeIntent(Graph<NetStat> &graph, int seed = 0);
+    void randomizeIntent(const Graph<NetStat> &graph, int seed = 0);
     std::vector<std::vector<unsigned int>>
     getIntentInNodeOrder(std::vector<Node> &nodes);
 };

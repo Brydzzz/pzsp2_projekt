@@ -2,10 +2,10 @@
 #include "Intent.h"
 
 Individual::Individual(std::vector<std::vector<Node>> &paths,
-                       const Graph<NetStat> &graph)
+                       const Graph<NetStat>* graph)
     : paths(paths), graph(graph) {
-    for (const Node &node : graph.getNodes()) {
-        for (const Edge<NetStat> edge : graph.getEdgesOf(node)) {
+    for (const Node &node : graph->getNodes()) {
+        for (const Edge<NetStat>& edge : graph->getEdgesOf(node)) {
             flow_left[edge] = edge.toInt();
         }
     }
@@ -14,12 +14,12 @@ Individual::Individual(std::vector<std::vector<Node>> &paths,
 Individual generate_random_individual(const Graph<NetStat>& graph, const Intent& intentGenerator) 
 {
     std::vector<std::vector<Node>> paths;
-    Individual indiv(paths, graph);
+    Individual indiv(paths, &graph);
     for (auto intent : intentGenerator.intents)
     {
         Node startNode = intent.first.first;
         Node endNode = intent.first.second;
-        indiv.paths.push_back(indiv.graph.generateRandomPath(startNode, endNode, intent.second));
+        indiv.paths.push_back(indiv.graph->generateRandomPath(startNode, endNode, intent.second, indiv.flow_left));
     }
     return indiv;
 };
@@ -43,9 +43,9 @@ std::vector<float> individual_target_function(Individual indiv)
     float loss = 0.0;
     for (auto path : indiv.paths)
     {
-        for (int i = 0; i < path.size() -1; i++)
+        for (size_t i = 0; i < path.size() -1; i++)
         {
-            auto edge = indiv.graph.getEdgeBetween(path[i], path[i+1]);
+            auto edge = indiv.graph->getEdgeBetween(path[i], path[i+1]);
             if (edge.has_value())
             {
                 delay += edge->weight.delay;
@@ -54,7 +54,7 @@ std::vector<float> individual_target_function(Individual indiv)
             }
         }
     }
-    for (auto edge = indiv.flow_left.begin(); edge != indiv.graph.flow_left.end(); edge++)
+    for (auto edge = indiv.flow_left.begin(); edge != indiv.flow_left.end(); edge++)
     {
         if (edge->second < 0)
         {
@@ -74,9 +74,9 @@ std::vector<float> individual_proper_target_function(Individual indiv)
     float loss = 0.0;
     for (auto path : indiv.paths)
     {
-        for (int i = 0; i < path.size() -1; i++)
+        for (size_t i = 0; i < path.size() -1; i++)
         {
-            auto edge = indiv.graph.getEdgeBetween(path[i], path[i+1]);
+            auto edge = indiv.graph->getEdgeBetween(path[i], path[i+1]);
             if (edge.has_value())
             {
                 delay += edge->weight.delay;

@@ -23,7 +23,7 @@ void Intent::randomizeIntent(std::vector<Node> &nodes, int minValue,
     }
 }
 
-void Intent::createIntentForPath(Graph<NetStat> &graph,
+void Intent::createIntentForPath(const Graph<NetStat> &graph,
                                  std::vector<Node> &path) {
     if (path.size() < 2) {
         return;
@@ -44,7 +44,7 @@ void Intent::createIntentForPath(Graph<NetStat> &graph,
     setDemand(path[0], path.back(), getRandomFromRange(0, maxThroughput));
 }
 
-void Intent::randomizeIntent(Graph<NetStat> &graph, int seed) {
+void Intent::randomizeIntent(const Graph<NetStat> &graph, int seed) {
     srand(seed);
     intents.clear();
     for (Node &fromNode : graph.getNodes()) {

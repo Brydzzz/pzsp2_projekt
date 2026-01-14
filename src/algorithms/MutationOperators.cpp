@@ -1,3 +1,5 @@
+#include "MutationOperators.h"
+#include "../graph/Individual.h"
 #include <algorithm>
 #include <map>
 #include <random>
@@ -12,24 +14,28 @@ INSGAMutationVariantAStrategy(const std::vector<Individual> &xs,
 
     const float mutation_probability = params.empty() ? 0.5 : params[0];
     static thread_local std::mt19937 rng{std::random_device{}()};
-    bool decision = [&](float p) { std::bernoulli_distribution(p)(rng); };
+    auto decision = [&](double prob) -> bool {
+        std::bernoulli_distribution dist(prob);
+        return dist(rng);
+    };
+
 
     auto mixByDfs =
-        [&](const Graph<NetStat> &graph,
-            const std::vector<Node> &parentPath const std::vector<Node>
+        [&](const Graph<NetStat>* graph,
+            const std::vector<Node> &parentPath, const std::vector<Node>
                 &mutantPath) -> std::vector<Node> {
         const Node source = parentPath.front();
         const Node terminal = parentPath.back();
 
         std::map<Node, std::vector<Node>> adj;
-        void addPath = [&](const std::vector<Node> &path) {
-            for (int i = 0; i + 1 < path.size(); i++) {
+        auto addPath = [&](const std::vector<Node> &path) {
+            for (size_t i = 0; i + 1 < path.size(); i++) {
                 Node u = path[i];
                 Node v = path[i + 1];
-                if (g.hadEdge(u, v)) {
+                if (graph->hasEdge(u, v)) {
                     adj[u].push_back(v);
                 }
-                if (g.hasEdge(v, u)) {
+                if (graph->hasEdge(v, u)) {
                     adj[v].push_back(u);
                 }
             }
@@ -47,15 +53,15 @@ INSGAMutationVariantAStrategy(const std::vector<Individual> &xs,
             auto adj_it = adj.find(node);
             if (adj_it == adj.end())
                 continue;
-            auto &neightbours = it->second;
-            std::shuffle(neightbour.begin(), neightbours.end(), rng);
+            auto &neightbours = adj_it->second;
+            std::shuffle(neightbours.begin(), neightbours.end(), rng);
 
             for (const Node &neightbour : neightbours) {
                 if (visited.find(neightbour) != visited.end()) {
                     continue;
                 }
                 visited.insert(neightbour);
-                dfs_tree_parent[neightbour] = node;
+                dfs_tree_parent.insert_or_assign(neightbour, node);
                 stack.push_back(neightbour);
             }
         }
@@ -64,8 +70,8 @@ INSGAMutationVariantAStrategy(const std::vector<Individual> &xs,
         }
 
         std::vector<Node> newPath;
-        for (Node current = terminal; current != start;
-             current = dfs_tree_parent[current]) {
+        for (Node current = terminal; current != source;
+             current = dfs_tree_parent.at(current)) {
             newPath.push_back(current);
         }
         newPath.push_back(source);
@@ -74,16 +80,16 @@ INSGAMutationVariantAStrategy(const std::vector<Individual> &xs,
     };
 
     std::vector<Individual> mutated = xs;
-    for (int i = 0; i < mutated.size(); i++) {
-        if (!decicision(mutation_probability))
+    for (size_t i = 0; i < mutated.size(); i++) {
+        if (!decision(mutation_probability))
             continue;
 
         Individual &specimen = mutated[i];
         for (auto &path : specimen.paths) {
             auto mutant =
-                specimen.graph.generateRandomPath(path.front(), path.back());
+                specimen.graph->generateRandomPath(path.front(), path.back());
 
-            path = mixByDfs(ind.graph, path, mutant);
+            path = mixByDfs(specimen.graph, path, mutant);
         }
     }
 
