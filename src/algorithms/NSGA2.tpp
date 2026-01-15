@@ -217,6 +217,7 @@ NSGA2<T>::solve(int popsize, int iterations, target_function<T> target,
     auto new_population = generate_init_pop(population_gen, popsize);
     auto combined_population = join_vector(population, new_population);
     for (int iter = 0; iter < iterations; iter++) {
+        std::cout << "NSGA2 Iteration: " << iter << std::endl;
         auto best = select_best(combined_population, popsize, target);
         population = best;
         if (iter + 1 < iterations) {
