@@ -134,8 +134,7 @@ void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent,
 }
 
 template <typename T>
-std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
-                                               unsigned int intent) {
+std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) const{
     check_node_existance(startNode);
     check_node_existance(endNode);
 
@@ -176,52 +175,51 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
         usedNodes.erase(path.back());
         path.pop_back();
     }
-    updateEdgeFlows(path, intent);
     return path;
 }
 
-template <typename T>
-std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) const {
-    check_node_existance(startNode);
-    check_node_existance(endNode);
+// template <typename T>
+// std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) const {
+//     check_node_existance(startNode);
+//     check_node_existance(endNode);
 
-    std::vector<Node> path;
-    // to keep the adjacencyList intact we create a permutations for each node,
-    // so that the order in which we take edges is randomized resulting in
-    // random paths
-    std::map<Node, std::vector<int>> pathChoices;
+//     std::vector<Node> path;
+//     // to keep the adjacencyList intact we create a permutations for each node,
+//     // so that the order in which we take edges is randomized resulting in
+//     // random paths
+//     std::map<Node, std::vector<int>> pathChoices;
 
-    std::mt19937 randomDevice = createRandomDevice();
+//     std::mt19937 randomDevice = createRandomDevice();
 
-    std::set<Node> usedNodes;
-    usedNodes.insert(startNode);
-    path.push_back(startNode);
-    while (path.size() and path.back() != endNode) {
-        auto lastNode = path.back();
-        if (pathChoices.find(lastNode) == pathChoices.end()) {
-            pathChoices[lastNode] = createRandomizedPermutation(
-                adjacencyList.at(lastNode).size(), randomDevice);
-        }
-        std::optional<Node> nextNode = std::nullopt;
-        while (pathChoices[lastNode].size()) {
-            int pathChoice = getNextPathChoice(pathChoices[lastNode]);
-            nextNode = adjacencyList.at(lastNode)[pathChoice].second_node;
-            if (usedNodes.find(nextNode.value()) != usedNodes.end()) {
-                nextNode = std::nullopt;
-                continue;
-            }
-            break;
-        }
-        if (nextNode) {
-            path.push_back(nextNode.value());
-            usedNodes.insert(path.back());
-            continue;
-        }
-        usedNodes.erase(path.back());
-        path.pop_back();
-    }
-    return path;
-}
+//     std::set<Node> usedNodes;
+//     usedNodes.insert(startNode);
+//     path.push_back(startNode);
+//     while (path.size() and path.back() != endNode) {
+//         auto lastNode = path.back();
+//         if (pathChoices.find(lastNode) == pathChoices.end()) {
+//             pathChoices[lastNode] = createRandomizedPermutation(
+//                 adjacencyList.at(lastNode).size(), randomDevice);
+//         }
+//         std::optional<Node> nextNode = std::nullopt;
+//         while (pathChoices[lastNode].size()) {
+//             int pathChoice = getNextPathChoice(pathChoices[lastNode]);
+//             nextNode = adjacencyList.at(lastNode)[pathChoice].second_node;
+//             if (usedNodes.find(nextNode.value()) != usedNodes.end()) {
+//                 nextNode = std::nullopt;
+//                 continue;
+//             }
+//             break;
+//         }
+//         if (nextNode) {
+//             path.push_back(nextNode.value());
+//             usedNodes.insert(path.back());
+//             continue;
+//         }
+//         usedNodes.erase(path.back());
+//         path.pop_back();
+//     }
+//     return path;
+// }
 
 template <typename T>
 std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,

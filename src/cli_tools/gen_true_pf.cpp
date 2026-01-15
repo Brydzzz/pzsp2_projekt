@@ -10,7 +10,7 @@
 #include <random>
 #include <string>
 #include <vector>
-
+#include "MutationOperators.h"
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         std::cerr << "Usage: " << argv[0]
@@ -45,42 +45,17 @@ int main(int argc, char *argv[]) {
     auto nodes = graph.getNodes();
     auto intents = intentGenerator.getIntentInNodeOrder(nodes);
 
-    // TODO: integrate real mutation, FOR NOW REPLACES MUTATION
-    auto crossing = [&](std::vector<Individual> paths,
-                        std::vector<float> params) {
-        for (auto indiv : paths) {
-            for (auto &path : indiv.paths) {
-                float random = rand();
-                float prec = random / (float)RAND_MAX;
-                if (prec > params[1])
-                    continue;
-                auto start = path.front();
-                auto end = path.back();
-                auto newPath = graph.generateRandomPath(start, end);
-                path = newPath;
-            }
-        }
-        return paths;
-    };
+    
 
     auto pop_generator = [&](int population_size) {
         return individual_population_generator(population_size, graph);
     };
 
     // TODO change because we are getting rid of flow_left
-    auto distance_function = [&](const Individual &first,
-                                 const Individual &second) {
-        double distance = 0.0;
-        for (const auto &[key, val1] : first.flow_left) {
-            double val2 = second.flow_left.at(key);
-            distance += std::abs(val1 - val2);
-        }
-        return distance;
-    };
-
+    
     std::vector<Individual> solutions_set;
 
-    SPEA2<Individual> spea2(distance_function);
+    SPEA2<Individual> spea2(individual_distance_function);
     std::vector<float> spea2_params = {5.0};
 
     NSGA2<Individual> nsga2;
@@ -95,19 +70,19 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < 10; i++) {
         std::cout << "SPEA2 Run No" << i << std::endl;
         auto spea2_indivs = spea2.solve(30, 10, individual_target_function,
-                                        crossing, pop_generator, spea2_params);
+                                        INSGAMutationVariantAStrategy, pop_generator, spea2_params);
         solutions_set.insert(solutions_set.end(), spea2_indivs.begin(),
                              spea2_indivs.end());
 
         std::cout << "NSGA2 Run No" << i << std::endl;
         auto nsga2_indivs = nsga2.solve(30, 10, individual_target_function,
-                                        crossing, pop_generator, nsga2_params);
+                                        INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
         solutions_set.insert(solutions_set.end(), nsga2_indivs.begin(),
                              nsga2_indivs.end());
 
         std::cout << "INSGA Run No" << i << std::endl;
         auto insga_indivs = insga.solve(10, 10, individual_target_function,
-                                        crossing, pop_generator, insga_params);
+                                        INSGAMutationVariantAStrategy, pop_generator, insga_params);
         solutions_set.insert(solutions_set.end(), insga_indivs.begin(),
                              insga_indivs.end());
     }

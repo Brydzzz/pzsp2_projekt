@@ -5,13 +5,14 @@
 #pragma once
 
 #include "Graph.h"
+#include <functional>
 #include <map>
-
+template <typename T>
+using target_function = std::function<std::vector<float>(T)>;
 class Individual {
   public:
     std::vector<std::vector<Node>> paths;
     const Graph<NetStat> *graph;
-    std::map<Edge<NetStat>, int> flow_left;
 
     Individual() = default;
 
@@ -24,3 +25,5 @@ individual_population_generator(int population_size,
                                 const Graph<NetStat> &graph);
 std::vector<float> individual_target_function(Individual indiv);
 std::vector<float> individual_proper_target_function(Individual indiv);
+float individual_distance_function(target_function<Individual> target, const Individual &first,
+                                 const Individual &second);

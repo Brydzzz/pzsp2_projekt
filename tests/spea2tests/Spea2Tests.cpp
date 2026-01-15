@@ -25,19 +25,21 @@ std::vector<float> mock_target(int number) {
 
 std::vector<int> mock_population(int number) { return {1, 2 - number, 3, 0}; }
 
-std::vector<int> mock_cross(std::vector<int> pop, std::vector<float> params) {
+std::vector<int> mock_mut(std::vector<int> pop, std::vector<float> params) {
     if (params.size() > 2) {
         return pop;
     }
     return pop;
 }
 
-float distance(int n1, int n2) { return std::abs(n1 - n2); }
+float distance(target_function<int> target, int n1, int n2) { 
+    (void)target;
+    return std::abs(n1 - n2); }
 
 template <typename T>
 class SPEA2Wrapper : SPEA2<T> {
   public:
-    SPEA2Wrapper(std::function<float(T, T)> distance) : SPEA2<T>(distance) {}
+    SPEA2Wrapper(std::function<float(target_function<T> target, T, T)> distance) : SPEA2<T>(distance) {}
 
     std::vector<int>
     wrap_calculate_strength(std::vector<std::vector<float>> objectives,
@@ -52,7 +54,7 @@ class SPEA2Wrapper : SPEA2<T> {
     }
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     wrap_calculate_distances(std::vector<T> pop) {
-        return this->calculate_distances(pop);
+        return this->calculate_distances(mock_target, pop);
     }
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     wrap_calculate_fitness(std::vector<std::vector<float>> objectives,
@@ -80,11 +82,11 @@ class SPEA2Wrapper : SPEA2<T> {
     }
     std::vector<int> wrap_solve(int popsize, int iterations,
                                 target_function<T> target,
-                                strategy<T> cross_strat,
+                                strategy<T> mut_strat,
                                 population_generator<T> population_gen,
                                 std::vector<float> &params) {
 
-        return this->solve(popsize, iterations, target, cross_strat,
+        return this->solve(popsize, iterations, target, mut_strat,
                            population_gen, params);
     }
 };
@@ -184,7 +186,7 @@ TEST(SPEA2Tests, test_solve) {
     std::srand(42);
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<float> params = {0.0};
-    auto solved = spea2.wrap_solve(4, 1, mock_target, mock_cross,
+    auto solved = spea2.wrap_solve(4, 1, mock_target, mock_mut,
                                    mock_population, params);
     std::vector<int> result = {0, -2, -2, 0};
     ASSERT_EQ(result, solved);
