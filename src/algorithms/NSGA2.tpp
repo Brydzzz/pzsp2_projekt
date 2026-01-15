@@ -75,17 +75,20 @@ NSGA2<T>::sort_nondominated_algorithm(std::vector<T> &population,
     std::vector<std::vector<int>> pareto_fronts(1);
     std::vector<int> dominated_by_count(population_size, 0);
 
+    std::vector<pareto::point<float, 3>> points(population_size);
     for (int i = 0; i < population_size; i++) {
-        auto individual = population[i];
-        auto objective = target(individual);
-        auto individual_point =
-            pareto::point<float, 3>(objective.begin(), objective.end());
+        auto objective_value = target(population[i]);
+        points[i] = pareto::point<float, 3>(objective_value.begin(),
+                                            objective_value.end());
+    }
+
+    for (int i = 0; i < population_size; i++) {
+        auto &individual_point = points[i];
 
         for (int j = 0; j < population_size; j++) {
-            auto other_individual = population[j];
-            auto other_objective = target(other_individual);
-            auto other_point = pareto::point<float, 3>(other_objective.begin(),
-                                                       other_objective.end());
+            if (i == j)
+                continue;
+            auto &other_point = points[j];
 
             if (individual_point.strongly_dominates(other_point)) {
                 dominates_points[i].push_back(j);
@@ -218,8 +221,7 @@ NSGA2<T>::solve(int popsize, int iterations, target_function<T> target,
     auto combined_population = join_vector(population, new_population);
     for (int iter = 0; iter < iterations; iter++) {
         std::cout << "NSGA2 Iteration: " << iter << std::endl;
-        auto best = select_best(combined_population, popsize, target);
-        population = best;
+        population = select_best(combined_population, popsize, target);
         if (iter + 1 < iterations) {
             new_population = cross_strat(population, params);
             combined_population = join_vector(population, new_population);

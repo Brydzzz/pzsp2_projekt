@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
                                        crossing, pop_generator, nsga2_params);
         });
         std::thread t3([&]() {
-            insga_indivs = insga.solve(10, 5, individual_target_function,
+            insga_indivs = insga.solve(30, 3, individual_target_function,
                                        crossing, pop_generator, insga_params);
         });
 
