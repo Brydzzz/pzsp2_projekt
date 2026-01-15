@@ -6,17 +6,14 @@
 
 #include "Evolutionary_Algorithm.h"
 #include "MutationOperators.h"
+#include <pareto/front.h>
+#include <pareto/kd_tree.h>
 
-enum class QoSCriterion { Throughput, Loss, Delay };
+enum class QoSCriterion { Delay, Loss, Jitter };
 
-template <typename T>
-struct INSGASortThroughputComparator;
-
-template <typename T>
-struct INSGASortLossComparator;
-
-template <typename T>
 struct INSGASortDelayComparator;
+struct INSGASortLossComparator;
+struct INSGASortJitterComparator;
 
 template <typename T>
 class INSGA : public Evolutionary_Algorithm<T> {
@@ -33,15 +30,16 @@ class INSGA : public Evolutionary_Algorithm<T> {
     Population empty_offspring_population() const;
     Population extend_population(const Population &base_population,
                                  const Population &offspring_population) const;
-    Fronts
-    non_dominance_sorting(const Population &base_extended_population) const;
-    Fronts sort_insga(const Fronts &fronts, QoSCriterion w) const;
-    Population elite_parent_selection(const Fronts &sorted_fronts) const;
+    Fronts non_dominance_sorting(const Population &base_extended_population,
+                                 target_function<T> target) const;
+    Fronts sort_insga(const Fronts &fronts, QoSCriterion w,
+                      target_function<T> target) const;
+    Population elite_parent_selection(const Fronts &sorted_fronts, int n) const;
     Population selection(const Population &base_new_population) const;
     Population crossover_insga(const Population &offspring_selected,
                                double crossover_probability) const;
     Population mutation(const Population &offspring_selected,
-                        double mutation_probabilit,
+                        double mutation_probability,
                         strategy<T> mutation_strategy) const;
     Population combine(const Population &offspring_selected,
                        const Population &crossovered_population,
@@ -49,6 +47,7 @@ class INSGA : public Evolutionary_Algorithm<T> {
     Front get_first_front(const Fronts &fronts) const;
 
   public:
+    INSGA(QoSCriterion w);
     Population generate_init_pop(population_generator<T> generator,
                                  int pop) override;
     Population crossover(strategy<T> strat, Population population,
