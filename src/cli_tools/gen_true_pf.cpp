@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     std::vector<float> insga_params = {mutation_probability,
                                        crossover_probability};
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1; i++) {
         std::cout << "SPEA2 Run No" << i << std::endl;
         auto spea2_indivs = spea2.solve(30, 10, individual_target_function,
                                         INSGAMutationVariantAStrategy, pop_generator, spea2_params);
