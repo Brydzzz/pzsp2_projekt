@@ -9,13 +9,14 @@
 
 template <typename T>
 class SPEA2 : public Evolutionary_Algorithm<T> {
-    std::function<float(target_function<T>, T, T)> distance_function;
+    std::function<float(const std::vector<float> &, const std::vector<float> &)>
+        distance_function;
 
   protected:
     std::vector<T> generate_init_pop(population_generator<T> generator,
                                      int pop) override;
     std::vector<T> mutation(strategy<T> strat, std::vector<T> population,
-                             const std::vector<float> &params) override;
+                            const std::vector<float> &params) override;
     std::vector<int>
     calculate_strength(std::vector<std::vector<float>> &objectives,
                        std::vector<T> &population);
@@ -27,7 +28,7 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                           std::vector<T> &combined,
                           std::vector<int> &strengths);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-    calculate_distances(target_function<T> target,std::vector<T> &combined);
+    calculate_distances(target_function<T> target, std::vector<T> &combined);
     std::vector<T> get_newset(unsigned int setsize,
                               std::vector<std::vector<float>> &objectives,
                               std::vector<T> &combined,
@@ -41,7 +42,10 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                                      std::vector<T> &pool2);
 
   public:
-    SPEA2(std::function<float(target_function<T>,T, T)> distance) : distance_function(distance) {}
+    SPEA2(std::function<float(const std::vector<float> &,
+                              const std::vector<float> &)>
+              distance)
+        : distance_function(distance) {}
 
     std::vector<T> solve(int popsize, int iterations, target_function<T> target,
                          strategy<T> mut_strat,

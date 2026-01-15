@@ -25,5 +25,5 @@ individual_population_generator(int population_size,
                                 const Graph<NetStat> &graph);
 std::vector<float> individual_target_function(Individual indiv);
 std::vector<float> individual_proper_target_function(Individual indiv);
-float individual_distance_function(target_function<Individual> target, const Individual &first,
-                                 const Individual &second);
+float individual_distance_function(const std::vector<float> &target_first,
+                                   const std::vector<float> &target_second);

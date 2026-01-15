@@ -67,23 +67,25 @@ int main(int argc, char *argv[]) {
     std::vector<float> insga_params = {mutation_probability,
                                        crossover_probability};
 
+    int iterations_alg = 10;
+    int populations_alg = 10;
     for (int i = 0; i < iterations; i++) {
         std::cout << "SPEA2 Run No" << i + 1 << std::endl;
         std::vector<Individual> spea2_indivs, nsga2_indivs, insga_indivs;
         std::thread t1([&]() {
-            spea2_indivs = spea2.solve(30, 3, individual_target_function,
-                                       INSGAMutationVariantAStrategy,
-                                       pop_generator, spea2_params);
+            spea2_indivs = spea2.solve(
+                populations_alg, iterations_alg, individual_target_function,
+                INSGAMutationVariantAStrategy, pop_generator, spea2_params);
         });
         std::thread t2([&]() {
-            nsga2_indivs = nsga2.solve(30, 3, individual_target_function,
-                                       INSGAMutationVariantAStrategy,
-                                       pop_generator, nsga2_params);
+            nsga2_indivs = nsga2.solve(
+                populations_alg, iterations_alg, individual_target_function,
+                INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
         });
         std::thread t3([&]() {
-            insga_indivs = insga.solve(30, 3, individual_target_function,
-                                       INSGAMutationVariantAStrategy,
-                                       pop_generator, insga_params);
+            insga_indivs = insga.solve(
+                populations_alg, iterations_alg, individual_target_function,
+                INSGAMutationVariantAStrategy, pop_generator, insga_params);
         });
 
         t1.join();

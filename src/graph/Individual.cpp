@@ -3,8 +3,7 @@
 
 Individual::Individual(std::vector<std::vector<Node>> &paths,
                        const Graph<NetStat> *graph)
-    : paths(paths), graph(graph) {
-}
+    : paths(paths), graph(graph) {}
 
 Individual generate_random_individual(const Graph<NetStat> &graph,
                                       const Intent &intentGenerator) {
@@ -13,8 +12,8 @@ Individual generate_random_individual(const Graph<NetStat> &graph,
     for (auto intent : intentGenerator.intents) {
         Node startNode = intent.first.first;
         Node endNode = intent.first.second;
-        indiv.paths.push_back(indiv.graph->generateRandomPath(
-            startNode, endNode));
+        indiv.paths.push_back(
+            indiv.graph->generateRandomPath(startNode, endNode));
     }
     return indiv;
 };
@@ -32,18 +31,14 @@ individual_population_generator(int population_size,
     return population;
 }
 
-
-float individual_distance_function(target_function<Individual> target, const Individual &first,
-                                 const Individual &second) {
-        auto target_first = target(first);
-        auto target_second = target(second);
-        float distance = 0.0;
-        for (size_t i = 0; i < target_first.size(); i++){
-            distance += std::abs(target_first[i] - target_second[i]);
-        }
-        return distance;
-    };
-
+float individual_distance_function(const std::vector<float> &target_first,
+                                   const std::vector<float> &target_second) {
+    float distance = 0.0;
+    for (size_t i = 0; i < target_first.size(); i++) {
+        distance += std::abs(target_first[i] - target_second[i]);
+    }
+    return distance;
+};
 
 std::vector<float> individual_target_function(Individual indiv) {
     float delay = 0;
