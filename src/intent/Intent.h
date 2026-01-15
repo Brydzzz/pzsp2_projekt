@@ -20,6 +20,6 @@ class Intent {
     std::vector<std::vector<unsigned int>>
     getIntentInNodeOrder(std::vector<Node> &nodes);
 
-    friend std::ostream& operator<<(std::ostream& os, const Intent& intent);
-    friend std::istream& operator>>(std::istream& is, Intent& intent);
+    friend std::ostream &operator<<(std::ostream &os, const Intent &intent);
+    friend std::istream &operator>>(std::istream &is, Intent &intent);
 };

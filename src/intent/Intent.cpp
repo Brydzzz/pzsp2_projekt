@@ -86,7 +86,7 @@ std::ostream &operator<<(std::ostream &os, const Intent &intent) {
     return os;
 }
 
-std::istream& operator>>(std::istream& is, Intent& intent) {
+std::istream &operator>>(std::istream &is, Intent &intent) {
     intent.intents.clear();
 
     Node source("temp"), dest("temp");
