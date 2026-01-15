@@ -149,6 +149,9 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize,
                     }
                 }
             }
+            for (auto dist : sorted_distances) {
+                dist.erase(dist.begin() + worst);
+            }
             sorted_distances.erase(sorted_distances.begin() + worst);
             non_dominated.erase(non_dominated.begin() + worst);
         }
