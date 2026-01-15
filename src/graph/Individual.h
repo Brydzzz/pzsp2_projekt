@@ -13,6 +13,8 @@ class Individual {
     const Graph<NetStat> *graph;
     std::map<Edge<NetStat>, int> flow_left;
 
+    Individual() = default;
+
     Individual(std::vector<std::vector<Node>> &paths,
                const Graph<NetStat> *graph);
 };

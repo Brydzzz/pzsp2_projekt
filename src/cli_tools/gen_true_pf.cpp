@@ -1,5 +1,6 @@
 #include "GraphParser.h"
-// #include "INSGA.h"
+#include "INSGA.h"
+#include "Individual.h"
 #include "Intent.h"
 #include "NSGA2.h"
 #include "Node.h"
@@ -9,42 +10,6 @@
 #include <random>
 #include <string>
 #include <vector>
-
-// TODO: change to Individual from graph/ when it will be ready
-class Individual {
-  public:
-    std::vector<std::vector<Node>> paths;
-    Graph<NetStat> graph;
-    Individual() = default;
-    Individual(std::vector<std::vector<Node>> &paths, Graph<NetStat> graph)
-        : paths(paths), graph(graph) {}
-};
-
-template <typename T>
-std::pair<bool, Graph<T>> are_paths_correct(Individual paths,
-                                            Intent intentGenerator) {
-    Graph<NetStat> checkGraph = paths.graph;
-    for (auto path : paths.paths) {
-        std::vector<Edge<T>> edges;
-        for (unsigned int i = 0; i < path.size() - 1; i++) {
-            auto edge = checkGraph.getEdgeBetween(path[i], path[i + 1]);
-
-            if (!edge.has_value()) {
-                return {false, paths.graph};
-            }
-
-            if (checkGraph.flow_left[*edge] <
-                static_cast<int>(intentGenerator.getDemand(
-                    path[0], path[path.size() - 1]))) {
-                return {false, paths.graph};
-            }
-            checkGraph.flow_left[*edge] =
-                (*edge).toInt() -
-                intentGenerator.getDemand(path[0], path[path.size() - 1]);
-        }
-    }
-    return {true, checkGraph};
-}
 
 int main(int argc, char *argv[]) {
     if (argc < 4) {
@@ -80,64 +45,7 @@ int main(int argc, char *argv[]) {
     auto nodes = graph.getNodes();
     auto intents = intentGenerator.getIntentInNodeOrder(nodes);
 
-    auto generate_random_path = [&]() -> Individual {
-        std::vector<std::vector<Node>> paths;
-        Individual indiv(paths, graph);
-        for (auto intent : intentGenerator.intents) {
-            Node startNode = intent.first.first;
-            Node endNode = intent.first.second;
-            indiv.paths.push_back(indiv.graph.generateRandomPath(
-                startNode, endNode, intent.second));
-        }
-        return indiv;
-    };
-    auto generate_random_paths = [&](int pop_num) -> std::vector<Individual> {
-        std::vector<Individual> pops;
-        for (int i = 0; i < pop_num; i++) {
-            pops.push_back(generate_random_path());
-        }
-        return pops;
-    };
-
-    // auto cross_two_paths = [&](Individual first_paths,
-    //                            Individual second_paths) -> Individual {
-    //     Individual crossed_paths = first_paths;
-    //     for (unsigned int i = 0; i < first_paths.paths.size(); i++) {
-    //         if (rand() % 10 < 5) {
-    //             auto try_paths = crossed_paths;
-    //             try_paths.paths[i] = second_paths.paths[i];
-    //             auto try_paths_result =
-    //                 are_paths_correct<NetStat>(try_paths, intentGenerator);
-    //             if (try_paths_result.first) {
-    //                 crossed_paths = try_paths;
-    //             }
-    //         }
-    //     }
-    //     return crossed_paths;
-    // };
-
-    // auto crossing = [&](std::vector<Individual> paths,
-    //                     std::vector<float> params) {
-    //     std::vector<Individual> new_paths;
-    //     new_paths.reserve(paths.size());
-
-    //     if (paths.size() < 2)
-    //         return paths;
-
-    //     for (unsigned int i = 0; i < paths.size(); i++) {
-    //         auto first_paths = paths[i];
-    //         auto second_paths = paths[(i + 1) % paths.size()];
-
-    //         if (rand() % 10 < params[0]) {
-    //             new_paths.push_back(first_paths);
-    //         } else {
-    //             auto crossed_path = cross_two_paths(first_paths,
-    //             second_paths); new_paths.push_back(crossed_path);
-    //         }
-    //     }
-    //     return new_paths;
-    // };
-
+    // TODO: integrate real mutation, FOR NOW REPLACES MUTATION
     auto crossing = [&](std::vector<Individual> paths,
                         std::vector<float> params) {
         for (auto indiv : paths) {
@@ -155,56 +63,16 @@ int main(int argc, char *argv[]) {
         return paths;
     };
 
-    auto target_function = [&](Individual indiv) {
-        int delay = 0;
-        int jitter = 0;
-        int loss = 0;
-        for (auto path : indiv.paths) {
-            for (unsigned int i = 0; i < path.size() - 1; i++) {
-                auto edge = indiv.graph.getEdgeBetween(path[i], path[i + 1]);
-                if (edge.has_value()) {
-                    delay += (*edge).weight.delay;
-                    jitter += (*edge).weight.jitter;
-                    loss += (*edge).weight.loss;
-                }
-            }
-        }
-        for (auto edge = indiv.graph.flow_left.begin();
-             edge != indiv.graph.flow_left.end(); edge++) {
-            if (edge->second < 0) {
-                delay += edge->second * 1000;
-                loss += edge->second * 1000;
-                jitter += edge->second * 1000;
-            }
-        }
-        return std::vector<float>{static_cast<float>(delay),
-                                  static_cast<float>(loss),
-                                  static_cast<float>(jitter)};
+    auto pop_generator = [&](int population_size) {
+        return individual_population_generator(population_size, graph);
     };
 
-    auto proper_target = [&](Individual indiv) {
-        int delay = 0;
-        int jitter = 0;
-        int loss = 0;
-        for (auto path : indiv.paths) {
-            for (unsigned int i = 0; i < path.size() - 1; i++) {
-                auto edge = indiv.graph.getEdgeBetween(path[i], path[i + 1]);
-                if (edge.has_value()) {
-                    delay += (*edge).weight.delay;
-                    jitter += (*edge).weight.jitter;
-                    loss += (*edge).weight.loss;
-                }
-            }
-        }
-        return std::vector<float>{static_cast<float>(delay),
-                                  static_cast<float>(loss),
-                                  static_cast<float>(jitter)};
-    };
+    // TODO change because we are getting rid of flow_left
     auto distance_function = [&](const Individual &first,
                                  const Individual &second) {
         double distance = 0.0;
-        for (const auto &[key, val1] : first.graph.flow_left) {
-            double val2 = second.graph.flow_left.at(key);
+        for (const auto &[key, val1] : first.flow_left) {
+            double val2 = second.flow_left.at(key);
             distance += std::abs(val1 - val2);
         }
         return distance;
@@ -218,52 +86,40 @@ int main(int argc, char *argv[]) {
     NSGA2<Individual> nsga2;
     std::vector<float> nsga2_params = {5.0, 1};
 
-    // INSGA<Individual> insga(QoSCriterion::Loss);
-    // double mutation_probability = 0.5;
-    // double crossover_probability = 0.0;
-    // std::vector<float> insga_params = {mutation_probability,
-    //                                    crossover_probability};
+    INSGA<Individual> insga(QoSCriterion::Loss);
+    float mutation_probability = 0.5;
+    float crossover_probability = 0.0;
+    std::vector<float> insga_params = {mutation_probability,
+                                       crossover_probability};
 
-    // Run each algo 10 times
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 10; i++) {
         std::cout << "SPEA2 Run No" << i << std::endl;
-        auto spea2_indivs = spea2.solve(30, 10, target_function, crossing,
-                                        generate_random_paths, spea2_params);
-        for (const auto &indiv : spea2_indivs) {
-            if (are_paths_correct<NetStat>(indiv, intentGenerator).first) {
-                solutions_set.push_back(indiv);
-            }
-        }
+        auto spea2_indivs = spea2.solve(30, 10, individual_target_function,
+                                        crossing, pop_generator, spea2_params);
+        solutions_set.insert(solutions_set.end(), spea2_indivs.begin(),
+                             spea2_indivs.end());
 
         std::cout << "NSGA2 Run No" << i << std::endl;
-        auto nsga2_indivs = nsga2.solve(30, 10, target_function, crossing,
-                                        generate_random_paths, nsga2_params);
-        for (const auto &indiv : nsga2_indivs) {
-            if (are_paths_correct<NetStat>(indiv, intentGenerator).first) {
-                solutions_set.push_back(indiv);
-            }
-        }
+        auto nsga2_indivs = nsga2.solve(30, 10, individual_target_function,
+                                        crossing, pop_generator, nsga2_params);
+        solutions_set.insert(solutions_set.end(), nsga2_indivs.begin(),
+                             nsga2_indivs.end());
 
-        // std::cout << "INSGA Run No" << i << std::endl;
-        // auto insga_indivs = insga.solve(10, 5, target_function, crossing,
-        //                                 generate_random_path, insga_params);
-        // solutions_set.insert(solutions_set.end(), insga_indivs.begin(),
-        //                      insga_indivs.end());
-        // for (const auto& indiv : insga_indivs) {
-        //     if (are_paths_correct<NetStat>(indiv, intentGenerator).first) {
-        //         solutions_set.push_back(indiv);
-        //     }
-        // }
+        std::cout << "INSGA Run No" << i << std::endl;
+        auto insga_indivs = insga.solve(10, 10, individual_target_function,
+                                        crossing, pop_generator, insga_params);
+        solutions_set.insert(solutions_set.end(), insga_indivs.begin(),
+                             insga_indivs.end());
     }
 
-    // Build true pareto front approximation
     pareto::front<float, 3, Individual> true_pf;
 
     std::cout << "Building Pareto Front from " << solutions_set.size()
               << " solutions..." << std::endl;
 
     for (const auto &indiv : solutions_set) {
-        std::vector<float> objectives = proper_target(indiv);
+        std::vector<float> objectives =
+            individual_proper_target_function(indiv);
         auto indiv_point =
             pareto::point<float, 3>(objectives.begin(), objectives.end());
         true_pf.insert({indiv_point, indiv});

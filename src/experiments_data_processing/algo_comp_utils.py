@@ -72,7 +72,7 @@ def calculate_objectives_stats(experiments_data: pd.DataFrame) -> pd.DataFrame:
 
 
 def is_raw_data_format_valid(data: pd.DataFrame) -> bool:
-    expected = {"algo", "loss", "delay", "jitter", "valid", "run_id"}
+    expected = {"algo", "loss", "delay", "jitter", "run_id"}
     if set(data.columns) != expected:
         return False
 
@@ -81,7 +81,6 @@ def is_raw_data_format_valid(data: pd.DataFrame) -> bool:
         "loss": "int64",
         "delay": "int64",
         "jitter": "int64",
-        "valid": "bool",
         "run_id": "int64",
     }
     actual_dtypes = data.dtypes.astype(str).to_dict()

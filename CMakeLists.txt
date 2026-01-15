@@ -23,6 +23,7 @@ set(COMMON_SOURCES
     ./src/intent/Intent.cpp
     ./src/graph/GraphParser.cpp
     ./src/graph/Graph.tpp
+    ./src/graph/Individual.cpp
 )
 
 
@@ -43,10 +44,12 @@ target_include_directories(gen_intents PRIVATE ${COMMON_INCLUDES})
 add_executable(gen_true_pf
     ./src/cli_tools/gen_true_pf.cpp
     ${COMMON_SOURCES}
-    ./src/algorithms/SPEA2.h
-    ./src/algorithms/NSGA2.h
-    # ./src/algorithms/INSGA.h
+    ./src/algorithms/SPEA2.tpp
+    ./src/algorithms/NSGA2.tpp
+    ./src/algorithms/INSGA.tpp
+    ./src/algorithms/MutationOperators.cpp
 )
+
 target_compile_options(gen_true_pf PRIVATE
     -Wno-maybe-uninitialized
 )
@@ -57,9 +60,10 @@ target_include_directories(gen_true_pf PRIVATE ${COMMON_INCLUDES} ./src/algorith
 add_executable(gen_algo_compare_data
     ./src/cli_tools/gen_algo_compare_data.cpp
     ${COMMON_SOURCES}
-    ./src/algorithms/SPEA2.h
-    ./src/algorithms/NSGA2.h
-    # ./src/algorithms/INSGA.h
+    ./src/algorithms/SPEA2.tpp
+    ./src/algorithms/NSGA2.tpp
+    ./src/algorithms/INSGA.tpp
+    ./src/algorithms/MutationOperators.cpp
 )
 target_link_libraries(gen_algo_compare_data PRIVATE pareto)
 target_compile_options(gen_algo_compare_data PRIVATE
