@@ -88,8 +88,6 @@ def run_algo_comp(
         print("[bold red]Incorrect true pareto front data format[/bold red].")
         return
 
-    # TODO: handle invalid solutions???
-
     fronts_df = get_fronts_by_run(raw_data, OBJECTIVES)
     metrics_summary = calculate_metrics(fronts_df, true_pf_df, OBJECTIVES)
     objectives_summary = calculate_objectives_stats(raw_data)
