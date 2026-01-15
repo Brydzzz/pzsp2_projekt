@@ -9,6 +9,7 @@
 #include <iostream>
 #include <random>
 #include <string>
+#include <thread>
 #include <vector>
 
 int main(int argc, char *argv[]) {
@@ -94,22 +95,31 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < iterations; i++) {
         std::cout << "SPEA2 Run No" << i + 1 << std::endl;
-        auto spea2_indivs = spea2.solve(30, 3, individual_target_function,
-                                        crossing, pop_generator, spea2_params);
+        std::vector<Individual> spea2_indivs, nsga2_indivs, insga_indivs;
+        std::thread t1([&]() {
+            spea2_indivs = spea2.solve(30, 3, individual_target_function,
+                                       crossing, pop_generator, spea2_params);
+        });
+        std::thread t2([&]() {
+            nsga2_indivs = nsga2.solve(30, 3, individual_target_function,
+                                       crossing, pop_generator, nsga2_params);
+        });
+        std::thread t3([&]() {
+            insga_indivs = insga.solve(10, 5, individual_target_function,
+                                       crossing, pop_generator, insga_params);
+        });
+
+        t1.join();
+        t2.join();
+        t3.join();
         for (const auto &indiv : spea2_indivs) {
             experiments_data.push_back({"SPEA2", i, indiv});
         }
 
-        std::cout << "NSGA2 Run No" << i + 1 << std::endl;
-        auto nsga2_indivs = nsga2.solve(30, 3, individual_target_function,
-                                        crossing, pop_generator, nsga2_params);
         for (const auto &indiv : nsga2_indivs) {
             experiments_data.push_back({"NSGA2", i, indiv});
         }
 
-        std::cout << "INSGA Run No" << i << std::endl;
-        auto insga_indivs = insga.solve(10, 5, individual_target_function,
-                                        crossing, pop_generator, insga_params);
         for (const auto &indiv : insga_indivs) {
             experiments_data.push_back({"INSGA", i, indiv});
         }
