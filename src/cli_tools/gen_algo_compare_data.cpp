@@ -69,38 +69,50 @@ int main(int argc, char *argv[]) {
 
     int iterations_alg = 10;
     int populations_alg = 10;
+    iterations = 10;
+
+    std::vector<std::thread> threads;
+
+    std::vector<std::vector<Individual>> spea2_indivs(iterations),
+        nsga2_indivs(iterations), insga_indivs(iterations);
     for (int i = 0; i < iterations; i++) {
         std::cout << "SPEA2 Run No" << i + 1 << std::endl;
-        std::vector<Individual> spea2_indivs, nsga2_indivs, insga_indivs;
-        std::thread t1([&]() {
-            spea2_indivs = spea2.solve(
+        threads.push_back(std::thread([&, i]() {
+            spea2_indivs[i] = spea2.solve(
                 populations_alg, iterations_alg, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, spea2_params);
-        });
-        std::thread t2([&]() {
-            nsga2_indivs = nsga2.solve(
+        }));
+        threads.push_back(std::thread([&, i]() {
+            nsga2_indivs[i] = nsga2.solve(
                 populations_alg, iterations_alg, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
-        });
-        std::thread t3([&]() {
-            insga_indivs = insga.solve(
+        }));
+        threads.push_back(std::thread([&, i]() {
+            insga_indivs[i] = insga.solve(
                 populations_alg, iterations_alg, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, insga_params);
-        });
+        }));
+    }
 
-        t1.join();
-        t2.join();
-        t3.join();
-        for (const auto &indiv : spea2_indivs) {
-            experiments_data.push_back({"SPEA2", i, indiv});
+    for (unsigned int i = 0; i < threads.size(); i++) {
+        threads[i].join();
+    }
+
+    for (int i = 0; i < iterations; i++) {
+        for (const auto &indiv : insga_indivs[i]) {
+            experiments_data.push_back({"INSGA", i, indiv});
         }
+    }
 
-        for (const auto &indiv : nsga2_indivs) {
+    for (int i = 0; i < iterations; i++) {
+        for (const auto &indiv : nsga2_indivs[i]) {
             experiments_data.push_back({"NSGA2", i, indiv});
         }
+    }
 
-        for (const auto &indiv : insga_indivs) {
-            experiments_data.push_back({"INSGA", i, indiv});
+    for (int i = 0; i < iterations; i++) {
+        for (const auto &indiv : spea2_indivs[i]) {
+            experiments_data.push_back({"SPEA2", i, indiv});
         }
     }
 
