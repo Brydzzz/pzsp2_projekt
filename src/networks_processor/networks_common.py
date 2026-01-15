@@ -8,13 +8,14 @@ from typing import Optional
 
 from rich import print
 
-GRAPH_FOLDER = "graph_csv_files"
+from src.cli.folder_and_fnames import GRAPH_FOLDER
 
-# Edge parametr ranges
-THROUGHPUT_RANGE = (1, 100)
-LOSS_RANGE = (0, 500)
-DELAY_RANGE = (1, 200)
-JITTER_RANGE = (-100, 100)
+from .constants import (
+    DELAY_RANGE,
+    JITTER_RANGE,
+    LOSS_RANGE,
+    THROUGHPUT_RANGE,
+)
 
 
 @dataclass(slots=True)

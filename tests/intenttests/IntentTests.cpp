@@ -107,3 +107,49 @@ TEST(IntentTests, returningIntentList) {
     ASSERT_EQ(demandList[2][1], 0);
     ASSERT_EQ(demandList[2][2], 0);
 }
+
+TEST(IntentTests, writeIntentToStream) {
+    Intent intent;
+    Node n1("A"), n2("B"), n3("C");
+    intent.intents[{n1, n2}] = 100;
+    intent.intents[{n2, n3}] = 200;
+
+    std::stringstream ss;
+    ss << intent;
+
+    std::string output = ss.str();
+    EXPECT_TRUE(output.find("A B 100") != std::string::npos);
+    EXPECT_TRUE(output.find("B C 200") != std::string::npos);
+}
+
+TEST(IntentTests, readIntentFromStream) {
+    Intent intent;
+    std::stringstream ss("A B 100\nB C 200\n");
+
+    ss >> intent;
+
+    Node n1("A"), n2("B"), n3("C");
+
+    ASSERT_EQ(intent.intents.size(), 2);
+
+    EXPECT_EQ((intent.intents[{n1, n2}]), 100);
+    EXPECT_EQ((intent.intents[{n2, n3}]), 200);
+}
+
+TEST(IntentTests, readIntentClearsExistingData) {
+    Intent intent;
+    intent.intents[{Node("OldS"), Node("OldD")}] = 999;
+
+    std::stringstream ss("NewS NewD 50");
+    ss >> intent;
+
+    ASSERT_EQ(intent.intents.size(), 1);
+    EXPECT_EQ((intent.intents[{Node("NewS"), Node("NewD")}]), 50);
+}
+
+TEST(IntentTests, handlingEmptyStream) {
+    Intent intent;
+    std::stringstream ss("");
+    ss >> intent;
+    EXPECT_TRUE(intent.intents.empty());
+}

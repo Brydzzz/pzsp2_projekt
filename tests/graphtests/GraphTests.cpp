@@ -25,6 +25,20 @@ Node node8 = Node("Kraków3");
 Node node9 = Node("Gdańsk3");
 Node node10 = Node("Poznań3");
 
+TEST(NodeTests, writeToStream) {
+    Node n("Warsaw");
+    std::stringstream ss;
+    ss << n;
+    EXPECT_EQ(ss.str(), "Warsaw");
+}
+
+TEST(NodeTests, readFromStream) {
+    Node n("temp");
+    std::stringstream ss("Krakow");
+    ss >> n;
+    EXPECT_EQ(n.name, "Krakow");
+}
+
 TEST(GraphTests, testGraphConstructor) {
     auto graph = Graph<int>();
     ASSERT_EQ(graph.countNodes(), 0);

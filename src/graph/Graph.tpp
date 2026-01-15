@@ -34,7 +34,7 @@ Graph<T>::Graph(std::vector<Node> &nodes,
 }
 
 template <typename T>
-void Graph<T>::check_node_existance(Node &node) {
+void Graph<T>::check_node_existance(Node &node) const {
     if (std::ranges::find(this->nodes.begin(), this->nodes.end(), node) ==
         this->nodes.end()) {
         throw std::invalid_argument("Node " + node.name +
@@ -57,6 +57,9 @@ Graph<T>::Graph(std::vector<Node> &nodes, std::vector<Edge<T>> adjacencyList)
 template <typename T>
 Graph<T>::Graph(std::vector<Node> &nodes) {
     this->nodes = nodes;
+    for (auto &node : this->nodes) {
+        this->adjacencyList[node] = std::vector<Edge<T>>();
+    }
 }
 
 template <typename T>
@@ -71,7 +74,7 @@ int Graph<T>::countNodes() {
 }
 
 template <typename T>
-std::vector<Node> Graph<T>::getNodes() {
+std::vector<Node> Graph<T>::getNodes() const {
     return nodes;
 }
 
@@ -100,8 +103,8 @@ T Graph<T>::getWeightBetween(Node &node1, Node &node2) {
 }
 
 template <typename T>
-bool Graph<T>::hasEdge(Node &from, Node &to) {
-    for (auto &edge : adjacencyList[from]) {
+bool Graph<T>::hasEdge(Node &from, Node &to) const {
+    for (auto &edge : adjacencyList.at(from)) {
         if (edge.second_node == to)
             return true;
     }
@@ -109,7 +112,7 @@ bool Graph<T>::hasEdge(Node &from, Node &to) {
 }
 
 template <typename T>
-int Graph<T>::getNextPathChoice(std::vector<int> &pathChoices) {
+int Graph<T>::getNextPathChoice(std::vector<int> &pathChoices) const {
     int pathChoice = pathChoices.back();
     pathChoices.pop_back();
     return pathChoice;
@@ -118,6 +121,15 @@ template <typename T>
 void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent) {
     for (unsigned int i = 0; i < path.size() - 1; i++) {
         flow_left[*getEdgeBetween(path[i], path[i + 1])] -= intent;
+    }
+}
+
+template <typename T>
+void Graph<T>::updateEdgeFlows(std::vector<Node> path, unsigned int intent,
+                        std::map<Edge<T>, int>& external_flow_left) const
+{
+    for (unsigned int i = 0; i < path.size() - 1; i++) {
+        external_flow_left[*getEdgeBetween(path[i], path[i + 1])] -= intent;
     }
 }
 
@@ -142,12 +154,12 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
         auto lastNode = path.back();
         if (pathChoices.find(lastNode) == pathChoices.end()) {
             pathChoices[lastNode] = createRandomizedPermutation(
-                adjacencyList[lastNode].size(), randomDevice);
+                adjacencyList.at(lastNode).size(), randomDevice);
         }
         std::optional<Node> nextNode = std::nullopt;
         while (pathChoices[lastNode].size()) {
             int pathChoice = getNextPathChoice(pathChoices[lastNode]);
-            nextNode = adjacencyList[lastNode][pathChoice].second_node;
+            nextNode = adjacencyList.at(lastNode)[pathChoice].second_node;
             if (usedNodes.find(nextNode.value()) != usedNodes.end()) {
                 nextNode = std::nullopt;
                 continue;
@@ -169,7 +181,7 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
 }
 
 template <typename T>
-std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
+std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) const {
     check_node_existance(startNode);
     check_node_existance(endNode);
 
@@ -188,12 +200,12 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
         auto lastNode = path.back();
         if (pathChoices.find(lastNode) == pathChoices.end()) {
             pathChoices[lastNode] = createRandomizedPermutation(
-                adjacencyList[lastNode].size(), randomDevice);
+                adjacencyList.at(lastNode).size(), randomDevice);
         }
         std::optional<Node> nextNode = std::nullopt;
         while (pathChoices[lastNode].size()) {
             int pathChoice = getNextPathChoice(pathChoices[lastNode]);
-            nextNode = adjacencyList[lastNode][pathChoice].second_node;
+            nextNode = adjacencyList.at(lastNode)[pathChoice].second_node;
             if (usedNodes.find(nextNode.value()) != usedNodes.end()) {
                 nextNode = std::nullopt;
                 continue;
@@ -211,6 +223,16 @@ std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode) {
     return path;
 }
 
+template <typename T>
+std::vector<Node> Graph<T>::generateRandomPath(Node &startNode, Node &endNode,
+                                         unsigned int intent, 
+                                         std::map<Edge<T>, int>& external_flow_left) const
+{
+    std::vector<Node> generated_path = generateRandomPath(startNode, endNode);
+    updateEdgeFlows(generated_path, intent, external_flow_left);
+    return generated_path;
+}
+
 // TODO: implement this function properly
 template <typename T>
 std::vector<Node> Graph<T>::generateWidestPath(Node &startNode, Node &endNode) {
@@ -221,7 +243,7 @@ std::vector<Node> Graph<T>::generateWidestPath(Node &startNode, Node &endNode) {
 }
 
 template <typename T>
-std::optional<Edge<T>> Graph<T>::getEdgeBetween(Node &fromNode, Node &toNode) {
+std::optional<Edge<T>> Graph<T>::getEdgeBetween(Node &fromNode, Node &toNode) const {
     check_node_existance(fromNode);
     check_node_existance(toNode);
 
@@ -235,4 +257,10 @@ std::optional<Edge<T>> Graph<T>::getEdgeBetween(Node &fromNode, Node &toNode) {
         }
     }
     return std::nullopt;
+}
+
+template <typename T>
+std::vector<Edge<T>> Graph<T>::getEdgesOf(const Node& node) const
+{
+    return adjacencyList.at(node);
 }

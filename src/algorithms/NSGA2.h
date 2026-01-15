@@ -40,11 +40,11 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
                          strategy<T> cross_strat,
                          population_generator<T> population_gen,
                          std::vector<float> &params) override;
-    std::vector<T> solve2(int popsize, int iterations,
-                          target_function<T> target,
-                          strategy<T> mutation_strategy,
-                          population_generator<T> population_gen,
-                          std::vector<float> &params);
+    // std::vector<T> solve2(int popsize, int iterations,
+    //                       target_function<T> target,
+    //                       strategy<T> mutation_strategy,
+    //                       population_generator<T> population_gen,
+    //                       std::vector<float> &params);
 };
 
 #include "NSGA2.tpp"

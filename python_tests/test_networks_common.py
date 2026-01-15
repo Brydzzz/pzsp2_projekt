@@ -1,11 +1,13 @@
 import csv
 from pathlib import Path
 
-from src.networks_processor.networks_common import (
+from src.networks_processor.constants import (
     DELAY_RANGE,
     JITTER_RANGE,
     LOSS_RANGE,
     THROUGHPUT_RANGE,
+)
+from src.networks_processor.networks_common import (
     GraphEdge,
     save_graph_to_csv,
 )

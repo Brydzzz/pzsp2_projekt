@@ -1,0 +1,5 @@
+# Edge parametr ranges
+THROUGHPUT_RANGE = (1, 100)
+LOSS_RANGE = (0, 500)
+DELAY_RANGE = (1, 200)
+JITTER_RANGE = (-100, 100)
