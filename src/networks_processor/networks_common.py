@@ -33,7 +33,6 @@ class GraphEdge:
 
     @staticmethod
     def _generate_edge_params() -> tuple[int, int, int, int]:
-        # TODO: change to uniform
         throughput = random.randint(*THROUGHPUT_RANGE)
         loss = random.randint(*LOSS_RANGE)
         delay = random.randint(*DELAY_RANGE)

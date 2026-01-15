@@ -76,19 +76,16 @@ def is_raw_data_format_valid(data: pd.DataFrame) -> bool:
     if set(data.columns) != expected:
         return False
 
-    # TODO: change to accept float too, commented for now
-    # expected_dtypes = {
-    #     "algo": "object",
-    #     "paths": "object",
-    #     "loss": "int64",
-    #     "delay": "int64",
-    #     "jitter": "int64",
-    #     "valid": "bool",
-    #     "run_id": "int64",
-    # }
-    # actual_dtypes = data.dtypes.astype(str).to_dict()
-    # return actual_dtypes == expected_dtypes
-    return True
+    expected_dtypes = {
+        "algo": "object",
+        "loss": "int64",
+        "delay": "int64",
+        "jitter": "int64",
+        "valid": "bool",
+        "run_id": "int64",
+    }
+    actual_dtypes = data.dtypes.astype(str).to_dict()
+    return actual_dtypes == expected_dtypes
 
 
 def save_algo_comp_results(results_df: pd.DataFrame, output_fname: str):
