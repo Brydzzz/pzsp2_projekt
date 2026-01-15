@@ -2,6 +2,7 @@
 #include "INSGA.h"
 #include "Individual.h"
 #include "Intent.h"
+#include "MutationOperators.h"
 #include "NSGA2.h"
 #include "Node.h"
 #include "SPEA2.h"
@@ -48,40 +49,13 @@ int main(int argc, char *argv[]) {
     auto nodes = graph.getNodes();
     auto intents = intentGenerator.getIntentInNodeOrder(nodes);
 
-    auto crossing = [&](std::vector<Individual> paths,
-                        std::vector<float> params) {
-        for (auto indiv : paths) {
-            for (auto &path : indiv.paths) {
-                float random = rand();
-                float prec = random / (float)RAND_MAX;
-                if (prec > params[1])
-                    continue;
-                auto start = path.front();
-                auto end = path.back();
-                auto newPath = graph.generateRandomPath(start, end);
-                path = newPath;
-            }
-        }
-        return paths;
-    };
-
     auto pop_generator = [&](int population_size) {
         return individual_population_generator(population_size, graph);
     };
 
-    auto distance_function = [&](const Individual &first,
-                                 const Individual &second) {
-        double distance = 0.0;
-        for (const auto &[key, val1] : first.flow_left) {
-            double val2 = second.flow_left.at(key);
-            distance += std::abs(val1 - val2);
-        }
-        return distance;
-    };
-
     std::vector<std::tuple<std::string, int, Individual>> experiments_data;
 
-    SPEA2<Individual> spea2(distance_function);
+    SPEA2<Individual> spea2(individual_distance_function);
     std::vector<float> spea2_params = {5.0};
 
     NSGA2<Individual> nsga2;
@@ -98,15 +72,18 @@ int main(int argc, char *argv[]) {
         std::vector<Individual> spea2_indivs, nsga2_indivs, insga_indivs;
         std::thread t1([&]() {
             spea2_indivs = spea2.solve(30, 3, individual_target_function,
-                                       crossing, pop_generator, spea2_params);
+                                       INSGAMutationVariantAStrategy,
+                                       pop_generator, spea2_params);
         });
         std::thread t2([&]() {
             nsga2_indivs = nsga2.solve(30, 3, individual_target_function,
-                                       crossing, pop_generator, nsga2_params);
+                                       INSGAMutationVariantAStrategy,
+                                       pop_generator, nsga2_params);
         });
         std::thread t3([&]() {
             insga_indivs = insga.solve(30, 3, individual_target_function,
-                                       crossing, pop_generator, insga_params);
+                                       INSGAMutationVariantAStrategy,
+                                       pop_generator, insga_params);
         });
 
         t1.join();

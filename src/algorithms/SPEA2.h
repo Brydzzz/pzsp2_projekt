@@ -9,25 +9,25 @@
 
 template <typename T>
 class SPEA2 : public Evolutionary_Algorithm<T> {
-    std::function<float(T, T)> distance_function;
+    std::function<float(target_function<T>, T, T)> distance_function;
 
   protected:
     std::vector<T> generate_init_pop(population_generator<T> generator,
                                      int pop) override;
-    std::vector<T> crossover(strategy<T> strat, std::vector<T> population,
+    std::vector<T> mutation(strategy<T> strat, std::vector<T> population,
                              const std::vector<float> &params) override;
     std::vector<int>
     calculate_strength(std::vector<std::vector<float>> &objectives,
                        std::vector<T> &population);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     calculate_fitness(std::vector<std::vector<float>> &objectives,
-                      std::vector<T> &combined);
+                      std::vector<T> &combined, target_function<T> target);
     std::vector<int>
     calculate_raw_fitness(std::vector<std::vector<float>> &objectives,
                           std::vector<T> &combined,
                           std::vector<int> &strengths);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-    calculate_distances(std::vector<T> &combined);
+    calculate_distances(target_function<T> target,std::vector<T> &combined);
     std::vector<T> get_newset(unsigned int setsize,
                               std::vector<std::vector<float>> &objectives,
                               std::vector<T> &combined,
@@ -41,10 +41,10 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                                      std::vector<T> &pool2);
 
   public:
-    SPEA2(std::function<float(T, T)> distance) : distance_function(distance) {}
+    SPEA2(std::function<float(target_function<T>,T, T)> distance) : distance_function(distance) {}
 
     std::vector<T> solve(int popsize, int iterations, target_function<T> target,
-                         strategy<T> cross_strat,
+                         strategy<T> mut_strat,
                          population_generator<T> population_gen,
                          std::vector<float> &params) override;
 };

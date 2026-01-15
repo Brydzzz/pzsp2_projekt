@@ -201,20 +201,10 @@ typename INSGA<T>::Population INSGA<T>::selection(
 }
 
 template <typename T>
-typename INSGA<T>::Population INSGA<T>::crossover_insga(
-    const typename INSGA<T>::Population &offspring_selected,
-    double crossover_probability) const {
-    // !!!  WE ASSUME NO CROSSOVER OPERATION!
-    return offspring_selected;
-}
-
-template <typename T>
 typename INSGA<T>::Population
-INSGA<T>::mutation(const typename INSGA<T>::Population &offspring_selected,
-                   double mutation_probability,
-                   strategy<T> mutation_strategy) const {
-    std::vector<float> params = {(float)mutation_probability};
-    auto mutated_population = mutation_strategy(offspring_selected, params);
+INSGA<T>::mutation(strategy<T> strat, Population population,
+                   const std::vector<float> &params) {
+    auto mutated_population = strat(population, params);
     return mutated_population;
 }
 
@@ -253,25 +243,17 @@ INSGA<T>::generate_init_pop(population_generator<T> generator, int pop) {
 }
 
 template <typename T>
-typename INSGA<T>::Population
-INSGA<T>::crossover(strategy<T> strat, typename INSGA<T>::Population population,
-                    const std::vector<float> &params) {
-    // !!!  WE ASSUME NO CROSSOVER OPERATION!
-    return population;
-}
-
-template <typename T>
 typename INSGA<T>::Front
 INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
-                strategy<T> cross_strat, population_generator<T> population_gen,
+                strategy<T> mut_strat, population_generator<T> population_gen,
                 std::vector<float> &params) {
     if (params.size() < 2) {
         throw std::invalid_argument(
             "Params vector must contain at least two elements: mutation and "
             "crossover probabilities.");
     }
-    double mutation_probability = params[0];
-    double crossover_probability = params[1];
+    // double mutation_probability = params[0];
+    // double crossover_probability = params[1];
 
     typename INSGA<T>::Population base_population, offspring_population,
         base_extended_population, base_new_population, offspring_selected,
@@ -280,7 +262,7 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
     typename INSGA<T>::Front first_front;
 
     // TODO: wywalic zhardkodowany operator mutacji
-    strategy<T> mutation_operator = INSGAMutationVariantAStrategy;
+    // strategy<T> mutation_operator = INSGAMutationVariantAStrategy;
 
     int iter = 1;
     base_population = random_initialization(popsize, population_gen);
@@ -293,10 +275,7 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
         sorted_fronts = sort_insga(fronts, _w, target);
         base_new_population = elite_parent_selection(sorted_fronts, popsize);
         offspring_selected = selection(base_new_population);
-        crossovered_population =
-            crossover_insga(offspring_selected, crossover_probability);
-        mutated_population = mutation(offspring_selected, mutation_probability,
-                                      mutation_operator);
+        mutated_population = mutation(mut_strat, offspring_selected, params);
         offspring_new_population = combine(
             offspring_selected, crossovered_population, mutated_population);
         base_population = base_new_population;

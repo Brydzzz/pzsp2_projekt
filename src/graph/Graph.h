@@ -37,7 +37,7 @@ class Graph {
     T getWeightBetween(Node &node1, Node &node2);
     bool hasEdge(Node &from, Node &to) const;
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode,
-                                         unsigned int intent);
+                                         unsigned int intent) const;
     std::vector<Node>
     generateRandomPath(Node &startNode, Node &endNode, unsigned int intent,
                        std::map<Edge<T>, int> &external_flow_left) const;
