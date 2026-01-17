@@ -78,8 +78,9 @@ NSGA2<T>::sort_nondominated_algorithm(std::vector<T> &population,
     std::vector<pareto::point<float, 3>> points(population_size);
     for (int i = 0; i < population_size; i++) {
         auto objective_value = target(population[i]);
-        points[i] = pareto::point<float, 3>(objective_value.begin(),
-                                            objective_value.end());
+        auto tmp = pareto::point<float, 3>(objective_value.begin(),
+                                           objective_value.end());
+        points[i] = std::move(tmp);
     }
 
     for (int i = 0; i < population_size; i++) {
