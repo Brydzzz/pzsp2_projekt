@@ -23,7 +23,9 @@ def get_fronts_by_run(df: pd.DataFrame, objective_names: list[str]):
 
 
 def calculate_metrics(
-    grouped_df: pd.DataFrame, true_pf_df: pd.DataFrame, objective_names: list[str]
+    grouped_df: pd.DataFrame,
+    true_pf_df: pd.DataFrame,
+    objective_names: list[str],
 ) -> pd.DataFrame:
     """
     :param grouped_df: DataFrame with columns ['algo', 'run_id', 'points']
@@ -67,7 +69,11 @@ def calculate_metrics(
 
 def calculate_objectives_stats(experiments_data: pd.DataFrame) -> pd.DataFrame:
     return experiments_data.groupby("algo").agg(
-        {"loss": ["mean", "std"], "jitter": ["mean", "std"], "delay": ["mean", "std"]}
+        {
+            "loss": ["mean", "std"],
+            "jitter": ["mean", "std"],
+            "delay": ["mean", "std"],
+        }
     )
 
 
@@ -82,6 +88,33 @@ def is_raw_data_format_valid(data: pd.DataFrame) -> bool:
         "delay": "int64",
         "jitter": "int64",
         "run_id": "int64",
+    }
+    actual_dtypes = data.dtypes.astype(str).to_dict()
+    return actual_dtypes == expected_dtypes
+
+
+def is_raw_data_format_valid_conv_check(data: pd.DataFrame) -> bool:
+    expected = {
+        "algo",
+        "run_id",
+        "iteration",
+        "popsize",
+        "loss",
+        "delay",
+        "jitter",
+        "run_id",
+    }
+    if set(data.columns) != expected:
+        return False
+
+    expected_dtypes = {
+        "algo": "object",
+        "run_id": "int64",
+        "iteration": "int64",
+        "popsize": "int64",
+        "loss": "int64",
+        "delay": "int64",
+        "jitter": "int64",
     }
     actual_dtypes = data.dtypes.astype(str).to_dict()
     return actual_dtypes == expected_dtypes

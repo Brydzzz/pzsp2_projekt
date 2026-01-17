@@ -228,6 +228,9 @@ std::vector<T> NSGA2<T>::solve(int popsize, int iterations,
             new_population = mutation(mut_strat, population, params);
             combined_population = join_vector(population, new_population);
         }
+        if (this->logs) {
+            this->logs_vec.push_back(population);
+        }
     }
     return population;
 }

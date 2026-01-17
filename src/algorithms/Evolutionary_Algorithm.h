@@ -14,7 +14,16 @@ using strategy = std::function<std::vector<T>(const std::vector<T> &,
 
 template <typename T>
 class Evolutionary_Algorithm {
+  protected:
+    std::vector<std::vector<T>> logs_vec;
+    bool logs;
+
   public:
+    Evolutionary_Algorithm(bool logs = false) : logs(logs) {
+        if (logs) {
+            this->logs_vec = {};
+        }
+    }
     virtual ~Evolutionary_Algorithm() = default;
     virtual std::vector<T> generate_init_pop(population_generator<T> generator,
                                              int pop) = 0;
@@ -32,4 +41,5 @@ class Evolutionary_Algorithm {
                                  strategy<T> cross_strat,
                                  population_generator<T> population_gen,
                                  std::vector<float> &params) = 0;
+    std::vector<std::vector<T>> getLogs() { return this->logs_vec; }
 };
