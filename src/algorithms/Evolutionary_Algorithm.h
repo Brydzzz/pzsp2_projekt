@@ -41,4 +41,5 @@ class Evolutionary_Algorithm {
                                  strategy<T> cross_strat,
                                  population_generator<T> population_gen,
                                  std::vector<float> &params) = 0;
+    std::vector<std::vector<T>> getLogs() { return this->logs_vec; }
 };

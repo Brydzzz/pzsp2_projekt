@@ -6,6 +6,7 @@ GRAPH_FOLDER = "graph_csv_files"
 ALGO_COMPARE_FOLDER = "algo_compare"
 PF_FOLDER = "pareto_fronts"
 INTENTS_FOLDER = "intents_csv_files"
+CONV_CHECK_FOLDER = "convergence_check"
 
 
 # filename generation
@@ -59,3 +60,37 @@ def generate_alg_comp_plots_fname(results_fname) -> list[str]:
         f"{results_fname.replace('alg_compare_results', f'alg_compare_plot_{plot_name}').replace('.csv', '.png')}"
         for plot_name in plot_names
     ]
+
+
+def generate_conv_check_raw_fname(
+    graph_fname: str,
+    intents_fname: str,
+    iterations: int,
+    runs: int,
+    mut_prob: float,
+    max_pop: int,
+    step: int,
+) -> str:
+    g_name = os.path.splitext(os.path.basename(graph_fname))[0]
+    i_name = os.path.splitext(os.path.basename(intents_fname))[0]
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    return f"conv_check__{g_name}__{i_name}__{iterations}__{runs}__{mut_prob}__{max_pop}__{step}it__{timestamp}.csv"
+
+
+def generate_conv_check_result_fname(
+    graph_fname: str,
+    intents_fname: str,
+    iterations: int,
+    runs: int,
+    mut_prob: float,
+    max_pop: int,
+    step: int,
+) -> str:
+    g_name = os.path.splitext(os.path.basename(graph_fname))[0]
+    i_name = os.path.splitext(os.path.basename(intents_fname))[0]
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    return f"conv_check_results__{g_name}__{i_name}__{iterations}__{runs}__{mut_prob}__{max_pop}__{step}it__{timestamp}.csv"
