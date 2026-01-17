@@ -30,7 +30,9 @@ def generate_alg_comp_raw_data_fname(
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    return f"{g_name}__{i_name}__{iterations}__{runs}it__alg_compare_raw__{timestamp}.csv"
+    return (
+        f"{g_name}__{i_name}__{iterations}__{runs}it__alg_compare_raw__{timestamp}.csv"
+    )
 
 
 def generate_alg_comp_results_fname(

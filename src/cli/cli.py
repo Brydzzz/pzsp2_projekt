@@ -41,9 +41,7 @@ def main():
             f" The CSV file will be saved to {GRAPH_FOLDER}/ and can be later used with other tools."
         ),
     )
-    parser_snd.add_argument(
-        "network_name", type=str, help="Network name from SNDLib"
-    )
+    parser_snd.add_argument("network_name", type=str, help="Network name from SNDLib")
 
     parser_full_mesh = subparsers.add_parser(
         "gen-full-mesh",
