@@ -16,7 +16,9 @@ def generate_full_mesh(node_count: int) -> list[GraphEdge]:
     return graph
 
 
-def generate_and_save_fullmesh(node_count: int, network_name: str | None = None) -> None:
+def generate_and_save_fullmesh(
+    node_count: int, network_name: str | None = None
+) -> None:
     print("[bold yellow]Generating network...[/bold yellow]")
     graph = generate_full_mesh(node_count)
     network_name = f"full_mesh_{node_count}" if (not network_name) else network_name
