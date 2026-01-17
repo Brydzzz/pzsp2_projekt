@@ -45,7 +45,9 @@ class TestFilenamesGeneration:
         iters = 25
         runs = 100
         mut_prob = 0.5
-        results = generate_alg_comp_results_fname(g_fname, i_fname, iters)
+        results = generate_alg_comp_results_fname(
+            g_fname, i_fname, iters, runs, mut_prob
+        )
         expected = "alg_compare_results__poland_big__poland_big_intent_10__25__100__0.5it__20260108_204531.csv"
         assert results == expected
 
