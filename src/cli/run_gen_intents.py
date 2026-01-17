@@ -8,7 +8,9 @@ from rich.table import Table
 from .folder_and_fnames import GRAPH_FOLDER, INTENTS_FOLDER, generate_intents_fname
 
 
-def run_gen_intents(graph_fname: str, intents_fname: str | None = None, should_print_config: bool = True):
+def run_gen_intents(
+    graph_fname: str, intents_fname: str | None = None, should_print_config: bool = True
+):
     print("[bold yellow]Generating intents...[/bold yellow]")
     if should_print_config:
         config_table = Table(title="Configuration")
