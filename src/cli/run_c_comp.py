@@ -49,12 +49,12 @@ def run_c_comp(
             if not pd.api.types.is_numeric_dtype(
                 df["node_count"]
             ) or not pd.api.types.is_numeric_dtype(df["execution_time"]):
-                raise ValueError("Non-numeric data in axis columns")
+                raise ValueError(
+                    "Non-numeric data in node_count or execution_time columns"
+                )
 
         except Exception as e:
-            print(
-                f"{e}. Invalid data format, look at example-datafile-c-comp.csv in examples folder"
-            )
+            print(f"Invalid data format. [bold red]Error:[/bold red]{e}")
             return
 
         _plot_complexity_data(df, load_data_filename, None, None, None)
@@ -76,7 +76,7 @@ def run_c_comp(
             intent_name = generate_intents_fname(csv_name)
 
             generate_and_save_fullmesh(node_count, base_name)
-            run_gen_intents(csv_name, intent_name)
+            run_gen_intents(csv_name, intent_name, should_print_config=False)
 
             final_graph_paths.append((graph_dir / csv_name).resolve())
             final_intent_paths.append((intents_dir / intent_name).resolve())
@@ -125,7 +125,7 @@ def _plot_complexity_data(
     )
 
     algorithms = avg_df["algorithm"].unique()
-    for idx, algo in enumerate(algorithms):
+    for algo in algorithms:
         subset = avg_df[avg_df["algorithm"] == algo]
         ax.plot(
             subset["node_count"],
