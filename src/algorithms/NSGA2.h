@@ -15,14 +15,14 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
     std::vector<T> generate_init_pop(population_generator<T> generator,
                                      int pop) override;
 
-    std::vector<T> crossover(strategy<T> strat, std::vector<T> population,
-                             const std::vector<float> &params) override;
+    std::vector<T> mutation(strategy<T> strat, std::vector<T> population,
+                            const std::vector<float> &params) override;
 
     std::vector<T> default_selection(std::vector<T> &population,
                                      std::vector<float> &params,
                                      target_function<T> target);
-    std::vector<T> default_mutation(std::vector<T> &population,
-                                    std::vector<float> &params);
+    // std::vector<T> default_mutation(std::vector<T> &population,
+    //                                 std::vector<float> &params);
     std::vector<std::vector<T>>
     sort_nondominated_algorithm(std::vector<T> &population,
                                 target_function<T> target);
@@ -37,7 +37,7 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
     NSGA2() {}
     // : distance_function(distance_function) {}
     std::vector<T> solve(int popsize, int iterations, target_function<T> target,
-                         strategy<T> cross_strat,
+                         strategy<T> mut_strat,
                          population_generator<T> population_gen,
                          std::vector<float> &params) override;
     // std::vector<T> solve2(int popsize, int iterations,

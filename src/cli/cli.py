@@ -1,7 +1,9 @@
 import argparse
 
 from src.cli.run_gen_intents import run_gen_intents
-from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
+from src.networks_processor.fullmesh_generator import (
+    generate_and_save_fullmesh,
+)
 from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
 from .folder_and_fnames import ALGO_COMPARE_FOLDER, GRAPH_FOLDER, PF_FOLDER
@@ -42,7 +44,8 @@ def main():
     parser_snd.add_argument("network_name", type=str, help="Network name from SNDLib")
 
     parser_full_mesh = subparsers.add_parser(
-        "gen-full-mesh", help="Generates full mesh network with given number of nodes"
+        "gen-full-mesh",
+        help="Generates full mesh network with given number of nodes",
     )
     parser_full_mesh.add_argument(
         "node_count", type=int, help="Number of nodes in full mesh network"
@@ -70,6 +73,21 @@ def main():
         "intents",
         help="Intents csv file generated for given graph. Filename in 'intents-files/'",
     )
+    parser_gen_pareto.add_argument(
+        "iterations",
+        type=int,
+        help="Number of iterations each algorithm will be run.",
+    )
+    parser_gen_pareto.add_argument(
+        "runs",
+        type=int,
+        help="Number of runs for each algorithm",
+    )
+    parser_gen_pareto.add_argument(
+        "mutation_probability",
+        type=float,
+        help="Mutation probability",
+    )
 
     parser_algo_comp = subparsers.add_parser(
         "algo-compare",
@@ -90,7 +108,19 @@ def main():
         help=f"True pareto front file generated for given graph and intents. Filename in '{PF_FOLDER}/'",
     )
     parser_algo_comp.add_argument(
-        "iterations", type=int, help="Number of iterations each algorithm will be run."
+        "iterations",
+        type=int,
+        help="Number of iterations each algorithm will be run.",
+    )
+    parser_algo_comp.add_argument(
+        "runs",
+        type=int,
+        help="Number of runs for each algorithm",
+    )
+    parser_algo_comp.add_argument(
+        "mutation_probability",
+        type=float,
+        help="Mutation probability",
     )
 
     parser_algo_comp.add_argument(
@@ -110,13 +140,21 @@ def main():
         case "gen-intents":
             run_gen_intents(args.graph)
         case "gen-true-pareto":
-            run_gen_true_pareto(args.graph, args.intents)
+            run_gen_true_pareto(
+                args.graph,
+                args.intents,
+                args.iterations,
+                args.runs,
+                args.mutation_probability,
+            )
         case "algo-compare":
             run_algo_comp(
                 args.graph,
                 args.intents,
                 args.true_pareto,
                 args.iterations,
+                args.runs,
+                args.mutation_probability,
                 args.plot_data,
             )
         case _:

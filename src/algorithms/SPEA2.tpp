@@ -26,10 +26,10 @@ std::vector<std::vector<float>> calculate_targets(target_function<T> target,
 }
 
 template <typename T>
-std::vector<T>
-SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
-                strategy<T> cross_strat, population_generator<T> population_gen,
-                std::vector<float> &params) {
+std::vector<T> SPEA2<T>::solve(int popsize, int iterations,
+                               target_function<T> target, strategy<T> mut_strat,
+                               population_generator<T> population_gen,
+                               std::vector<float> &params) {
     // params[0] = 0;
     int t = 0;
     int setsize = popsize;
@@ -40,7 +40,7 @@ SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
         combined.insert(combined.end(), external_set.begin(),
                         external_set.end());
         auto objectives = calculate_targets(target, combined);
-        auto fitness_result = calculate_fitness(objectives, combined);
+        auto fitness_result = calculate_fitness(objectives, combined, target);
         auto combined_fitness = fitness_result.first;
         auto distances = fitness_result.second;
         std::vector<T> newset = get_newset(setsize, objectives, combined,
@@ -48,21 +48,21 @@ SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
         if (t > iterations) {
             return newset;
         }
-        std::cout << "SPEA2 Iteration: " << t << std::endl;
+        // std::cout << "SPEA2 Iteration: " << t << std::endl;
         std::vector<T> combined_set = newset;
         combined_set.insert(combined_set.end(), external_set.begin(),
                             external_set.end());
         auto objectives_pool1 = calculate_targets(target, external_set);
         std::vector<T> pool1 = binary_tournament_selection(
             popsize, external_set,
-            calculate_fitness(objectives_pool1, external_set).first);
+            calculate_fitness(objectives_pool1, external_set, target).first);
         auto objectives_pool2 = calculate_targets(target, combined_set);
         std::vector<T> pool2 = binary_tournament_selection(
             popsize, combined_set,
-            calculate_fitness(objectives_pool2, combined_set).first);
+            calculate_fitness(objectives_pool2, combined_set, target).first);
         std::vector<T> final_pool =
             choose_final_pool(target, popsize, pool1, pool2);
-        std::vector<T> next_pop = crossover(cross_strat, final_pool, params);
+        std::vector<T> next_pop = mutation(mut_strat, final_pool, params);
         external_set = newset;
         population = next_pop;
         t++;
@@ -71,8 +71,8 @@ SPEA2<T>::solve(int popsize, int iterations, target_function<T> target,
 }
 
 template <typename T>
-std::vector<T> SPEA2<T>::crossover(strategy<T> strat, std::vector<T> population,
-                                   const std::vector<float> &params) {
+std::vector<T> SPEA2<T>::mutation(strategy<T> strat, std::vector<T> population,
+                                  const std::vector<float> &params) {
     return strat(population, params);
 }
 
@@ -82,7 +82,7 @@ std::vector<T> SPEA2<T>::choose_final_pool(target_function<T> target,
                                            std::vector<T> &pool2) {
     pool1.insert(pool1.end(), pool2.begin(), pool2.end());
     auto objectives = calculate_targets(target, pool1);
-    auto fitness_result = calculate_fitness(objectives, pool1);
+    auto fitness_result = calculate_fitness(objectives, pool1, target);
     std::vector<size_t> indices(pool1.size());
     std::iota(indices.begin(), indices.end(), 0);
     std::sort(indices.begin(), indices.end(), [&](size_t a, size_t b) {
@@ -197,13 +197,14 @@ std::vector<T> SPEA2<T>::get_newset(unsigned int setsize,
 template <typename T>
 std::pair<std::vector<float>, std::vector<std::vector<float>>>
 SPEA2<T>::calculate_fitness(std::vector<std::vector<float>> &objectives,
-                            std::vector<T> &combined) {
+                            std::vector<T> &combined,
+                            target_function<T> target) {
     std::vector<float> fitness(combined.size());
     std::vector<int> pop_strength = calculate_strength(objectives, combined);
     std::vector<int> pop_raw_fitness =
         calculate_raw_fitness(objectives, combined, pop_strength);
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
-        distances_results = calculate_distances(combined);
+        distances_results = calculate_distances(target, combined);
     std::vector<float> distances = distances_results.first;
     for (unsigned int i = 0; i < pop_raw_fitness.size(); i++) {
         fitness[i] = distances[i] + static_cast<float>(pop_raw_fitness[i]);
@@ -217,14 +218,17 @@ SPEA2<T>::calculate_raw_fitness(std::vector<std::vector<float>> &objectives,
                                 std::vector<T> &combined,
                                 std::vector<int> &strengths) {
     std::vector<int> raw_fitness(combined.size());
+    std::vector<pareto::point<float, 3>> points(combined.size());
     for (unsigned int i = 0; i < combined.size(); i++) {
-        auto target_i = objectives[i];
-        auto point_i =
-            pareto::point<float, 3>(target_i.begin(), target_i.end());
+        points[i] =
+            pareto::point<float, 3>(objectives[i].begin(), objectives[i].end());
+    }
+    for (unsigned int i = 0; i < combined.size(); i++) {
+        // auto target_i = objectives[i];
+        auto &point_i = points[i];
         for (unsigned int j = 0; j < combined.size(); j++) {
-            auto target_j = objectives[j];
-            auto point_j =
-                pareto::point<float, 3>(target_j.begin(), target_j.end());
+            // auto target_j = objectives[j];
+            auto &point_j = points[j];
             if (point_j.strongly_dominates(point_i)) {
                 raw_fitness[i] += strengths[j];
             }
@@ -258,12 +262,19 @@ SPEA2<T>::calculate_strength(std::vector<std::vector<float>> &objectives,
 
 template <typename T>
 std::pair<std::vector<float>, std::vector<std::vector<float>>>
-SPEA2<T>::calculate_distances(std::vector<T> &combined) {
+SPEA2<T>::calculate_distances(target_function<T> target,
+                              std::vector<T> &combined) {
     std::vector<float> result_distances(combined.size());
     std::vector<std::vector<float>> distances(combined.size());
+
+    std::vector<std::vector<float>> target_values(combined.size());
+    for (unsigned int i = 0; i < combined.size(); i++) {
+        target_values[i] = target(combined[i]);
+    }
     for (unsigned int i = 0; i < combined.size(); i++) {
         for (unsigned int j = 0; j < combined.size(); j++) {
-            distances[i].push_back(distance_function(combined[i], combined[j]));
+            distances[i].push_back(
+                distance_function(target_values[i], target_values[j]));
         }
     }
     int k = sqrt(combined.size());

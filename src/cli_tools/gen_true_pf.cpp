@@ -2,6 +2,7 @@
 #include "INSGA.h"
 #include "Individual.h"
 #include "Intent.h"
+#include "MutationOperators.h"
 #include "NSGA2.h"
 #include "Node.h"
 #include "SPEA2.h"
@@ -10,11 +11,11 @@
 #include <random>
 #include <string>
 #include <vector>
-
 int main(int argc, char *argv[]) {
-    if (argc < 4) {
+    if (argc < 7) {
         std::cerr << "Usage: " << argv[0]
-                  << " <graph_csv_path> <intent_csv_path> <output_pf_path"
+                  << " <graph_csv_path> <intent_csv_path> <output_pf_path> "
+                     "<iterations> <runs> <mutation_probability>"
                   << std::endl;
         return 1;
     }
@@ -22,7 +23,9 @@ int main(int argc, char *argv[]) {
     std::string graphPath = argv[1];
     std::string intentsPath = argv[2];
     std::string outputPath = argv[3];
-
+    int iterations = atoi(argv[4]);
+    int runs = atoi(argv[5]);
+    float mut_prob = std::stof(argv[6]);
     std::ifstream graphFile(graphPath);
     if (!graphFile.is_open()) {
         std::cerr << "Error: Could not open graph file at " << graphPath
@@ -35,7 +38,7 @@ int main(int argc, char *argv[]) {
     Intent intentGenerator;
     std::ifstream intentsFile(intentsPath);
     if (!intentsFile.is_open()) {
-        std::cerr << "Error: Could not open intent file at " << outputPath
+        std::cerr << "Error: Could not open intent file at " << intentsPath
                   << std::endl;
         return 1;
     }
@@ -45,71 +48,64 @@ int main(int argc, char *argv[]) {
     auto nodes = graph.getNodes();
     auto intents = intentGenerator.getIntentInNodeOrder(nodes);
 
-    // TODO: integrate real mutation, FOR NOW REPLACES MUTATION
-    auto crossing = [&](std::vector<Individual> paths,
-                        std::vector<float> params) {
-        for (auto indiv : paths) {
-            for (auto &path : indiv.paths) {
-                float random = rand();
-                float prec = random / (float)RAND_MAX;
-                if (prec > params[1])
-                    continue;
-                auto start = path.front();
-                auto end = path.back();
-                auto newPath = graph.generateRandomPath(start, end);
-                path = newPath;
-            }
-        }
-        return paths;
-    };
-
     auto pop_generator = [&](int population_size) {
         return individual_population_generator(population_size, graph);
     };
 
-    // TODO change because we are getting rid of flow_left
-    auto distance_function = [&](const Individual &first,
-                                 const Individual &second) {
-        double distance = 0.0;
-        for (const auto &[key, val1] : first.flow_left) {
-            double val2 = second.flow_left.at(key);
-            distance += std::abs(val1 - val2);
-        }
-        return distance;
-    };
-
     std::vector<Individual> solutions_set;
 
-    SPEA2<Individual> spea2(distance_function);
-    std::vector<float> spea2_params = {5.0};
+    SPEA2<Individual> spea2(individual_distance_function);
+    std::vector<float> spea2_params = {mut_prob};
 
     NSGA2<Individual> nsga2;
-    std::vector<float> nsga2_params = {5.0, 1};
+    std::vector<float> nsga2_params = {mut_prob};
 
     INSGA<Individual> insga(QoSCriterion::Loss);
-    float mutation_probability = 0.5;
-    float crossover_probability = 0.0;
-    std::vector<float> insga_params = {mutation_probability,
-                                       crossover_probability};
+    std::vector<float> insga_params = {mut_prob};
 
-    for (int i = 0; i < 10; i++) {
-        std::cout << "SPEA2 Run No" << i << std::endl;
-        auto spea2_indivs = spea2.solve(30, 10, individual_target_function,
-                                        crossing, pop_generator, spea2_params);
-        solutions_set.insert(solutions_set.end(), spea2_indivs.begin(),
-                             spea2_indivs.end());
+    std::vector<std::thread> threads;
+    int populations_alg = 30;
+    std::vector<std::vector<Individual>> spea2_indivs(runs), nsga2_indivs(runs),
+        insga_indivs(runs);
+    for (int i = 0; i < runs; i++) {
+        // std::cout << "SPEA2 Run No" << i + 1 << std::endl;
+        threads.push_back(std::thread([&, i]() {
+            spea2_indivs[i] = spea2.solve(
+                populations_alg, iterations, individual_target_function,
+                INSGAMutationVariantAStrategy, pop_generator, spea2_params);
+        }));
+        threads.push_back(std::thread([&, i]() {
+            nsga2_indivs[i] = nsga2.solve(
+                populations_alg, iterations, individual_target_function,
+                INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
+        }));
+        threads.push_back(std::thread([&, i]() {
+            insga_indivs[i] = insga.solve(
+                populations_alg, iterations, individual_target_function,
+                INSGAMutationVariantAStrategy, pop_generator, insga_params);
+        }));
+    }
 
-        std::cout << "NSGA2 Run No" << i << std::endl;
-        auto nsga2_indivs = nsga2.solve(30, 10, individual_target_function,
-                                        crossing, pop_generator, nsga2_params);
-        solutions_set.insert(solutions_set.end(), nsga2_indivs.begin(),
-                             nsga2_indivs.end());
+    for (unsigned int i = 0; i < threads.size(); i++) {
+        threads[i].join();
+    }
 
-        std::cout << "INSGA Run No" << i << std::endl;
-        auto insga_indivs = insga.solve(10, 10, individual_target_function,
-                                        crossing, pop_generator, insga_params);
-        solutions_set.insert(solutions_set.end(), insga_indivs.begin(),
-                             insga_indivs.end());
+    for (int i = 0; i < runs; i++) {
+        for (const auto &indiv : insga_indivs[i]) {
+            solutions_set.push_back(indiv);
+        }
+    }
+
+    for (int i = 0; i < runs; i++) {
+        for (const auto &indiv : nsga2_indivs[i]) {
+            solutions_set.push_back(indiv);
+        }
+    }
+
+    for (int i = 0; i < runs; i++) {
+        for (const auto &indiv : spea2_indivs[i]) {
+            solutions_set.push_back(indiv);
+        }
     }
 
     pareto::front<float, 3, Individual> true_pf;

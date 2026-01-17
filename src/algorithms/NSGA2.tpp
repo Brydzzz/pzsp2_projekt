@@ -32,8 +32,8 @@ std::vector<T> NSGA2<T>::generate_init_pop(population_generator<T> generator,
 }
 
 template <typename T>
-std::vector<T> NSGA2<T>::crossover(strategy<T> strat, std::vector<T> population,
-                                   const std::vector<float> &params) {
+std::vector<T> NSGA2<T>::mutation(strategy<T> strat, std::vector<T> population,
+                                  const std::vector<float> &params) {
     return strat(population, params);
 }
 
@@ -75,17 +75,20 @@ NSGA2<T>::sort_nondominated_algorithm(std::vector<T> &population,
     std::vector<std::vector<int>> pareto_fronts(1);
     std::vector<int> dominated_by_count(population_size, 0);
 
+    std::vector<pareto::point<float, 3>> points(population_size);
     for (int i = 0; i < population_size; i++) {
-        auto individual = population[i];
-        auto objective = target(individual);
-        auto individual_point =
-            pareto::point<float, 3>(objective.begin(), objective.end());
+        auto objective_value = target(population[i]);
+        points[i] = pareto::point<float, 3>(objective_value.begin(),
+                                            objective_value.end());
+    }
+
+    for (int i = 0; i < population_size; i++) {
+        auto &individual_point = points[i];
 
         for (int j = 0; j < population_size; j++) {
-            auto other_individual = population[j];
-            auto other_objective = target(other_individual);
-            auto other_point = pareto::point<float, 3>(other_objective.begin(),
-                                                       other_objective.end());
+            if (i == j)
+                continue;
+            auto &other_point = points[j];
 
             if (individual_point.strongly_dominates(other_point)) {
                 dominates_points[i].push_back(j);
@@ -209,19 +212,18 @@ std::vector<T> NSGA2<T>::select_best(std::vector<T> &population, int best_size,
 //
 
 template <typename T>
-std::vector<T>
-NSGA2<T>::solve(int popsize, int iterations, target_function<T> target,
-                strategy<T> cross_strat, population_generator<T> population_gen,
-                std::vector<float> &params) {
+std::vector<T> NSGA2<T>::solve(int popsize, int iterations,
+                               target_function<T> target, strategy<T> mut_strat,
+                               population_generator<T> population_gen,
+                               std::vector<float> &params) {
     std::vector<T> population = generate_init_pop(population_gen, popsize);
     auto new_population = generate_init_pop(population_gen, popsize);
     auto combined_population = join_vector(population, new_population);
     for (int iter = 0; iter < iterations; iter++) {
-        std::cout << "NSGA2 Iteration: " << iter << std::endl;
-        auto best = select_best(combined_population, popsize, target);
-        population = best;
+        // std::cout << "NSGA2 Iteration: " << iter << std::endl;
+        population = select_best(combined_population, popsize, target);
         if (iter + 1 < iterations) {
-            new_population = cross_strat(population, params);
+            new_population = mutation(mut_strat, population, params);
             combined_population = join_vector(population, new_population);
         }
     }

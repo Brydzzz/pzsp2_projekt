@@ -33,6 +33,8 @@ def run_algo_comp(
     intents_fname: str,
     true_pareto_fname: str,
     iterations: int,
+    runs: int,
+    mut_prob: float,
     plot_data: bool,
 ) -> None:
     print("[bold yellow]Running algorithm comparison...[/bold yellow]")
@@ -43,13 +45,15 @@ def run_algo_comp(
     config_table.add_row("Intents", intents_fname)
     config_table.add_row("True Pareto Front", true_pareto_fname)
     config_table.add_row("Number of iterations", str(iterations))
+    config_table.add_row("Number of runs", str(runs))
+    config_table.add_row("Mutation probability", str(mut_prob))
     config_table.add_row("Plot data", str(plot_data))
     print(config_table)
 
     output_dir = Path.cwd() / ALGO_COMPARE_FOLDER
     os.makedirs(output_dir, exist_ok=True)
     raw_data_fname = generate_alg_comp_raw_data_fname(
-        graph_fname, intents_fname, iterations
+        graph_fname, intents_fname, iterations, runs, mut_prob
     )
     raw_data_output_path = output_dir / raw_data_fname
     raw_data_abs_path = raw_data_output_path.resolve()
@@ -64,6 +68,8 @@ def run_algo_comp(
             abs_intents_path,
             raw_data_abs_path,
             str(iterations),
+            str(runs),
+            str(mut_prob),
         ]
     )
     if result.returncode != 0:
@@ -95,7 +101,7 @@ def run_algo_comp(
     results = pd.concat([metrics_summary, objectives_summary], axis=1)
     print(f"\n[bold]Experiment results:[/bold]\n\n{results}\n")
     results_output_fname = generate_alg_comp_results_fname(
-        graph_fname, intents_fname, iterations
+        graph_fname, intents_fname, iterations, runs, mut_prob
     )
     save_algo_comp_results(results, results_output_fname)
 
@@ -112,7 +118,11 @@ def create_plots(results_df: pd.DataFrame, results_fname: str) -> None:
 
     fig1, axes1 = plt.subplots(1, 3, figsize=(18, 5))
     objectives = ["loss", "jitter", "delay"]
-    y_labels = {"loss": "Loss[%]", "jitter": "Jitter[ms]", "delay": "Delay[ms]"}
+    y_labels = {
+        "loss": "Loss[%]",
+        "jitter": "Jitter[ms]",
+        "delay": "Delay[ms]",
+    }
     colors = ["#2ecc71", "#e67e22", "#9b59b6"]
 
     fig1.suptitle(
@@ -164,7 +174,9 @@ def create_plots(results_df: pd.DataFrame, results_fname: str) -> None:
             edgecolor="black",
         )
         ax.set_title(
-            f"{metric.replace('_plus', '+').upper()}\n", fontsize=12, fontweight="bold"
+            f"{metric.replace('_plus', '+').upper()}\n",
+            fontsize=12,
+            fontweight="bold",
         )
 
         ax.set_xlabel("")

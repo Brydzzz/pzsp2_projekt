@@ -36,11 +36,9 @@ class INSGA : public Evolutionary_Algorithm<T> {
                       target_function<T> target) const;
     Population elite_parent_selection(const Fronts &sorted_fronts, int n) const;
     Population selection(const Population &base_new_population) const;
-    Population crossover_insga(const Population &offspring_selected,
-                               double crossover_probability) const;
-    Population mutation(const Population &offspring_selected,
-                        double mutation_probability,
-                        strategy<T> mutation_strategy) const;
+    // Population mutation(const Population &offspring_selected,
+    //                     double mutation_probability,
+    //                     strategy<T> mutation_strategy) const;
     Population combine(const Population &offspring_selected,
                        const Population &crossovered_population,
                        const Population &mutated_population) const;
@@ -50,8 +48,8 @@ class INSGA : public Evolutionary_Algorithm<T> {
     INSGA(QoSCriterion w);
     Population generate_init_pop(population_generator<T> generator,
                                  int pop) override;
-    Population crossover(strategy<T> strat, Population population,
-                         const std::vector<float> &params) override;
+    Population mutation(strategy<T> strat, Population population,
+                        const std::vector<float> &params) override;
     Front solve(int popsize, int iterations, target_function<T> target,
                 strategy<T> cross_strat, population_generator<T> population_gen,
                 std::vector<float> &params) override;

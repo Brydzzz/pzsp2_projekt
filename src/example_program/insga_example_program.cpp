@@ -2,6 +2,7 @@
 #include "INSGA.h"
 #include "Individual.h"
 #include "Intent.h"
+#include "NSGA2.h"
 #include <fstream>
 #include <iostream>
 
@@ -27,12 +28,41 @@ int main() {
         return individual_population_generator(population_size, graph);
     };
 
-    INSGA<Individual> insga(QoSCriterion::Loss);
+    NSGA2<Individual> nsga2;
     float mutation_probability = 0.5;
     float crossover_probability = 0.0;
     std::vector<float> params = {mutation_probability, crossover_probability};
-    auto solution = insga.solve(10, 10, individual_target_function, crossing,
-                                pop_generator, params);
+
+    auto solution =
+        nsga2.solve(30, 100, individual_target_function,
+                    INSGAMutationVariantAStrategy, pop_generator, params);
+
+    std::cout << "\n\n------------------------\n\nNSGA2:\n" << std::endl;
+    for (auto indiv : solution) {
+        auto vals = individual_proper_target_function(indiv);
+        for (auto v : vals) {
+            std::cout << v << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    INSGA<Individual> insga(QoSCriterion::Loss);
+    solution = insga.solve(30, 100, individual_target_function, crossing,
+                           pop_generator, params);
+
+    std::cout << "\n\n------------------------\n\nINSGA:\n" << std::endl;
+    for (auto indiv : solution) {
+        auto vals = individual_proper_target_function(indiv);
+        for (auto v : vals) {
+            std::cout << v << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << "\n\n------------------------\n\nRANDOMS:\n" << std::endl;
+    solution = nsga2.solve(30, 0, individual_target_function, crossing,
+                           pop_generator, params);
+
     for (auto indiv : solution) {
         auto vals = individual_proper_target_function(indiv);
         for (auto v : vals) {
