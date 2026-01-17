@@ -47,9 +47,7 @@ def main():
             f" The CSV file will be saved to {GRAPH_FOLDER}/ and can be later used with other tools."
         ),
     )
-    parser_snd.add_argument(
-        "network_name", type=str, help="Network name from SNDLib"
-    )
+    parser_snd.add_argument("network_name", type=str, help="Network name from SNDLib")
 
     parser_full_mesh = subparsers.add_parser(
         "gen-full-mesh",
@@ -76,9 +74,7 @@ def main():
     )
     parser_check_conv = subparsers.add_parser(
         "check-conv",
-        help=(
-            "Check the convergence for earch algorithm, based on population size"
-        ),
+        help=("Check the convergence for earch algorithm, based on population size"),
     )
     parser_check_conv.add_argument(
         "graph", help=f"CSV file with graph. Filename in '{GRAPH_FOLDER}/'"
@@ -119,7 +115,7 @@ def main():
     parser_check_conv.add_argument(
         "--plot-data",
         action="store_true",
-        help="Generate & show 4 convergence charts (Loss, Delay, Jitter, Metrics).\n"
+        help="Generate convergence charts for each metric and Population Size.\n"
         f" All plots are saved to '{CONV_CHECK_FOLDER}'.",
     )
     parser_gen_pareto.add_argument(

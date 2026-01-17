@@ -6,17 +6,12 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from rich import print
 from rich.table import Table
-import math
 from pymoo.indicators.gd import GD
 from pymoo.indicators.gd_plus import GDPlus
 from pymoo.indicators.igd import IGD
 from pymoo.indicators.igd_plus import IGDPlus
-import numpy as np
 
 from src.experiments_data_processing.algo_comp_utils import (
-    calculate_metrics,
-    calculate_objectives_stats,
-    get_fronts_by_run,
     is_raw_data_format_valid_conv_check,
 )
 
@@ -107,12 +102,13 @@ def run_check_conv(
     results_output_fname = generate_conv_check_result_fname(
         graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
     )
+    output_dir = Path.cwd() / CONV_CHECK_FOLDER / results_output_fname
     if plot_data:
         create_convergence_plots(
             raw_data,
             true_pf_df,
             ["loss", "delay", "jitter"],
-            results_output_fname,
+            output_dir,
         )
 
 
@@ -149,8 +145,7 @@ def create_convergence_plots(
         }
         results.append(metrics_row)
     metrics_history_df = pd.DataFrame(results)
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    os.makedirs(output_folder, exist_ok=True)
 
     metrics_list = ["gd", "gd+", "igd", "igd+"]
     pop_sizes = sorted(metrics_history_df["popsize"].unique())
@@ -158,9 +153,7 @@ def create_convergence_plots(
     colors = ["blue", "orange", "green"]
     algo_color_map = dict(zip(algos, colors))
 
-    print(
-        f"[bold green]Plotting convergence charts to {output_folder}...[/bold green]"
-    )
+    print(f"[bold green]Plotting convergence charts to {output_folder}...[/bold green]")
     for pop in pop_sizes:
         pop_data = metrics_history_df[metrics_history_df["popsize"] == pop]
         for metric in metrics_list:
@@ -168,13 +161,11 @@ def create_convergence_plots(
             plt.title(
                 f"Convergence of {metric} for popsize: {pop}",
             )
-            for algo in unique_algos:
+            for algo in algos:
                 algo_data = pop_data[pop_data["algo"] == algo]
                 if algo_data.empty:
                     continue
-                agg = algo_data.groupby("iteration")[metric].agg(
-                    ["mean", "std"]
-                )
+                agg = algo_data.groupby("iteration")[metric].agg(["mean", "std"])
                 agg["std"] = agg["std"].fillna(0)
                 plt.plot(
                     agg.index,
