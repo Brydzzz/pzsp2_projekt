@@ -110,9 +110,7 @@ def run_algo_comp(
 
 
 def create_plots(results_df: pd.DataFrame, results_fname: str) -> None:
-    obj_output_path, metrics_output_path = generate_alg_comp_plots_fname(
-        results_fname
-    )
+    obj_output_path, metrics_output_path = generate_alg_comp_plots_fname(results_fname)
     obj_output_path, metrics_output_path = (
         f"{ALGO_COMPARE_FOLDER}/{obj_output_path}",
         f"{ALGO_COMPARE_FOLDER}/{metrics_output_path}",
