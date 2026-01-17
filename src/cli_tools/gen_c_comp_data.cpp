@@ -11,7 +11,6 @@
 #include <iostream>
 #include <vector>
 
-
 int main(int argc, char *argv[]) {
     if (argc < 7 || (argc - 5) % 2 != 0) {
         std::cerr << "Usage: " << argv[0]
