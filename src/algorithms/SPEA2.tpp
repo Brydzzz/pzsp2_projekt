@@ -45,6 +45,9 @@ std::vector<T> SPEA2<T>::solve(int popsize, int iterations,
         auto distances = fitness_result.second;
         std::vector<T> newset = get_newset(setsize, objectives, combined,
                                            distances, combined_fitness);
+        if (this->logs) {
+            this->logs_vec.push_back(newset);
+        }
         if (t > iterations) {
             return newset;
         }

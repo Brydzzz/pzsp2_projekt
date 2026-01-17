@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::tuple<std::string, int, Individual>> experiments_data;
 
-    SPEA2<Individual> spea2(individual_distance_function);
+    SPEA2<Individual> spea2(&individual_distance_function);
     std::vector<float> spea2_params = {mut_prob};
 
     NSGA2<Individual> nsga2;

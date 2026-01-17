@@ -45,7 +45,8 @@ class INSGA : public Evolutionary_Algorithm<T> {
     Front get_first_front(const Fronts &fronts) const;
 
   public:
-    INSGA(QoSCriterion w);
+    using Evolutionary_Algorithm<T>::Evolutionary_Algorithm;
+    INSGA(QoSCriterion w, bool logs = false);
     Population generate_init_pop(population_generator<T> generator,
                                  int pop) override;
     Population mutation(strategy<T> strat, Population population,

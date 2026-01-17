@@ -42,10 +42,11 @@ class SPEA2 : public Evolutionary_Algorithm<T> {
                                      std::vector<T> &pool2);
 
   public:
-    SPEA2(std::function<float(const std::vector<float> &,
-                              const std::vector<float> &)>
-              distance)
-        : distance_function(distance) {}
+    using Evolutionary_Algorithm<T>::Evolutionary_Algorithm;
+    SPEA2(float (*distance)(const std::vector<float> &,
+                            const std::vector<float> &),
+          bool logs = false)
+        : Evolutionary_Algorithm<T>(logs), distance_function(distance) {}
 
     std::vector<T> solve(int popsize, int iterations, target_function<T> target,
                          strategy<T> mut_strat,
