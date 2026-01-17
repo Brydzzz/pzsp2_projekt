@@ -38,14 +38,18 @@ def generate_alg_comp_raw_data_fname(
 
 
 def generate_alg_comp_results_fname(
-    graph_fname: str, intents_fname: str, iterations: int
+    graph_fname: str,
+    intents_fname: str,
+    iterations: int,
+    runs: int,
+    mut_prob: float,
 ) -> str:
     g_name = os.path.splitext(os.path.basename(graph_fname))[0]
     i_name = os.path.splitext(os.path.basename(intents_fname))[0]
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    return f"alg_compare_results__{g_name}__{i_name}__{iterations}it__{timestamp}.csv"
+    return f"alg_compare_results__{g_name}__{i_name}__{iterations}__{runs}__{mut_prob}it__{timestamp}.csv"
 
 
 def generate_alg_comp_plots_fname(results_fname) -> list[str]:

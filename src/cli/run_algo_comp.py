@@ -101,7 +101,7 @@ def run_algo_comp(
     results = pd.concat([metrics_summary, objectives_summary], axis=1)
     print(f"\n[bold]Experiment results:[/bold]\n\n{results}\n")
     results_output_fname = generate_alg_comp_results_fname(
-        graph_fname, intents_fname, iterations
+        graph_fname, intents_fname, iterations, runs, mut_prob
     )
     save_algo_comp_results(results, results_output_fname)
 
@@ -110,7 +110,9 @@ def run_algo_comp(
 
 
 def create_plots(results_df: pd.DataFrame, results_fname: str) -> None:
-    obj_output_path, metrics_output_path = generate_alg_comp_plots_fname(results_fname)
+    obj_output_path, metrics_output_path = generate_alg_comp_plots_fname(
+        results_fname
+    )
     obj_output_path, metrics_output_path = (
         f"{ALGO_COMPARE_FOLDER}/{obj_output_path}",
         f"{ALGO_COMPARE_FOLDER}/{metrics_output_path}",
