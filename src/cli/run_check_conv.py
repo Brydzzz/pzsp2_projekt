@@ -102,7 +102,9 @@ def run_check_conv(
     results_output_fname = generate_conv_check_result_fname(
         graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
     )
-    output_dir = Path.cwd() / CONV_CHECK_FOLDER / results_output_fname
+    output_dir = (
+        Path.cwd() / CONV_CHECK_FOLDER / "".join(results_output_fname.split(".")[:-1])
+    )
     if plot_data:
         create_convergence_plots(
             raw_data,
