@@ -16,7 +16,7 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
                                      int pop) override;
 
     std::vector<T> mutation(strategy<T> strat, std::vector<T> population,
-                             const std::vector<float> &params) override;
+                            const std::vector<float> &params) override;
 
     std::vector<T> default_selection(std::vector<T> &population,
                                      std::vector<float> &params,

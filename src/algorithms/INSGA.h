@@ -49,7 +49,7 @@ class INSGA : public Evolutionary_Algorithm<T> {
     Population generate_init_pop(population_generator<T> generator,
                                  int pop) override;
     Population mutation(strategy<T> strat, Population population,
-                         const std::vector<float> &params) override;
+                        const std::vector<float> &params) override;
     Front solve(int popsize, int iterations, target_function<T> target,
                 strategy<T> cross_strat, population_generator<T> population_gen,
                 std::vector<float> &params) override;

@@ -32,14 +32,16 @@ std::vector<int> mock_mut(std::vector<int> pop, std::vector<float> params) {
     return pop;
 }
 
-float distance(target_function<int> target, int n1, int n2) { 
+float distance(target_function<int> target, int n1, int n2) {
     (void)target;
-    return std::abs(n1 - n2); }
+    return std::abs(n1 - n2);
+}
 
 template <typename T>
 class SPEA2Wrapper : SPEA2<T> {
   public:
-    SPEA2Wrapper(std::function<float(target_function<T> target, T, T)> distance) : SPEA2<T>(distance) {}
+    SPEA2Wrapper(std::function<float(target_function<T> target, T, T)> distance)
+        : SPEA2<T>(distance) {}
 
     std::vector<int>
     wrap_calculate_strength(std::vector<std::vector<float>> objectives,
@@ -186,8 +188,8 @@ TEST(SPEA2Tests, test_solve) {
     std::srand(42);
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<float> params = {0.0};
-    auto solved = spea2.wrap_solve(4, 1, mock_target, mock_mut,
-                                   mock_population, params);
+    auto solved =
+        spea2.wrap_solve(4, 1, mock_target, mock_mut, mock_population, params);
     std::vector<int> result = {0, -2, -2, 0};
     ASSERT_EQ(result, solved);
 }

@@ -22,8 +22,8 @@ class Evolutionary_Algorithm {
     //                                  std::vector<T> population,
     //                                  const std::vector<float>& params);
     virtual std::vector<T> mutation(strategy<T> strat,
-                                     std::vector<T> population,
-                                     const std::vector<float> &params) = 0;
+                                    std::vector<T> population,
+                                    const std::vector<float> &params) = 0;
     // virtual std::vector<T> succession(strategy<T> strat,
     //                                   std::vector<T> population,
     //                                   const std::vector<float>& params);
