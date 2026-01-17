@@ -34,6 +34,7 @@ def run_algo_comp(
     true_pareto_fname: str,
     iterations: int,
     runs: int,
+    mut_prob: float,
     plot_data: bool,
 ) -> None:
     print("[bold yellow]Running algorithm comparison...[/bold yellow]")
@@ -45,13 +46,14 @@ def run_algo_comp(
     config_table.add_row("True Pareto Front", true_pareto_fname)
     config_table.add_row("Number of iterations", str(iterations))
     config_table.add_row("Number of runs", str(runs))
+    config_table.add_row("Mutation probability", str(mut_prob))
     config_table.add_row("Plot data", str(plot_data))
     print(config_table)
 
     output_dir = Path.cwd() / ALGO_COMPARE_FOLDER
     os.makedirs(output_dir, exist_ok=True)
     raw_data_fname = generate_alg_comp_raw_data_fname(
-        graph_fname, intents_fname, iterations, runs
+        graph_fname, intents_fname, iterations, runs, mut_prob
     )
     raw_data_output_path = output_dir / raw_data_fname
     raw_data_abs_path = raw_data_output_path.resolve()
@@ -67,6 +69,7 @@ def run_algo_comp(
             raw_data_abs_path,
             str(iterations),
             str(runs),
+            str(mut_prob),
         ]
     )
     if result.returncode != 0:

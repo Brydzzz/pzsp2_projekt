@@ -75,6 +75,21 @@ def main():
         "intents",
         help="Intents csv file generated for given graph. Filename in 'intents-files/'",
     )
+    parser_gen_pareto.add_argument(
+        "iterations",
+        type=int,
+        help="Number of iterations each algorithm will be run.",
+    )
+    parser_gen_pareto.add_argument(
+        "runs",
+        type=int,
+        help="Number of runs for each algorithm",
+    )
+    parser_gen_pareto.add_argument(
+        "mutation_probability",
+        type=float,
+        help="Mutation probability",
+    )
 
     parser_algo_comp = subparsers.add_parser(
         "algo-compare",
@@ -104,6 +119,11 @@ def main():
         type=int,
         help="Number of runs for each algorithm",
     )
+    parser_algo_comp.add_argument(
+        "mutation_probability",
+        type=float,
+        help="Mutation probability",
+    )
 
     parser_algo_comp.add_argument(
         "--plot-data",
@@ -122,7 +142,13 @@ def main():
         case "gen-intents":
             run_gen_intents(args.graph)
         case "gen-true-pareto":
-            run_gen_true_pareto(args.graph, args.intents)
+            run_gen_true_pareto(
+                args.graph,
+                args.intents,
+                args.iterations,
+                args.runs,
+                args.mutation_probability,
+            )
         case "algo-compare":
             run_algo_comp(
                 args.graph,
@@ -130,6 +156,7 @@ def main():
                 args.true_pareto,
                 args.iterations,
                 args.runs,
+                args.mutation_probability,
                 args.plot_data,
             )
         case _:

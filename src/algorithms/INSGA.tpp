@@ -247,10 +247,9 @@ typename INSGA<T>::Front
 INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
                 strategy<T> mut_strat, population_generator<T> population_gen,
                 std::vector<float> &params) {
-    if (params.size() < 2) {
+    if (params.size() < 1) {
         throw std::invalid_argument(
-            "Params vector must contain at least two elements: mutation and "
-            "crossover probabilities.");
+            "Params vector must contain mutation_probability");
     }
     // double mutation_probability = params[0];
     // double crossover_probability = params[1];

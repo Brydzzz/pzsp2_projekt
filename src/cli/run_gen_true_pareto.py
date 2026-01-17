@@ -13,13 +13,22 @@ from src.cli.folder_and_fnames import (
 )
 
 
-def run_gen_true_pareto(graph_fname: str, intents_fname: str) -> None:
+def run_gen_true_pareto(
+    graph_fname: str,
+    intents_fname: str,
+    iterations: int,
+    runs: int,
+    mut_prob: float,
+) -> None:
     print("[bold yellow]Generating true pareto front...[/bold yellow]")
     config_table = Table(title="Configuration")
     config_table.add_column("Parameter")
     config_table.add_column("Value")
     config_table.add_row("Graph", graph_fname)
     config_table.add_row("Intents", intents_fname)
+    config_table.add_row("Number of iterations", str(iterations))
+    config_table.add_row("Number of runs", str(runs))
+    config_table.add_row("Mutation probability", str(mut_prob))
     print(config_table)
 
     output_dir = Path.cwd() / PF_FOLDER
@@ -37,6 +46,9 @@ def run_gen_true_pareto(graph_fname: str, intents_fname: str) -> None:
             abs_graph_path,
             abs_intents_path,
             abs_output_path,
+            str(iterations),
+            str(runs),
+            str(mut_prob),
         ]
     )
     if result.returncode != 0:

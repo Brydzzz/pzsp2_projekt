@@ -14,10 +14,11 @@
 #include <vector>
 
 int main(int argc, char *argv[]) {
-    if (argc < 5) {
+    if (argc < 7) {
         std::cerr << "Usage: " << argv[0]
                   << "<graph_csv_path> <intent_csv_path> "
-                     "<output_raw_data_path> <iterations>"
+                     "<output_raw_data_path> <iterations> <runs> "
+                     "<mutation_probability>"
                   << std::endl;
         return 1;
     }
@@ -27,6 +28,7 @@ int main(int argc, char *argv[]) {
     std::string outputPath = argv[3];
     int iterations = atoi(argv[4]);
     int runs = atoi(argv[5]);
+    float mut_prob = std::stof(argv[6]);
 
     std::ifstream graphFile(graphPath);
     if (!graphFile.is_open()) {
@@ -57,16 +59,13 @@ int main(int argc, char *argv[]) {
     std::vector<std::tuple<std::string, int, Individual>> experiments_data;
 
     SPEA2<Individual> spea2(individual_distance_function);
-    std::vector<float> spea2_params = {5.0};
+    std::vector<float> spea2_params = {mut_prob};
 
     NSGA2<Individual> nsga2;
-    std::vector<float> nsga2_params = {5.0, 1};
+    std::vector<float> nsga2_params = {mut_prob};
 
     INSGA<Individual> insga(QoSCriterion::Loss);
-    float mutation_probability = 0.5;
-    float crossover_probability = 0.0;
-    std::vector<float> insga_params = {mutation_probability,
-                                       crossover_probability};
+    std::vector<float> insga_params = {mut_prob};
 
     // int iterations_alg = 100;
     int populations_alg = 30;
