@@ -104,18 +104,9 @@ def run_check_conv(
     if set(true_pf_df.columns) != set(OBJECTIVES):
         print("[bold red]Incorrect true pareto front data format[/bold red].")
         return
-
-    fronts_df = get_fronts_by_run(raw_data, OBJECTIVES)
-    metrics_summary = calculate_metrics(fronts_df, true_pf_df, OBJECTIVES)
-    objectives_summary = calculate_objectives_stats(raw_data)
-
-    results = pd.concat([metrics_summary, objectives_summary], axis=1)
-    print(f"\n[bold]Experiment results:[/bold]\n\n{results}\n")
     results_output_fname = generate_conv_check_result_fname(
         graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
     )
-    # save_algo_comp_results(raw_data, results_output_fname)
-
     if plot_data:
         create_convergence_plots(
             raw_data,
@@ -163,7 +154,7 @@ def create_convergence_plots(
 
     metrics_list = ["gd", "gd+", "igd", "igd+"]
     pop_sizes = sorted(metrics_history_df["popsize"].unique())
-    unique_algos = metrics_history_df["algo"].unique()
+    unique_algos = ["INSGA", "NSGA2", "SPEA2"]
     colors = ["blue", "orange", "green"]
     algo_color_map = dict(zip(unique_algos, colors))
 
