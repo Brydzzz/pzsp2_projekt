@@ -6,6 +6,7 @@ GRAPH_FOLDER = "graph_csv_files"
 ALGO_COMPARE_FOLDER = "algo_compare"
 PF_FOLDER = "pareto_fronts"
 INTENTS_FOLDER = "intents_csv_files"
+C_COMP_DATA_FOLDER = "c_comp_data"
 
 
 # filename generation
@@ -20,6 +21,15 @@ def generate_true_pareto_fname(graph_fname: str, intents_fname: str) -> str:
     i_name = os.path.splitext(os.path.basename(intents_fname))[0]
 
     return f"{g_name}__{i_name}__pf.csv"
+
+
+def generate_c_comp_fname(iterations: int, runs: int, mut_prob: float) -> str:
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"c_comp_results__{iterations}it__{runs}runs__{mut_prob}mut__{timestamp}.csv"
+
+
+def generate_c_comp_plot_fname(results_fname: str) -> str:
+    return f"{results_fname.replace('c_comp_results', 'c_comp_plot').replace('.csv', '.png')}"
 
 
 def generate_alg_comp_raw_data_fname(

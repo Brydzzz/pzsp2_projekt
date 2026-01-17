@@ -3,6 +3,7 @@ graph_csv_files/
 algo_compare/
 pareto_fronts/
 intents_csv_files/
+c_comp_data/
 __pycache__/
 .ruff_cache/
 .idea/

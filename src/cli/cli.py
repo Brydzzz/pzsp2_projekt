@@ -1,12 +1,18 @@
 import argparse
 
+from src.cli.run_c_comp import run_c_comp
 from src.cli.run_gen_intents import run_gen_intents
 from src.networks_processor.fullmesh_generator import (
     generate_and_save_fullmesh,
 )
 from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
-from .folder_and_fnames import ALGO_COMPARE_FOLDER, GRAPH_FOLDER, PF_FOLDER
+from .folder_and_fnames import (
+    ALGO_COMPARE_FOLDER,
+    C_COMP_DATA_FOLDER,
+    GRAPH_FOLDER,
+    PF_FOLDER,
+)
 from .run_algo_comp import run_algo_comp
 from .run_gen_true_pareto import run_gen_true_pareto
 
@@ -15,11 +21,11 @@ def main():
     folder_map = f"""
     DIRECTORY MAPPING:
     The program expects files in specific subdirectories. Use FILENAMES only:
-        - Graphs                            ->  /{GRAPH_FOLDER}/
-        - Intents                           ->  /intents-files/
-        - True Pareto                       ->  /{PF_FOLDER}/
-        - Algorithms Comparison Results     ->  /{ALGO_COMPARE_FOLDER}/
-        - ... (more coming soon)
+        - Graphs                               ->  /{GRAPH_FOLDER}/
+        - Intents                              ->  /intents-files/
+        - True Pareto                          ->  /{PF_FOLDER}/
+        - Algorithms Comparison Results        ->  /{ALGO_COMPARE_FOLDER}/
+        - Computational complexity Results     ->  /{C_COMP_DATA_FOLDER}/
     """
     parser = argparse.ArgumentParser(
         description="Tool for multi-objective telecommunications network optimization",
@@ -130,6 +136,39 @@ def main():
         f" All plots are saved to '{ALGO_COMPARE_FOLDER}'.",
     )
 
+    parser_c_comp = subparsers.add_parser(
+        "c-comp",
+        help=(
+            "Run computational complexity tests to measure execution time vs network size."
+            " Automatically generates fullmesh networks (small/medium/large) if no data is loaded."
+        ),
+    )
+    parser_c_comp.add_argument(
+        "--load-data",
+        type=str,
+        metavar="FILENAME",
+        help=f"Load existing measurement data from '{C_COMP_DATA_FOLDER}/' instead of generating new.",
+    )
+
+    parser_c_comp.add_argument(
+        "--iterations",
+        type=int,
+        default=None,
+        help="[Gen Only] Number of iterations (Default: 1000).",
+    )
+    parser_c_comp.add_argument(
+        "--runs",
+        type=int,
+        default=None,
+        help="[Gen Only] Number of runs per algorithm (Default: 1).",
+    )
+    parser_c_comp.add_argument(
+        "--mutation",
+        type=float,
+        default=None,
+        help="[Gen Only] Mutation probability (Default: 0.1).",
+    )
+
     args = parser.parse_args()
 
     match args.command:
@@ -157,5 +196,23 @@ def main():
                 args.mutation_probability,
                 args.plot_data,
             )
+        case "c-comp":
+            if args.load_data:
+                if (
+                    args.iterations is not None
+                    or args.runs is not None
+                    or args.mutation is not None
+                ):
+                    parser.error(
+                        "Arguments --iterations, --runs, and --mutation cannot be used with --load-data."
+                    )
+
+                run_c_comp(args.load_data, 0, 0, 0.0)
+            else:
+                iter_val = args.iterations if args.iterations is not None else 1000
+                runs_val = args.runs if args.runs is not None else 1
+                mut_val = args.mutation if args.mutation is not None else 0.1
+
+                run_c_comp(None, iter_val, runs_val, mut_val)
         case _:
             parser.print_help()
