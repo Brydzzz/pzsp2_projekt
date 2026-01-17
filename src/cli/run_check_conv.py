@@ -154,9 +154,9 @@ def create_convergence_plots(
 
     metrics_list = ["gd", "gd+", "igd", "igd+"]
     pop_sizes = sorted(metrics_history_df["popsize"].unique())
-    unique_algos = ["INSGA", "NSGA2", "SPEA2"]
+    algos = ["INSGA", "NSGA2", "SPEA2"]
     colors = ["blue", "orange", "green"]
-    algo_color_map = dict(zip(unique_algos, colors))
+    algo_color_map = dict(zip(algos, colors))
 
     print(
         f"[bold green]Plotting convergence charts to {output_folder}...[/bold green]"
