@@ -67,9 +67,9 @@ int main(int argc, char *argv[]) {
     std::vector<float> insga_params = {mutation_probability,
                                        crossover_probability};
 
-    int iterations_alg = 10;
-    int populations_alg = 10;
-    iterations = 10;
+    // int iterations_alg = 100;
+    int populations_alg = 30;
+    int runs = 20;
 
     std::vector<std::thread> threads;
 
@@ -79,17 +79,17 @@ int main(int argc, char *argv[]) {
         std::cout << "SPEA2 Run No" << i + 1 << std::endl;
         threads.push_back(std::thread([&, i]() {
             spea2_indivs[i] = spea2.solve(
-                populations_alg, iterations_alg, individual_target_function,
+                populations_alg, iterations, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, spea2_params);
         }));
         threads.push_back(std::thread([&, i]() {
             nsga2_indivs[i] = nsga2.solve(
-                populations_alg, iterations_alg, individual_target_function,
+                populations_alg, iterations, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
         }));
         threads.push_back(std::thread([&, i]() {
             insga_indivs[i] = insga.solve(
-                populations_alg, iterations_alg, individual_target_function,
+                populations_alg, iterations, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, insga_params);
         }));
     }

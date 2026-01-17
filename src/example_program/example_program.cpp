@@ -1,6 +1,8 @@
 #include "GraphParser.h"
 #include "Intent.h"
+#include "NSGA2.h"
 #include "SPEA2.h"
+
 #include <fstream>
 #include <iostream>
 class Individual {
@@ -69,71 +71,49 @@ int main() {
         return pops;
     };
 
-    auto cross_two_paths = [&](Individual first_paths,
-                               Individual second_paths) -> Individual {
-        Individual crossed_paths = first_paths;
-        for (unsigned int i = 0; i < first_paths.paths.size(); i++) {
-            if (rand() % 10 < 5) {
-                auto try_paths = crossed_paths;
-                try_paths.paths[i] = second_paths.paths[i];
-                auto try_paths_result =
-                    paths_correct<NetStat>(try_paths, intentGenerator);
-                if (try_paths_result.first) {
-                    crossed_paths = try_paths;
-                }
-            }
-        }
-        return crossed_paths;
-    };
-
     auto crossing = [&](std::vector<Individual> paths,
                         std::vector<float> params) {
-        std::vector<Individual> new_paths;
-        new_paths.reserve(paths.size());
-
-        if (paths.size() < 2)
-            return paths;
-
-        for (unsigned int i = 0; i < paths.size(); i++) {
-            auto first_paths = paths[i];
-            auto second_paths = paths[(i + 1) % paths.size()];
-
-            if (rand() % 10 < params[0]) {
-                new_paths.push_back(first_paths);
-            } else {
-                auto crossed_path = cross_two_paths(first_paths, second_paths);
-                new_paths.push_back(crossed_path);
+        for (auto indiv : paths) {
+            for (auto &path : indiv.paths) {
+                float random = rand();
+                float prec = random / (float)RAND_MAX;
+                if (prec > params[1])
+                    continue;
+                auto start = path.front();
+                auto end = path.back();
+                auto newPath = graph.generateRandomPath(start, end);
+                path = newPath;
             }
         }
-        return new_paths;
+        return paths;
     };
 
-    auto target_function = [&](Individual indiv) {
-        int delay = 0;
-        int jitter = 0;
-        int loss = 0;
-        for (auto path : indiv.paths) {
-            for (unsigned int i = 0; i < path.size() - 1; i++) {
-                auto edge = indiv.graph.getEdgeBetween(path[i], path[i + 1]);
-                if (edge.has_value()) {
-                    delay += (*edge).weight.delay;
-                    jitter += (*edge).weight.jitter;
-                    loss += (*edge).weight.loss;
-                }
-            }
-        }
-        for (auto edge = indiv.graph.flow_left.begin();
-             edge != indiv.graph.flow_left.end(); edge++) {
-            if (edge->second < 0) {
-                delay += edge->second * 10;
-                loss += edge->second * 10;
-                jitter += edge->second * 10;
-            }
-        }
-        return std::vector<float>{static_cast<float>(delay),
-                                  static_cast<float>(loss),
-                                  static_cast<float>(jitter)};
-    };
+    // auto target_function = [&](Individual indiv) {
+    //     int delay = 0;
+    //     int jitter = 0;
+    //     int loss = 0;
+    //     for (auto path : indiv.paths) {
+    //         for (unsigned int i = 0; i < path.size() - 1; i++) {
+    //             auto edge = indiv.graph.getEdgeBetween(path[i], path[i + 1]);
+    //             if (edge.has_value()) {
+    //                 delay += (*edge).weight.delay;
+    //                 jitter += (*edge).weight.jitter;
+    //                 loss += (*edge).weight.loss;
+    //             }
+    //         }
+    //     }
+    //     for (auto edge = indiv.graph.flow_left.begin();
+    //          edge != indiv.graph.flow_left.end(); edge++) {
+    //         if (edge->second < 0) {
+    //             delay += edge->second * 10;
+    //             loss += edge->second * 10;
+    //             jitter += edge->second * 10;
+    //         }
+    //     }
+    //     return std::vector<float>{static_cast<float>(delay),
+    //                               static_cast<float>(loss),
+    //                               static_cast<float>(jitter)};
+    // };
 
     auto proper_target = [&](Individual indiv) {
         int delay = 0;
@@ -165,8 +145,8 @@ int main() {
 
     SPEA2<Individual> spea2(distance_function);
     // spea2.distance_function =distance_function
-    std::vector<float> params = {5.0};
-    auto indivs = spea2.solve(30, 40, target_function, crossing,
+    std::vector<float> params = {-100.00};
+    auto indivs = spea2.solve(30, 100, proper_target, crossing,
                               generate_random_paths, params);
     for (auto indiv : indivs) {
         auto vals = proper_target(indiv);

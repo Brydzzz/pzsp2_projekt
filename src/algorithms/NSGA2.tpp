@@ -33,7 +33,7 @@ std::vector<T> NSGA2<T>::generate_init_pop(population_generator<T> generator,
 
 template <typename T>
 std::vector<T> NSGA2<T>::mutation(strategy<T> strat, std::vector<T> population,
-                                   const std::vector<float> &params) {
+                                  const std::vector<float> &params) {
     return strat(population, params);
 }
 
@@ -212,15 +212,15 @@ std::vector<T> NSGA2<T>::select_best(std::vector<T> &population, int best_size,
 //
 
 template <typename T>
-std::vector<T>
-NSGA2<T>::solve(int popsize, int iterations, target_function<T> target,
-                strategy<T> mut_strat, population_generator<T> population_gen,
-                std::vector<float> &params) {
+std::vector<T> NSGA2<T>::solve(int popsize, int iterations,
+                               target_function<T> target, strategy<T> mut_strat,
+                               population_generator<T> population_gen,
+                               std::vector<float> &params) {
     std::vector<T> population = generate_init_pop(population_gen, popsize);
     auto new_population = generate_init_pop(population_gen, popsize);
     auto combined_population = join_vector(population, new_population);
     for (int iter = 0; iter < iterations; iter++) {
-        std::cout << "NSGA2 Iteration: " << iter << std::endl;
+        // std::cout << "NSGA2 Iteration: " << iter << std::endl;
         population = select_best(combined_population, popsize, target);
         if (iter + 1 < iterations) {
             new_population = mutation(mut_strat, population, params);

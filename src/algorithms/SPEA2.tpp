@@ -48,7 +48,7 @@ std::vector<T> SPEA2<T>::solve(int popsize, int iterations,
         if (t > iterations) {
             return newset;
         }
-        std::cout << "SPEA2 Iteration: " << t << std::endl;
+        // std::cout << "SPEA2 Iteration: " << t << std::endl;
         std::vector<T> combined_set = newset;
         combined_set.insert(combined_set.end(), external_set.begin(),
                             external_set.end());
