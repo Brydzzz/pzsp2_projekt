@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
     std::string intentsPath = argv[2];
     std::string outputPath = argv[3];
     int iterations = atoi(argv[4]);
+    int runs = atoi(argv[5]);
 
     std::ifstream graphFile(graphPath);
     if (!graphFile.is_open()) {
@@ -69,14 +70,13 @@ int main(int argc, char *argv[]) {
 
     // int iterations_alg = 100;
     int populations_alg = 30;
-    int runs = 20;
 
     std::vector<std::thread> threads;
 
-    std::vector<std::vector<Individual>> spea2_indivs(iterations),
-        nsga2_indivs(iterations), insga_indivs(iterations);
-    for (int i = 0; i < iterations; i++) {
-        std::cout << "SPEA2 Run No" << i + 1 << std::endl;
+    std::vector<std::vector<Individual>> spea2_indivs(runs), nsga2_indivs(runs),
+        insga_indivs(runs);
+    for (int i = 0; i < runs; i++) {
+        // std::cout << "SPEA2 Run No" << i + 1 << std::endl;
         threads.push_back(std::thread([&, i]() {
             spea2_indivs[i] = spea2.solve(
                 populations_alg, iterations, individual_target_function,
@@ -98,19 +98,19 @@ int main(int argc, char *argv[]) {
         threads[i].join();
     }
 
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < runs; i++) {
         for (const auto &indiv : insga_indivs[i]) {
             experiments_data.push_back({"INSGA", i, indiv});
         }
     }
 
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < runs; i++) {
         for (const auto &indiv : nsga2_indivs[i]) {
             experiments_data.push_back({"NSGA2", i, indiv});
         }
     }
 
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < runs; i++) {
         for (const auto &indiv : spea2_indivs[i]) {
             experiments_data.push_back({"SPEA2", i, indiv});
         }

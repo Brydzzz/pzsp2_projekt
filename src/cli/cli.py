@@ -1,7 +1,9 @@
 import argparse
 
 from src.cli.run_gen_intents import run_gen_intents
-from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
+from src.networks_processor.fullmesh_generator import (
+    generate_and_save_fullmesh,
+)
 from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
 from .folder_and_fnames import ALGO_COMPARE_FOLDER, GRAPH_FOLDER, PF_FOLDER
@@ -39,10 +41,13 @@ def main():
             f" The CSV file will be saved to {GRAPH_FOLDER}/ and can be later used with other tools."
         ),
     )
-    parser_snd.add_argument("network_name", type=str, help="Network name from SNDLib")
+    parser_snd.add_argument(
+        "network_name", type=str, help="Network name from SNDLib"
+    )
 
     parser_full_mesh = subparsers.add_parser(
-        "gen-full-mesh", help="Generates full mesh network with given number of nodes"
+        "gen-full-mesh",
+        help="Generates full mesh network with given number of nodes",
     )
     parser_full_mesh.add_argument(
         "node_count", type=int, help="Number of nodes in full mesh network"
@@ -90,7 +95,14 @@ def main():
         help=f"True pareto front file generated for given graph and intents. Filename in '{PF_FOLDER}/'",
     )
     parser_algo_comp.add_argument(
-        "iterations", type=int, help="Number of iterations each algorithm will be run."
+        "iterations",
+        type=int,
+        help="Number of iterations each algorithm will be run.",
+    )
+    parser_algo_comp.add_argument(
+        "runs",
+        type=int,
+        help="Number of runs for each algorithm",
     )
 
     parser_algo_comp.add_argument(
@@ -117,6 +129,7 @@ def main():
                 args.intents,
                 args.true_pareto,
                 args.iterations,
+                args.runs,
                 args.plot_data,
             )
         case _:
