@@ -31,7 +31,7 @@ class TestFilenamesGeneration:
         results = generate_alg_comp_raw_data_fname(
             g_fname, i_fname, iters, runs, mut_prob
         )
-        expected = "poland_big__poland_big_intent_10__25__100__0.5it__alg_compare_raw__20260108_204531.csv"
+        expected = "poland_big__poland_big_intent_10__25__100__0.5_it__alg_compare_raw__20260108_204531.csv"
         assert results == expected
 
     def test_generate_alg_comp_results_fname(self, monkeypatch):

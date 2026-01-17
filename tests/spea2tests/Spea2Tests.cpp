@@ -32,16 +32,14 @@ std::vector<int> mock_mut(std::vector<int> pop, std::vector<float> params) {
     return pop;
 }
 
-float distance(target_function<int> target, int n1, int n2) {
-    (void)target;
-    return std::abs(n1 - n2);
+float distance(const std::vector<float> &t1, const std::vector<float> &t2) {
+    return std::abs(std::round(std::cbrt(t1[1]) - std::cbrt(t2[1])));
 }
 
 template <typename T>
-class SPEA2Wrapper : SPEA2<T> {
+class SPEA2Wrapper : public SPEA2<T> {
   public:
-    SPEA2Wrapper(std::function<float(target_function<T> target, T, T)> distance)
-        : SPEA2<T>(distance) {}
+    SPEA2Wrapper(distance_function_T distance) : SPEA2<T>(distance) {}
 
     std::vector<int>
     wrap_calculate_strength(std::vector<std::vector<float>> objectives,
@@ -61,7 +59,7 @@ class SPEA2Wrapper : SPEA2<T> {
     std::pair<std::vector<float>, std::vector<std::vector<float>>>
     wrap_calculate_fitness(std::vector<std::vector<float>> objectives,
                            std::vector<T> &population) {
-        return this->calculate_fitness(objectives, population);
+        return this->calculate_fitness(objectives, population, mock_target);
     }
     std::vector<int> wrap_get_newset(unsigned int setsize,
                                      std::vector<std::vector<float>> objectives,

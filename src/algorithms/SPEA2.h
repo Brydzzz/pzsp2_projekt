@@ -7,10 +7,13 @@
 #include <pareto/front.h>
 #include <pareto/kd_tree.h>
 
+using distance_function_T = std::function<float(const std::vector<float> &,
+                                                const std::vector<float> &)>;
+
 template <typename T>
 class SPEA2 : public Evolutionary_Algorithm<T> {
-    std::function<float(const std::vector<float> &, const std::vector<float> &)>
-        distance_function;
+
+    distance_function_T distance_function;
 
   protected:
     std::vector<T> generate_init_pop(population_generator<T> generator,
