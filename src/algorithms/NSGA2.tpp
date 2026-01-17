@@ -78,8 +78,10 @@ NSGA2<T>::sort_nondominated_algorithm(std::vector<T> &population,
     std::vector<pareto::point<float, 3>> points(population_size);
     for (int i = 0; i < population_size; i++) {
         auto objective_value = target(population[i]);
-        points[i] = pareto::point<float, 3>(objective_value.begin(),
-                                            objective_value.end());
+        points[i] =
+            pareto::point<float, 3>({static_cast<float>(objective_value[0]),
+                                     static_cast<float>(objective_value[1]),
+                                     static_cast<float>(objective_value[2])});
     }
 
     for (int i = 0; i < population_size; i++) {
@@ -225,6 +227,9 @@ std::vector<T> NSGA2<T>::solve(int popsize, int iterations,
         if (iter + 1 < iterations) {
             new_population = mutation(mut_strat, population, params);
             combined_population = join_vector(population, new_population);
+        }
+        if (this->logs) {
+            this->logs_vec.push_back(population);
         }
     }
     return population;

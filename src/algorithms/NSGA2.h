@@ -34,7 +34,7 @@ class NSGA2 : public Evolutionary_Algorithm<T> {
                                target_function<T> target);
 
   public:
-    NSGA2() {}
+    using Evolutionary_Algorithm<T>::Evolutionary_Algorithm;
     // : distance_function(distance_function) {}
     std::vector<T> solve(int popsize, int iterations, target_function<T> target,
                          strategy<T> mut_strat,

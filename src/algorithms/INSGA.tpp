@@ -280,9 +280,13 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
         base_population = base_new_population;
         offspring_population = offspring_new_population;
         iter++;
+        if (this->logs) {
+            this->logs_vec.push_back(offspring_population);
+        }
     }
     return get_first_front(fronts);
 }
 
 template <typename T>
-INSGA<T>::INSGA(QoSCriterion w) : _w(w) {}
+INSGA<T>::INSGA(QoSCriterion w, bool logs)
+    : Evolutionary_Algorithm<T>(logs), _w(w) {}

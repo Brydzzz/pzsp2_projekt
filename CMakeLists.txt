@@ -72,6 +72,20 @@ target_compile_options(gen_algo_compare_data PRIVATE
 target_include_directories(gen_algo_compare_data PRIVATE ${COMMON_INCLUDES} ./src/algorithms)
 
 
+add_executable(gen_check_conv
+    ./src/cli_tools/gen_check_conv.cpp
+    ${COMMON_SOURCES}
+    ./src/algorithms/SPEA2.tpp
+    ./src/algorithms/NSGA2.tpp
+    ./src/algorithms/INSGA.tpp
+    ./src/algorithms/MutationOperators.cpp
+)
+target_link_libraries(gen_check_conv PRIVATE pareto)
+target_compile_options(gen_check_conv PRIVATE
+    -Wno-maybe-uninitialized
+)
+target_include_directories(gen_check_conv PRIVATE ${COMMON_INCLUDES} ./src/algorithms)
+
 add_executable(gen_c_comp_data
     ./src/cli_tools/gen_c_comp_data.cpp
     ${COMMON_SOURCES}
