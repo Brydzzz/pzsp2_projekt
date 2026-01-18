@@ -3,13 +3,16 @@ import subprocess
 from pathlib import Path
 
 from rich import print
-from rich.table import Table
 
 from src.cli.folder_and_fnames import (
     GRAPH_FOLDER,
     INTENTS_FOLDER,
     PF_FOLDER,
     generate_true_pareto_fname,
+)
+from src.experiments_processing.processing_common import (
+    executable_exists,
+    print_config_table,
 )
 
 
@@ -20,16 +23,25 @@ def run_gen_true_pareto(
     runs: int,
     mut_prob: float,
 ) -> None:
+    bin_path = "./build/gen_true_pf"
+    if not executable_exists(bin_path):
+        print(
+            "[bold red]Error: c++ program `gen_true_pf` hasn't been built.[/bold red]"
+        )
+        print(
+            f"Please build it first and make sure it is placed in {Path(bin_path).resolve()}"
+        )
+        return
     print("[bold yellow]Generating true pareto front...[/bold yellow]")
-    config_table = Table(title="Configuration")
-    config_table.add_column("Parameter")
-    config_table.add_column("Value")
-    config_table.add_row("Graph", graph_fname)
-    config_table.add_row("Intents", intents_fname)
-    config_table.add_row("Number of iterations", str(iterations))
-    config_table.add_row("Number of runs", str(runs))
-    config_table.add_row("Mutation probability", str(mut_prob))
-    print(config_table)
+    print_config_table(
+        {
+            "Graph": graph_fname,
+            "Intents": intents_fname,
+            "Number of iterations": str(iterations),
+            "Number of runs": str(runs),
+            "Mutation probability": str(mut_prob),
+        }
+    )
 
     output_dir = Path.cwd() / PF_FOLDER
     os.makedirs(output_dir, exist_ok=True)
@@ -42,7 +54,7 @@ def run_gen_true_pareto(
 
     result = subprocess.run(
         [
-            "./build/gen_true_pf",
+            bin_path,
             abs_graph_path,
             abs_intents_path,
             abs_output_path,

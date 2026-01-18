@@ -5,14 +5,17 @@ from pathlib import Path
 import pandas as pd
 from matplotlib import pyplot as plt
 from rich import print
-from rich.table import Table
 
-from src.experiments_data_processing.algo_comp_utils import (
+from src.experiments_processing.algo_comp_utils import (
     calculate_metrics,
     calculate_objectives_stats,
     get_fronts_by_run,
     is_algo_compare_data_format_valid,
     save_algo_comp_results,
+)
+from src.experiments_processing.processing_common import (
+    executable_exists,
+    print_config_table,
 )
 
 from .folder_and_fnames import (
@@ -37,18 +40,27 @@ def run_algo_comp(
     mut_prob: float,
     plot_data: bool,
 ) -> None:
+    bin_path = "./build/gen_algo_compare_data"
+    if not executable_exists(bin_path):
+        print(
+            "[bold red]Error: c++ program `gen_algo_compare_data` hasn't been built.[/bold red]"
+        )
+        print(
+            f"Please build it first and make sure it is placed in {Path(bin_path).resolve()}"
+        )
+        return
     print("[bold yellow]Running algorithm comparison...[/bold yellow]")
-    config_table = Table(title="Configuration")
-    config_table.add_column("Parameter")
-    config_table.add_column("Value")
-    config_table.add_row("Graph", graph_fname)
-    config_table.add_row("Intents", intents_fname)
-    config_table.add_row("True Pareto Front", true_pareto_fname)
-    config_table.add_row("Number of iterations", str(iterations))
-    config_table.add_row("Number of runs", str(runs))
-    config_table.add_row("Mutation probability", str(mut_prob))
-    config_table.add_row("Plot data", str(plot_data))
-    print(config_table)
+    print_config_table(
+        {
+            "Graph": graph_fname,
+            "Intents": intents_fname,
+            "True Pareto Front": true_pareto_fname,
+            "Number of iterations": str(iterations),
+            "Number of runs": str(runs),
+            "Mutation probability": str(mut_prob),
+            "Plot data": str(plot_data),
+        }
+    )
 
     output_dir = Path.cwd() / ALGO_COMPARE_FOLDER
     os.makedirs(output_dir, exist_ok=True)
@@ -63,7 +75,7 @@ def run_algo_comp(
 
     result = subprocess.run(
         [
-            "./build/gen_algo_compare_data",
+            bin_path,
             abs_graph_path,
             abs_intents_path,
             raw_data_abs_path,
