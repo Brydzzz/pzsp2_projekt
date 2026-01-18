@@ -8,17 +8,20 @@ from rich.table import Table
 from .folder_and_fnames import GRAPH_FOLDER, INTENTS_FOLDER, generate_intents_fname
 
 
-def run_gen_intents(graph_fname: str):
+def run_gen_intents(
+    graph_fname: str, intents_fname: str | None = None, should_print_config: bool = True
+):
     print("[bold yellow]Generating intents...[/bold yellow]")
-    config_table = Table(title="Configuration")
-    config_table.add_column("Parameter")
-    config_table.add_column("Value")
-    config_table.add_row("Graph", graph_fname)
-    print(config_table)
+    if should_print_config:
+        config_table = Table(title="Configuration")
+        config_table.add_column("Parameter")
+        config_table.add_column("Value")
+        config_table.add_row("Graph", graph_fname)
+        print(config_table)
 
     output_dir = Path.cwd() / INTENTS_FOLDER
     os.makedirs(output_dir, exist_ok=True)
-    fname = generate_intents_fname(graph_fname)
+    fname = generate_intents_fname(graph_fname) if not intents_fname else intents_fname
     output_path = output_dir / fname
     abs_output_path = output_path.resolve()
 

@@ -1,5 +1,8 @@
 import argparse
 
+from rich import print
+
+from src.cli.run_c_comp import run_c_comp
 from src.cli.run_gen_intents import run_gen_intents
 from src.networks_processor.fullmesh_generator import (
     generate_and_save_fullmesh,
@@ -8,6 +11,7 @@ from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 
 from .folder_and_fnames import (
     ALGO_COMPARE_FOLDER,
+    C_COMP_DATA_FOLDER,
     GRAPH_FOLDER,
     PF_FOLDER,
     CONV_CHECK_FOLDER,
@@ -21,11 +25,11 @@ def main():
     folder_map = f"""
     DIRECTORY MAPPING:
     The program expects files in specific subdirectories. Use FILENAMES only:
-        - Graphs                            ->  /{GRAPH_FOLDER}/
-        - Intents                           ->  /intents-files/
-        - True Pareto                       ->  /{PF_FOLDER}/
-        - Algorithms Comparison Results     ->  /{ALGO_COMPARE_FOLDER}/
-        - ... (more coming soon)
+        - Graphs                               ->  /{GRAPH_FOLDER}/
+        - Intents                              ->  /intents-files/
+        - True Pareto                          ->  /{PF_FOLDER}/
+        - Algorithms Comparison Results        ->  /{ALGO_COMPARE_FOLDER}/
+        - Computational complexity Results     ->  /{C_COMP_DATA_FOLDER}/
     """
     parser = argparse.ArgumentParser(
         description="Tool for multi-objective telecommunications network optimization",
@@ -181,6 +185,63 @@ def main():
         f" All plots are saved to '{ALGO_COMPARE_FOLDER}'.",
     )
 
+    parser_c_comp = subparsers.add_parser(
+        "c-comp",
+        help=(
+            "Run computational complexity tests to measure execution time vs network size."
+            " Automatically generates fullmesh networks (small/medium/large) if no data is loaded."
+        ),
+    )
+    parser_c_comp.add_argument(
+        "--load-data",
+        type=str,
+        metavar="FILENAME",
+        help=f"Load existing measurement data from '{C_COMP_DATA_FOLDER}/' instead of generating new.",
+    )
+
+    parser_c_comp.add_argument(
+        "--iterations",
+        type=int,
+        default=1000,
+        help="[Data Generation Only] Number of iterations (Default: 1000).",
+    )
+    parser_c_comp.add_argument(
+        "--runs",
+        type=int,
+        default=1,
+        help="[Data Generation Only] Number of runs per algorithm (Default: 1).",
+    )
+    parser_c_comp.add_argument(
+        "--mutation",
+        type=float,
+        default=0.1,
+        help="[Data Generation Only] Mutation probability (Default: 0.1).",
+    )
+
+    parser_c_comp.add_argument(
+        "--min_nodes",
+        type=int,
+        default=5,
+        help="[Data Generation Only] Min number of nodes in network (Default: 5).",
+    )
+
+    parser_c_comp.add_argument(
+        "--max_nodes",
+        type=int,
+        default=40,
+        help="[Data Generation Only] Max number of nodes in network, has to be bigger than min_nodes (Default: 40).",
+    )
+
+    parser_c_comp.add_argument(
+        "--step",
+        type=int,
+        default=5,
+        help=(
+            "[Data Generation Only] Step for nodes count generation "
+            "nodes_counts=range(min_nodes, max_nodes+1, step) (Default: 5)."
+        ),
+    )
+
     args = parser.parse_args()
 
     match args.command:
@@ -207,6 +268,25 @@ def main():
                 args.runs,
                 args.mutation_probability,
                 args.plot_data,
+            )
+        case "c-comp":
+            if args.load_data:
+                print(
+                    "[bold blue]INFO: Arguments --iterations, --runs, --mutation, --min_nodes, "
+                    "--max_nodes and --step will be ignored for --load-data.[/bold blue]"
+                )
+            else:
+                if args.min_nodes > args.max_nodes:
+                    parser.error("Max nodes has to be bigger than min nodes")
+
+            run_c_comp(
+                None,
+                args.iterations,
+                args.runs,
+                args.mutation,
+                args.min_nodes,
+                args.max_nodes,
+                args.step,
             )
         case "check-conv":
             run_check_conv(

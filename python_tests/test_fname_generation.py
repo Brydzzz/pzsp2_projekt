@@ -2,9 +2,11 @@ from datetime import datetime
 
 from src.cli.folder_and_fnames import (
     generate_alg_comp_plots_fname,
-    generate_alg_comp_results_fname,
-    generate_true_pareto_fname,
     generate_alg_comp_raw_data_fname,
+    generate_alg_comp_results_fname,
+    generate_c_comp_fname,
+    generate_c_comp_plot_fname,
+    generate_true_pareto_fname,
 )
 
 
@@ -57,3 +59,15 @@ class TestFilenamesGeneration:
             "alg_compare_plot_gdmetrics__poland__poland_intent_10__25it__20260108_204531.png",
         ]
         assert results == expected
+
+    def test_generate_c_comp_fname(self, monkeypatch):
+        monkeypatch.setattr("src.cli.folder_and_fnames.datetime", self.MockDatetime)
+        results = generate_c_comp_fname(10, 2, 0.5)
+        expected = "c_comp_results__10it__2runs__0.5mut__20260108_204531.csv"
+        assert results == expected
+
+    def test_generate_c_comp_plot_fname(results_fname: str) -> str:
+        results_fname = "c_comp_results__10it__2runs__0.5mut__20260108_204531.csv"
+        results = generate_c_comp_plot_fname(results_fname)
+        excepted = "c_comp_plot__10it__2runs__0.5mut__20260108_204531.png"
+        assert results == excepted
