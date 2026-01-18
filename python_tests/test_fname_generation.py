@@ -6,6 +6,9 @@ from src.cli.folder_and_fnames import (
     generate_alg_comp_results_fname,
     generate_c_comp_fname,
     generate_c_comp_plot_fname,
+    generate_conv_check_raw_fname,
+    generate_conv_check_result_fname,
+    generate_intents_fname,
     generate_true_pareto_fname,
 )
 
@@ -70,4 +73,26 @@ class TestFilenamesGeneration:
         results_fname = "c_comp_results__10it__2runs__0.5mut__20260108_204531.csv"
         results = generate_c_comp_plot_fname(results_fname)
         excepted = "c_comp_plot__10it__2runs__0.5mut__20260108_204531.png"
+        assert results == excepted
+
+    def test_generate_intents_fname(self, monkeypatch):
+        monkeypatch.setattr("src.cli.folder_and_fnames.datetime", self.MockDatetime)
+        results = generate_intents_fname("graph.csv")
+        excepted = "graph__intents__20260108_204531.csv"
+        assert results == excepted
+
+    def test_generate_conv_check_raw_fname(self, monkeypatch):
+        monkeypatch.setattr("src.cli.folder_and_fnames.datetime", self.MockDatetime)
+        results = generate_conv_check_raw_fname(
+            "graph.csv", "intents.csv", 10, 5, 0.4, 30, 2
+        )
+        excepted = "conv_check__graph__intents__10it__5run__0.4mut__30pop__2step__20260108_204531.csv"
+        assert results == excepted
+
+    def test_generate_conv_check_result_fname(self, monkeypatch):
+        monkeypatch.setattr("src.cli.folder_and_fnames.datetime", self.MockDatetime)
+        results = generate_conv_check_result_fname(
+            "graph.csv", "intents.csv", 10, 5, 0.4, 30, 2
+        )
+        excepted = "conv_check_results__graph__intents__10it__5run__0.4mut__30pop__2step__20260108_204531.csv"
         assert results == excepted

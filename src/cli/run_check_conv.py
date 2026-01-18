@@ -4,26 +4,28 @@ from pathlib import Path
 
 import pandas as pd
 from matplotlib import pyplot as plt
-from rich import print
-from rich.table import Table
 from pymoo.indicators.gd import GD
 from pymoo.indicators.gd_plus import GDPlus
 from pymoo.indicators.igd import IGD
 from pymoo.indicators.igd_plus import IGDPlus
+from rich import print
 
-from src.experiments_data_processing.algo_comp_utils import (
+from src.experiments_processing.conv_check_utils import (
     is_raw_data_format_valid_conv_check,
+)
+from src.experiments_processing.processing_common import (
+    executable_exists,
+    print_config_table,
 )
 
 from .folder_and_fnames import (
+    CONV_CHECK_FOLDER,
     GRAPH_FOLDER,
     INTENTS_FOLDER,
     PF_FOLDER,
-    CONV_CHECK_FOLDER,
     generate_conv_check_raw_fname,
     generate_conv_check_result_fname,
 )
-
 
 OBJECTIVES = ["loss", "delay", "jitter"]
 
@@ -39,20 +41,29 @@ def run_check_conv(
     step: int,
     plot_data: bool,
 ) -> None:
+    bin_path = "./build/gen_check_conv"
+    if not executable_exists(bin_path):
+        print(
+            "[bold red]Error: c++ program `gen_check_conv` hasn't been built.[/bold red]"
+        )
+        print(
+            f"Please build it first and make sure it is placed in {Path(bin_path).resolve()}"
+        )
+        return
     print("[bold yellow]Running algorithm comparison...[/bold yellow]")
-    config_table = Table(title="Configuration")
-    config_table.add_column("Parameter")
-    config_table.add_column("Value")
-    config_table.add_row("Graph", graph_fname)
-    config_table.add_row("Intents", intents_fname)
-    config_table.add_row("True Pareto Front", true_pareto_fname)
-    config_table.add_row("Number of iterations", str(iterations))
-    config_table.add_row("Number of runs", str(runs))
-    config_table.add_row("Mutation probability", str(mut_prob))
-    config_table.add_row("Max population", str(max_pop))
-    config_table.add_row("Step", str(step))
-    config_table.add_row("Plot data", str(plot_data))
-    print(config_table)
+    print_config_table(
+        {
+            "Graph": graph_fname,
+            "Intents": intents_fname,
+            "True Pareto Front": true_pareto_fname,
+            "Number of iterations": str(iterations),
+            "Number of runs": str(runs),
+            "Mutation probability": str(mut_prob),
+            "Max population": str(max_pop),
+            "Step": str(step),
+            "Plot data": str(plot_data),
+        }
+    )
     results_output_fname = generate_conv_check_result_fname(
         graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
     )
@@ -73,7 +84,7 @@ def run_check_conv(
 
     result = subprocess.run(
         [
-            "./build/gen_check_conv",
+            bin_path,
             abs_graph_path,
             abs_intents_path,
             raw_data_abs_path,

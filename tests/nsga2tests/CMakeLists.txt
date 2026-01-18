@@ -19,7 +19,7 @@ if (NOT pareto_POPULATED)
 endif ()
 
 # ...
-target_link_libraries(nsga2test PRIVATE pareto gtest gtest_main)
+target_link_libraries(nsga2test PRIVATE pareto gtest gtest_main coverage_options)
 
 include(GoogleTest)
 gtest_discover_tests(nsga2test)

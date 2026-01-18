@@ -9,6 +9,7 @@ from src.networks_processor.constants import (
 )
 from src.networks_processor.networks_common import (
     GraphEdge,
+    get_clickable_path,
     save_graph_to_csv,
 )
 
@@ -95,3 +96,52 @@ class TestSaveGraphToCSV:
         captured = capsys.readouterr()
         assert "Error saving graph:" in captured.out
         assert "open() failure" in captured.out
+
+
+class TestGetClickablePath:
+    def test_standard_environment_returns_uri(self, monkeypatch, tmp_path):
+        monkeypatch.delenv("WSL_DISTRO_NAME", raising=False)
+
+        test_file = tmp_path / "test_file.txt"
+        result = get_clickable_path(test_file)
+
+        assert result.startswith("file://")
+        assert str(test_file.resolve()) in result
+
+    def test_wsl_environment_success(self, monkeypatch, tmp_path):
+        monkeypatch.setenv("WSL_DISTRO_NAME", "Ubuntu")
+
+        call_tracker = {"called": False, "args": []}
+
+        def fake_check_output(command, **kwargs):
+            call_tracker["called"] = True
+            call_tracker["args"] = command
+            return r"\\wsl.localhost\archlinux\home\aha\tmp_path\polska.csv"
+
+        monkeypatch.setenv("WSL_DISTRO_NAME", "Ubuntu")
+        import subprocess
+
+        monkeypatch.setattr(subprocess, "check_output", fake_check_output)
+
+        test_path = tmp_path / "polska.csv"
+        get_clickable_path(test_path)
+
+        assert call_tracker["called"] is True
+        expected_args = ["wslpath", "-w", str(test_path.resolve())]
+        assert call_tracker["args"] == expected_args
+
+    def test_wsl_environment_command_failure(self, monkeypatch, tmp_path):
+        monkeypatch.setenv("WSL_DISTRO_NAME", "Ubuntu")
+
+        import subprocess
+
+        def mock_check_output_error(*args, **kwargs):
+            raise subprocess.CalledProcessError(returncode=1, cmd="wslpath")
+
+        monkeypatch.setattr(subprocess, "check_output", mock_check_output_error)
+
+        test_file = tmp_path / "test_file.txt"
+        result = get_clickable_path(test_file)
+
+        assert result == str(test_file.resolve())
+        assert not result.startswith("file://")

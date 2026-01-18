@@ -251,8 +251,6 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
         throw std::invalid_argument(
             "Params vector must contain mutation_probability");
     }
-    // double mutation_probability = params[0];
-    // double crossover_probability = params[1];
 
     typename INSGA<T>::Population base_population, offspring_population,
         base_extended_population, base_new_population, offspring_selected,
@@ -260,14 +258,10 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
     typename INSGA<T>::Fronts fronts, sorted_fronts;
     typename INSGA<T>::Front first_front;
 
-    // TODO: wywalic zhardkodowany operator mutacji
-    // strategy<T> mutation_operator = INSGAMutationVariantAStrategy;
-
     int iter = 1;
     base_population = random_initialization(popsize, population_gen);
     offspring_population = empty_offspring_population();
     while (iter <= iterations) {
-        // std::cout << "INSGA Iteration:" << iter << std::endl;
         base_extended_population =
             extend_population(base_population, offspring_population);
         fronts = non_dominance_sorting(base_extended_population, target);

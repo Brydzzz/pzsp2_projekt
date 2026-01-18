@@ -140,16 +140,3 @@ TEST(NSGA2Tests, test_solve) {
         ASSERT_LT(v, 50);
     }
 }
-
-// TEST(NSGA2Tests, test_solve2) {
-//     srand(11);
-//     std::vector<float> params = {};
-
-//     std::vector<int> result = nsga2.solve2(5, 1000, mock_target,
-//     mock_mutation,
-//                                            mock_population, params);
-
-//     for (auto v : result) {
-//         ASSERT_EQ(v, 0);
-//     }
-// }

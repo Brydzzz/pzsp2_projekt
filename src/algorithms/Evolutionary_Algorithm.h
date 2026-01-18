@@ -1,6 +1,3 @@
-//
-// Created by tomek on 12/12/25.
-//
 #pragma once
 #include <functional>
 #include <vector>
@@ -27,15 +24,9 @@ class Evolutionary_Algorithm {
     virtual ~Evolutionary_Algorithm() = default;
     virtual std::vector<T> generate_init_pop(population_generator<T> generator,
                                              int pop) = 0;
-    // virtual std::vector<T> selection(strategy<T> strat,
-    //                                  std::vector<T> population,
-    //                                  const std::vector<float>& params);
     virtual std::vector<T> mutation(strategy<T> strat,
                                     std::vector<T> population,
                                     const std::vector<float> &params) = 0;
-    // virtual std::vector<T> succession(strategy<T> strat,
-    //                                   std::vector<T> population,
-    //                                   const std::vector<float>& params);
     virtual std::vector<T> solve(int popsize, int iterations,
                                  target_function<T> target,
                                  strategy<T> cross_strat,

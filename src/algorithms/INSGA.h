@@ -36,9 +36,6 @@ class INSGA : public Evolutionary_Algorithm<T> {
                       target_function<T> target) const;
     Population elite_parent_selection(const Fronts &sorted_fronts, int n) const;
     Population selection(const Population &base_new_population) const;
-    // Population mutation(const Population &offspring_selected,
-    //                     double mutation_probability,
-    //                     strategy<T> mutation_strategy) const;
     Population combine(const Population &offspring_selected,
                        const Population &crossovered_population,
                        const Population &mutated_population) const;
