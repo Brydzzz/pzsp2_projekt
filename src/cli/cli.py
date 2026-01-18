@@ -12,13 +12,14 @@ from src.networks_processor.sndlib_parser import parse_and_save_sndlib
 from .folder_and_fnames import (
     ALGO_COMPARE_FOLDER,
     C_COMP_DATA_FOLDER,
-    GRAPH_FOLDER,
-    PF_FOLDER,
     CONV_CHECK_FOLDER,
+    GRAPH_FOLDER,
+    INTENTS_FOLDER,
+    PF_FOLDER,
 )
 from .run_algo_comp import run_algo_comp
-from .run_gen_true_pareto import run_gen_true_pareto
 from .run_check_conv import run_check_conv
+from .run_gen_true_pareto import run_gen_true_pareto
 
 
 def main():
@@ -26,10 +27,11 @@ def main():
     DIRECTORY MAPPING:
     The program expects files in specific subdirectories. Use FILENAMES only:
         - Graphs                               ->  /{GRAPH_FOLDER}/
-        - Intents                              ->  /intents-files/
+        - Intents                              ->  /{INTENTS_FOLDER}/
         - True Pareto                          ->  /{PF_FOLDER}/
         - Algorithms Comparison Results        ->  /{ALGO_COMPARE_FOLDER}/
         - Computational complexity Results     ->  /{C_COMP_DATA_FOLDER}/
+        - Convergence experiment results       ->  /{CONV_CHECK_FOLDER}/
     """
     parser = argparse.ArgumentParser(
         description="Tool for multi-objective telecommunications network optimization",
@@ -76,6 +78,28 @@ def main():
             " These solutions will form a front that best represented the actual Pareto front."
         ),
     )
+    parser_gen_pareto.add_argument(
+        "graph", help=f"CSV file with graph. Filename in '{GRAPH_FOLDER}/'"
+    )
+    parser_gen_pareto.add_argument(
+        "intents",
+        help="Intents csv file generated for given graph. Filename in 'intents-files/'",
+    )
+    parser_gen_pareto.add_argument(
+        "iterations",
+        type=int,
+        help="Number of iterations each algorithm will be run.",
+    )
+    parser_gen_pareto.add_argument(
+        "runs",
+        type=int,
+        help="Number of runs for each algorithm",
+    )
+    parser_gen_pareto.add_argument(
+        "mutation_probability",
+        type=float,
+        help="Mutation probability",
+    )
     parser_check_conv = subparsers.add_parser(
         "check-conv",
         help=("Check the convergence for earch algorithm, based on population size"),
@@ -85,7 +109,7 @@ def main():
     )
     parser_check_conv.add_argument(
         "intents",
-        help="Intents csv file generated for given graph. Filename in 'intents-files/'",
+        help=f"Intents csv file generated for given graph. Filename in '{INTENTS_FOLDER}/'",
     )
     parser_check_conv.add_argument(
         "true_pareto",
@@ -122,28 +146,6 @@ def main():
         help="Generate convergence charts for each metric and Population Size.\n"
         f" All plots are saved to '{CONV_CHECK_FOLDER}'.",
     )
-    parser_gen_pareto.add_argument(
-        "graph", help=f"CSV file with graph. Filename in '{GRAPH_FOLDER}/'"
-    )
-    parser_gen_pareto.add_argument(
-        "intents",
-        help="Intents csv file generated for given graph. Filename in 'intents-files/'",
-    )
-    parser_gen_pareto.add_argument(
-        "iterations",
-        type=int,
-        help="Number of iterations each algorithm will be run.",
-    )
-    parser_gen_pareto.add_argument(
-        "runs",
-        type=int,
-        help="Number of runs for each algorithm",
-    )
-    parser_gen_pareto.add_argument(
-        "mutation_probability",
-        type=float,
-        help="Mutation probability",
-    )
     parser_algo_comp = subparsers.add_parser(
         "algo-compare",
         help=(
@@ -156,7 +158,7 @@ def main():
     )
     parser_algo_comp.add_argument(
         "intents",
-        help="Intents csv file generated for given graph. Filename in 'intents-files/'",
+        help=f"Intents csv file generated for given graph. Filename in '{INTENTS_FOLDER}/'",
     )
     parser_algo_comp.add_argument(
         "true_pareto",
