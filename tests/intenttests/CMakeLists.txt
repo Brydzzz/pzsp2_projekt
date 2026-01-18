@@ -5,7 +5,7 @@ add_executable(intenttests IntentTests.cpp
 
 target_include_directories(intenttests PRIVATE ../../src/graph)
 
-target_link_libraries(intenttests gtest gtest_main)
+target_link_libraries(intenttests gtest gtest_main coverage_options)
 
 include(GoogleTest)
 gtest_discover_tests(intenttests)

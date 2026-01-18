@@ -14,7 +14,7 @@ FetchContent_Declare(pareto
 
 FetchContent_MakeAvailable(pareto)
 
-target_link_libraries(spea2test PRIVATE pareto gtest gtest_main gmock_main)
+target_link_libraries(spea2test PRIVATE pareto gtest gtest_main gmock_main coverage_options)
 
 include(GoogleTest)
 gtest_discover_tests(spea2test)

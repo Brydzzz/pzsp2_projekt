@@ -24,6 +24,8 @@ Node node10 = Node("Poznań3");
 std::vector<Node> allNodes = {node1, node2, node3, node4, node5,
                               node6, node7, node8, node9, node10};
 
+bool isBetween(int val, int a, int b) { return (val >= a) and (val <= b); }
+
 TEST(IntentTests, demandNotExisting) {
     Intent testing_intent;
     ASSERT_EQ(testing_intent.getDemand(node1, node2), 0);
@@ -38,9 +40,15 @@ TEST(IntentTests, settingDemand) {
 
 TEST(IntentTests, randomizingIntent) {
     Intent testing_intent;
-    testing_intent.setDemand(node1, node2, 10);
-    ASSERT_EQ(testing_intent.getDemand(node1, node2), 10);
-    ASSERT_EQ(testing_intent.getDemand(node2, node3), 0);
+    testing_intent.randomizeIntent(allNodes, 1, 3);
+    for (auto node1 : allNodes) {
+        for (auto node2 : allNodes) {
+            if (node1 == node2)
+                continue;
+            auto demand = testing_intent.getDemand(node1, node2);
+            EXPECT_PRED3(isBetween, demand, 1, 3);
+        }
+    }
 }
 
 TEST(IntentTests, randomizingIntentByPath) {
@@ -70,18 +78,12 @@ TEST(IntentTests, randomizingIntentByPath2) {
     int demand31 = testing_intent.getDemand(node3, node1);
     int demand23 = testing_intent.getDemand(node2, node3);
     int demand32 = testing_intent.getDemand(node3, node2);
-    ASSERT_GE(demand12, 0);
-    ASSERT_LE(demand12, 10);
-    ASSERT_GE(demand21, 0);
-    ASSERT_LE(demand21, 10);
-    ASSERT_GE(demand13, 0);
-    ASSERT_LE(demand13, 10);
-    ASSERT_GE(demand31, 0);
-    ASSERT_LE(demand31, 10);
-    ASSERT_GE(demand23, 0);
-    ASSERT_LE(demand23, 10);
-    ASSERT_GE(demand32, 0);
-    ASSERT_LE(demand32, 10);
+    EXPECT_PRED3(isBetween, demand12, 0, 10);
+    EXPECT_PRED3(isBetween, demand21, 0, 10);
+    EXPECT_PRED3(isBetween, demand13, 0, 10);
+    EXPECT_PRED3(isBetween, demand31, 0, 10);
+    EXPECT_PRED3(isBetween, demand23, 0, 10);
+    EXPECT_PRED3(isBetween, demand32, 0, 10);
     ASSERT_LE(demand12 + demand21, 10);
     ASSERT_LE(demand13 + demand31, 10);
     ASSERT_LE(demand23 + demand32, 10);
