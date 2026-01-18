@@ -1,6 +1,0 @@
-#ifndef DEFINES_GRAPH_H
-#define DEFINES_GRAPH_H
-
-#define THROUGHPUT_MAX __UINT32_MAX__
-
-#endif

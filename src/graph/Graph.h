@@ -42,14 +42,11 @@ class Graph {
     generateRandomPath(Node &startNode, Node &endNode, unsigned int intent,
                        std::map<Edge<T>, int> &external_flow_left) const;
     std::vector<Node> generateRandomPath(Node &startNode, Node &endNode) const;
-
-    std::vector<Node> generateWidestPath(Node &startNode, Node &endNode);
     std::optional<Edge<T>> getEdgeBetween(Node &fromNode, Node &toNode) const;
 
     std::vector<Edge<T>> getEdgesOf(const Node &node) const;
     void addNode(Node &node) { nodes.push_back(node); }
     bool hasNode(Node &node) const {
-        // This will now work because <algorithm> is included
         if (std::find(nodes.begin(), nodes.end(), node) == nodes.end()) {
             return false;
         }

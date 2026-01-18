@@ -6,9 +6,6 @@
 #include <numeric>
 #include <vector>
 
-// template <typename T>
-// using point = pareto::front<float, 3, T>;
-
 template <typename T>
 std::vector<T> SPEA2<T>::generate_init_pop(population_generator<T> generator,
                                            int pop) {
@@ -30,7 +27,6 @@ std::vector<T> SPEA2<T>::solve(int popsize, int iterations,
                                target_function<T> target, strategy<T> mut_strat,
                                population_generator<T> population_gen,
                                std::vector<float> &params) {
-    // params[0] = 0;
     int t = 0;
     int setsize = popsize;
     std::vector<T> population = generate_init_pop(population_gen, popsize);
@@ -51,7 +47,6 @@ std::vector<T> SPEA2<T>::solve(int popsize, int iterations,
         if (t > iterations) {
             return newset;
         }
-        // std::cout << "SPEA2 Iteration: " << t << std::endl;
         std::vector<T> combined_set = newset;
         combined_set.insert(combined_set.end(), external_set.begin(),
                             external_set.end());
@@ -227,10 +222,8 @@ SPEA2<T>::calculate_raw_fitness(std::vector<std::vector<float>> &objectives,
             pareto::point<float, 3>(objectives[i].begin(), objectives[i].end());
     }
     for (unsigned int i = 0; i < combined.size(); i++) {
-        // auto target_i = objectives[i];
         auto &point_i = points[i];
         for (unsigned int j = 0; j < combined.size(); j++) {
-            // auto target_j = objectives[j];
             auto &point_j = points[j];
             if (point_j.strongly_dominates(point_i)) {
                 raw_fitness[i] += strengths[j];
@@ -288,8 +281,3 @@ SPEA2<T>::calculate_distances(target_function<T> target,
     }
     return {result_distances, distances};
 }
-
-// template <typename T>
-// float calculate_distance_points(T point1, T point2) {
-//
-// }

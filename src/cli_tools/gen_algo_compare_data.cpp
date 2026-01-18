@@ -67,7 +67,6 @@ int main(int argc, char *argv[]) {
     INSGA<Individual> insga(QoSCriterion::Loss);
     std::vector<float> insga_params = {mut_prob};
 
-    // int iterations_alg = 100;
     int populations_alg = 30;
 
     std::vector<std::thread> threads;
@@ -75,7 +74,6 @@ int main(int argc, char *argv[]) {
     std::vector<std::vector<Individual>> spea2_indivs(runs), nsga2_indivs(runs),
         insga_indivs(runs);
     for (int i = 0; i < runs; i++) {
-        // std::cout << "SPEA2 Run No" << i + 1 << std::endl;
         threads.push_back(std::thread([&, i]() {
             spea2_indivs[i] = spea2.solve(
                 populations_alg, iterations, individual_target_function,
