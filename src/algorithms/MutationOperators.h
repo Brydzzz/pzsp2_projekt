@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../graph/Individual.h"
+#include "Individual.h"
 #include "Evolutionary_Algorithm.h"
 
 std::vector<Individual>

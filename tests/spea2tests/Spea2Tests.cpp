@@ -91,11 +91,6 @@ class SPEA2Wrapper : public SPEA2<T> {
     }
 };
 
-// TEST(SPEA2Tests, testBasicUsage) {
-//     auto spea2 = SPEA2<int>();
-//     spea2.solve(mock_target, mock_population(4), );
-// }
-
 TEST(SPEA2Tests, test_calculate_strength) {
     auto spea2 = SPEA2Wrapper<int>(distance);
     std::vector<int> pop = {1, -2, 3, 0};
