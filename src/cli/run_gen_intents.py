@@ -3,7 +3,11 @@ import subprocess
 from pathlib import Path
 
 from rich import print
-from rich.table import Table
+
+from src.experiments_processing.processing_common import (
+    executable_exists,
+    print_config_table,
+)
 
 from .folder_and_fnames import GRAPH_FOLDER, INTENTS_FOLDER, generate_intents_fname
 
@@ -11,13 +15,18 @@ from .folder_and_fnames import GRAPH_FOLDER, INTENTS_FOLDER, generate_intents_fn
 def run_gen_intents(
     graph_fname: str, intents_fname: str | None = None, should_print_config: bool = True
 ):
+    bin_path = "./build/gen_intents"
+    if not executable_exists(bin_path):
+        print(
+            "[bold red]Error: c++ program `gen_intents` hasn't been built.[/bold red]"
+        )
+        print(
+            f"Please build it first and make sure it is placed in {Path(bin_path).resolve()}"
+        )
+        return
     print("[bold yellow]Generating intents...[/bold yellow]")
     if should_print_config:
-        config_table = Table(title="Configuration")
-        config_table.add_column("Parameter")
-        config_table.add_column("Value")
-        config_table.add_row("Graph", graph_fname)
-        print(config_table)
+        print_config_table({"Graph": graph_fname})
 
     output_dir = Path.cwd() / INTENTS_FOLDER
     os.makedirs(output_dir, exist_ok=True)
@@ -29,7 +38,7 @@ def run_gen_intents(
 
     result = subprocess.run(
         [
-            "./build/gen_intents",
+            bin_path,
             abs_graph_path,
             abs_output_path,
         ]

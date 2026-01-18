@@ -15,7 +15,8 @@ from src.cli.folder_and_fnames import (
     generate_intents_fname,
 )
 from src.cli.run_gen_intents import run_gen_intents
-from src.experiments_data_processing.run_c_comp_utils import is_c_comp_data_format_valid
+from src.experiments_processing.c_comp_utils import is_c_comp_data_format_valid
+from src.experiments_processing.processing_common import executable_exists
 from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
 
 
@@ -52,6 +53,15 @@ def run_c_comp(
         plot_complexity_data(df, load_data_filename, None, None, None)
 
     else:
+        bin_path = "./build/gen_c_comp_data"
+        if not executable_exists(bin_path):
+            print(
+                "[bold red]Error: c++ program `gen_c_comp_data` hasn't been built.[/bold red]"
+            )
+            print(
+                f"Please build it first and make sure it is placed in {Path(bin_path).resolve()}"
+            )
+            return
         node_counts = [i for i in range(min_nodes, max_nodes + 1, step)]
         print(f"Number of nodes in network that will be tested: {node_counts}")
         print(
@@ -80,7 +90,7 @@ def run_c_comp(
             file_args.append(str(g_path))
             file_args.append(str(i_path))
         cmd = [
-            "./build/gen_c_comp_data",
+            bin_path,
             abs_output_path,
             str(iterations),
             str(runs),

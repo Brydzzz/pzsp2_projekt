@@ -77,7 +77,7 @@ def calculate_objectives_stats(experiments_data: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def is_raw_data_format_valid(data: pd.DataFrame) -> bool:
+def is_algo_compare_data_format_valid(data: pd.DataFrame) -> bool:
     expected = {"algo", "loss", "delay", "jitter", "run_id"}
     if set(data.columns) != expected:
         return False
@@ -93,33 +93,6 @@ def is_raw_data_format_valid(data: pd.DataFrame) -> bool:
     return actual_dtypes == expected_dtypes
 
 
-def is_raw_data_format_valid_conv_check(data: pd.DataFrame) -> bool:
-    expected = {
-        "algo",
-        "run_id",
-        "iteration",
-        "popsize",
-        "loss",
-        "delay",
-        "jitter",
-        "run_id",
-    }
-    if set(data.columns) != expected:
-        return False
-
-    expected_dtypes = {
-        "algo": "object",
-        "run_id": "int64",
-        "iteration": "int64",
-        "popsize": "int64",
-        "loss": "int64",
-        "delay": "int64",
-        "jitter": "int64",
-    }
-    actual_dtypes = data.dtypes.astype(str).to_dict()
-    return actual_dtypes == expected_dtypes
-
-
 def save_algo_comp_results(results_df: pd.DataFrame, output_fname: str):
     results_df.columns = [f"{col}_{stat}" for col, stat in results_df.columns]
     results_df = results_df.reset_index()
@@ -128,22 +101,3 @@ def save_algo_comp_results(results_df: pd.DataFrame, output_fname: str):
         f"{ALGO_COMPARE_FOLDER}/{output_fname}",
         index=False,
     )
-
-
-if __name__ == "__main__":
-    rng = np.random.default_rng(40)
-    true_pf = rng.normal(loc=[20, 30, 5], scale=1.0, size=(100, 3))
-    pareto_fronts = np.array(
-        [
-            rng.normal(loc=[21, 31, 6], scale=1.5, size=(20, 3)),
-            rng.normal(loc=[23, 33, 7], scale=1.5, size=(20, 3)),
-            rng.normal(loc=[25, 35, 8], scale=1.5, size=(20, 3)),
-        ]
-    )
-    metrics_results = calculate_metrics(pareto_fronts, true_pf)
-    for i, res in enumerate(metrics_results):
-        print(f"--- Run {i + 1} ---")
-        print(f"GD:  {res.gd:.4f}")
-        print(f"GD+:  {res.gd_plus:.4f}")
-        print(f"IGD: {res.igd:.4f}")
-        print(f"IGD+: {res.igd_plus:.4f}")
