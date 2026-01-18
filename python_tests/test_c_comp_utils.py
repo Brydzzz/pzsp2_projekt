@@ -2,14 +2,18 @@ from src.experiments_processing.c_comp_utils import is_c_comp_data_format_valid
 import pytest
 import pandas as pd
 
+
 @pytest.fixture
 def valid_df():
-    return pd.DataFrame({
-        "node_count": [10, 20, 30],
-        "algorithm": ["A", "B", "A"],
-        "execution_time": [0.5, 1.2, 0.8],
-        "run_id": [1, 1, 2]
-    })
+    return pd.DataFrame(
+        {
+            "node_count": [10, 20, 30],
+            "algorithm": ["A", "B", "A"],
+            "execution_time": [0.5, 1.2, 0.8],
+            "run_id": [1, 1, 2],
+        }
+    )
+
 
 class TestCCompDataValidFormat:
     def test_valid_data(self, valid_df):
@@ -23,7 +27,7 @@ class TestCCompDataValidFormat:
         assert is_valid is False
         assert error == "missing required columns"
 
-    def test_missing_multiple_columns(self,valid_df):
+    def test_missing_multiple_columns(self, valid_df):
         invalid_df = valid_df.drop(columns=["algorithm", "run_id"])
         is_valid, error = is_c_comp_data_format_valid(invalid_df)
         assert is_valid is False

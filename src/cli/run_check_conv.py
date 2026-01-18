@@ -13,7 +13,10 @@ from rich import print
 from src.experiments_processing.conv_check_utils import (
     is_raw_data_format_valid_conv_check,
 )
-from src.experiments_processing.processing_common import executable_exists, print_config_table
+from src.experiments_processing.processing_common import (
+    executable_exists,
+    print_config_table,
+)
 
 from .folder_and_fnames import (
     CONV_CHECK_FOLDER,
