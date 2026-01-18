@@ -5,7 +5,7 @@ add_executable(graphtest GraphTests.cpp
 )
 
 target_include_directories(graphtest PRIVATE ../../src/graph)
-target_link_libraries(graphtest gtest gtest_main)
+target_link_libraries(graphtest gtest gtest_main coverage_options)
 
 add_executable(graphParserTest GraphParserTests.cpp
         ../../src/graph/GraphParser.h ../../src/graph/GraphParser.cpp
@@ -15,7 +15,7 @@ add_executable(graphParserTest GraphParserTests.cpp
         ../../src/graph/Node.h)
 
 target_include_directories(graphParserTest PRIVATE ../../src/graph ${csvreader_SOURCE_DIR})
-target_link_libraries(graphParserTest gtest gtest_main)
+target_link_libraries(graphParserTest gtest gtest_main coverage_options)
 
 
 
