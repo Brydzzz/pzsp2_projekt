@@ -110,7 +110,9 @@ def run_algo_comp(
 
 
 def create_plots(results_df: pd.DataFrame, results_fname: str) -> None:
-    obj_output_path, metrics_output_path = generate_alg_comp_plots_fname(results_fname)
+    obj_output_path, metrics_output_path = generate_alg_comp_plots_fname(
+        results_fname
+    )
     obj_output_path, metrics_output_path = (
         f"{ALGO_COMPARE_FOLDER}/{obj_output_path}",
         f"{ALGO_COMPARE_FOLDER}/{metrics_output_path}",
@@ -126,7 +128,7 @@ def create_plots(results_df: pd.DataFrame, results_fname: str) -> None:
     colors = ["#2ecc71", "#e67e22", "#9b59b6"]
 
     fig1.suptitle(
-        f"Objectives Values for {results_fname}",
+        f"Objectives Values for \n {results_fname}",
         fontsize=18,
         fontweight="bold",
     )

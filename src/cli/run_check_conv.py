@@ -53,8 +53,14 @@ def run_check_conv(
     config_table.add_row("Step", str(step))
     config_table.add_row("Plot data", str(plot_data))
     print(config_table)
-
-    output_dir = Path.cwd() / CONV_CHECK_FOLDER
+    results_output_fname = generate_conv_check_result_fname(
+        graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
+    )
+    output_dir = (
+        Path.cwd()
+        / CONV_CHECK_FOLDER
+        / "".join(results_output_fname.split(".")[:-1])
+    )
     os.makedirs(output_dir, exist_ok=True)
     raw_data_fname = generate_conv_check_raw_fname(
         graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
@@ -99,11 +105,11 @@ def run_check_conv(
     if set(true_pf_df.columns) != set(OBJECTIVES):
         print("[bold red]Incorrect true pareto front data format[/bold red].")
         return
-    results_output_fname = generate_conv_check_result_fname(
-        graph_fname, intents_fname, iterations, runs, mut_prob, max_pop, step
-    )
+
     output_dir = (
-        Path.cwd() / CONV_CHECK_FOLDER / "".join(results_output_fname.split(".")[:-1])
+        Path.cwd()
+        / CONV_CHECK_FOLDER
+        / "".join(results_output_fname.split(".")[:-1])
     )
     if plot_data:
         create_convergence_plots(
@@ -118,7 +124,7 @@ def create_convergence_plots(
     raw_data: pd.DataFrame,
     true_pf_df: pd.DataFrame,
     objective_names: list[str],
-    output_folder: str = "plots_convergence",
+    output_folder: str = "convergence_check",
 ) -> None:
     print(
         "[bold yellow]Calculating convergence metrics over iterations...[/bold yellow]"
@@ -155,28 +161,43 @@ def create_convergence_plots(
     colors = ["blue", "orange", "green"]
     algo_color_map = dict(zip(algos, colors))
 
-    print(f"[bold green]Plotting convergence charts to {output_folder}...[/bold green]")
-    for pop in pop_sizes:
+    print(
+        f"[bold green]Plotting convergence charts to {output_folder}...[/bold green]"
+    )
+
+    n_rows = len(pop_sizes)
+    n_cols = len(metrics_list)
+
+    fig, axes = plt.subplots(
+        nrows=n_rows,
+        ncols=n_cols,
+        figsize=(5 * n_cols, 5 * n_rows),
+        squeeze=False,
+    )
+
+    for i, pop in enumerate(pop_sizes):
         pop_data = metrics_history_df[metrics_history_df["popsize"] == pop]
-        for metric in metrics_list:
-            plt.figure(figsize=(5, 5))
-            plt.title(
-                f"Convergence of {metric} for popsize: {pop}",
-            )
+        for j, metric in enumerate(metrics_list):
+            ax = axes[i, j]
+            ax.set_title(f"Popsize: {pop} | Metric: {metric}")
+
             for algo in algos:
                 algo_data = pop_data[pop_data["algo"] == algo]
                 if algo_data.empty:
                     continue
-                agg = algo_data.groupby("iteration")[metric].agg(["mean", "std"])
+                agg = algo_data.groupby("iteration")[metric].agg(
+                    ["mean", "std"]
+                )
                 agg["std"] = agg["std"].fillna(0)
-                plt.plot(
+
+                ax.plot(
                     agg.index,
                     agg["mean"],
                     label=algo,
                     color=algo_color_map[algo],
                     linewidth=2,
                 )
-                plt.fill_between(
+                ax.fill_between(
                     agg.index,
                     agg["mean"] - agg["std"],
                     agg["mean"] + agg["std"],
@@ -184,14 +205,14 @@ def create_convergence_plots(
                     alpha=0.15,
                 )
 
-            plt.xlabel("Iteration")
-            plt.ylabel("Metric value")
-            plt.yscale("log")
-            plt.legend(title="Algorithm")
+            ax.set_xlabel("Iteration")
+            ax.set_ylabel("Metric value")
+            ax.set_yscale("log")
 
-            fname = f"conv_pop_{pop}_{metric}.png"
-            output_path = os.path.join(output_folder, fname)
-            plt.tight_layout()
-            plt.savefig(output_path, dpi=300)
-            plt.close()
-            print(f"Saved: {fname}")
+            if i == 0 and j == 0:
+                ax.legend(title="Algorithm")
+    output_path = os.path.join(output_folder, "convergence_check.png")
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close()
+    print(f"Saved: {output_path}")
