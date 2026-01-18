@@ -1,5 +1,7 @@
 import argparse
 
+from rich import print
+
 from src.cli.run_c_comp import run_c_comp
 from src.cli.run_gen_intents import run_gen_intents
 from src.networks_processor.fullmesh_generator import (
@@ -200,20 +202,44 @@ def main():
     parser_c_comp.add_argument(
         "--iterations",
         type=int,
-        default=None,
-        help="[Gen Only] Number of iterations (Default: 1000).",
+        default=1000,
+        help="[Data Generation Only] Number of iterations (Default: 1000).",
     )
     parser_c_comp.add_argument(
         "--runs",
         type=int,
-        default=None,
-        help="[Gen Only] Number of runs per algorithm (Default: 1).",
+        default=1,
+        help="[Data Generation Only] Number of runs per algorithm (Default: 1).",
     )
     parser_c_comp.add_argument(
         "--mutation",
         type=float,
-        default=None,
-        help="[Gen Only] Mutation probability (Default: 0.1).",
+        default=0.1,
+        help="[Data Generation Only] Mutation probability (Default: 0.1).",
+    )
+
+    parser_c_comp.add_argument(
+        "--min_nodes",
+        type=int,
+        default=5,
+        help="[Data Generation Only] Min number of nodes in network (Default: 5).",
+    )
+
+    parser_c_comp.add_argument(
+        "--max_nodes",
+        type=int,
+        default=40,
+        help="[Data Generation Only] Max number of nodes in network, has to be bigger than min_nodes (Default: 40).",
+    )
+
+    parser_c_comp.add_argument(
+        "--step",
+        type=int,
+        default=5,
+        help=(
+            "[Data Generation Only] Step for nodes count generation "
+            "nodes_counts=range(min_nodes, max_nodes+1, step) (Default: 5)."
+        ),
     )
 
     args = parser.parse_args()
@@ -245,22 +271,23 @@ def main():
             )
         case "c-comp":
             if args.load_data:
-                if (
-                    args.iterations is not None
-                    or args.runs is not None
-                    or args.mutation is not None
-                ):
-                    parser.error(
-                        "Arguments --iterations, --runs, and --mutation cannot be used with --load-data."
-                    )
-
-                run_c_comp(args.load_data, 0, 0, 0.0)
+                print(
+                    "[bold blue]INFO: Arguments --iterations, --runs, --mutation, --min_nodes, "
+                    "--max_nodes and --step will be ignored for --load-data.[/bold blue]"
+                )
             else:
-                iter_val = args.iterations if args.iterations is not None else 1000
-                runs_val = args.runs if args.runs is not None else 1
-                mut_val = args.mutation if args.mutation is not None else 0.1
+                if args.min_nodes > args.max_nodes:
+                    parser.error("Max nodes has to be bigger than min nodes")
 
-                run_c_comp(None, iter_val, runs_val, mut_val)
+            run_c_comp(
+                None,
+                args.iterations,
+                args.runs,
+                args.mutation,
+                args.min_nodes,
+                args.max_nodes,
+                args.step,
+            )
         case "check-conv":
             run_check_conv(
                 args.graph,

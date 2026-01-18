@@ -15,14 +15,18 @@ from src.cli.folder_and_fnames import (
     generate_intents_fname,
 )
 from src.cli.run_gen_intents import run_gen_intents
+from src.experiments_data_processing.run_c_comp_utils import is_c_comp_data_format_valid
 from src.networks_processor.fullmesh_generator import generate_and_save_fullmesh
 
 
 def run_c_comp(
-    load_data_filename: str,
+    load_data_filename: str | None,
     iterations: int,
     runs: int,
     mutation_prob: float,
+    min_nodes: int,
+    max_nodes: int,
+    step: int,
 ):
     base_dir = Path.cwd()
     data_dir = base_dir / C_COMP_DATA_FOLDER
@@ -35,42 +39,30 @@ def run_c_comp(
 
         if not os.path.exists(file_path):
             print(
-                f"Error: File '{load_data_filename}' not found in '{C_COMP_DATA_FOLDER}/'."
+                f"[bold red]Error:[/bold red] File '{load_data_filename}' not found in '{C_COMP_DATA_FOLDER}/'."
             )
             return
 
-        try:
-            df = pd.read_csv(file_path)
-            required_columns = {"node_count", "algorithm", "execution_time", "run_id"}
-
-            if not required_columns.issubset(df.columns):
-                raise ValueError("Missing required columns")
-
-            if not pd.api.types.is_numeric_dtype(
-                df["node_count"]
-            ) or not pd.api.types.is_numeric_dtype(df["execution_time"]):
-                raise ValueError(
-                    "Non-numeric data in node_count or execution_time columns"
-                )
-
-        except Exception as e:
-            print(f"Invalid data format. [bold red]Error:[/bold red]{e}")
+        df = pd.read_csv(file_path)
+        is_valid, err_msg = is_c_comp_data_format_valid(df)
+        if not is_valid:
+            print(f"[bold red]Error: invalid data format, {err_msg} [/bold red]")
             return
 
-        _plot_complexity_data(df, load_data_filename, None, None, None)
-        return
+        plot_complexity_data(df, load_data_filename, None, None, None)
 
     else:
+        node_counts = [i for i in range(min_nodes, max_nodes + 1, step)]
+        print(f"Number of nodes in network that will be tested: {node_counts}")
         print(
             f"Starting Complexity Tests (Iter: {iterations}, Runs: {runs}, Mut: {mutation_prob})..."
         )
 
-        NODE_COUNTS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
         final_graph_paths = []
         final_intent_paths = []
 
-        print("Generating network topologies and intents...")
-        for node_count in NODE_COUNTS:
+        print("[bold yellow]Generating network topologies and intents...[/bold yellow]")
+        for node_count in node_counts:
             base_name = f"full_mesh_{node_count}_c_comp"
             csv_name = f"{base_name}.csv"
             intent_name = generate_intents_fname(csv_name)
@@ -100,17 +92,19 @@ def run_c_comp(
 
             if os.path.exists(abs_output_path):
                 final_df = pd.read_csv(abs_output_path)
-                _plot_complexity_data(
+                plot_complexity_data(
                     final_df, output_fname, iterations, runs, mutation_prob
                 )
             else:
-                print("Error: Output file was not created by the c++ program.")
+                print(
+                    "[bold red]Error: [/bold red]Output file was not created by the C++ program."
+                )
 
         except subprocess.CalledProcessError as e:
-            print(f"Error running C++ program: {e}")
+            print(f"[bold red]Error running C++ program:[/bold red] {e}")
 
 
-def _plot_complexity_data(
+def plot_complexity_data(
     df: pd.DataFrame,
     results_fname: str,
     iterations: int | None,
@@ -118,7 +112,7 @@ def _plot_complexity_data(
     mut_prob: float | None,
 ):
     output_path = Path(C_COMP_DATA_FOLDER) / generate_c_comp_plot_fname(results_fname)
-    fig, ax = plt.subplots(figsize=(10, 6))
+    _, ax = plt.subplots(figsize=(10, 6))
     df = df.sort_values(by="node_count")
     avg_df = (
         df.groupby(["node_count", "algorithm"])["execution_time"].mean().reset_index()
