@@ -11,7 +11,7 @@ from src.experiments_data_processing.algo_comp_utils import (
     calculate_metrics,
     calculate_objectives_stats,
     get_fronts_by_run,
-    is_raw_data_format_valid,
+    is_algo_compare_data_format_valid,
     save_algo_comp_results,
 )
 
@@ -84,7 +84,7 @@ def run_algo_comp(
         )
 
     raw_data = pd.read_csv(raw_data_abs_path)
-    if not is_raw_data_format_valid(raw_data):
+    if not is_algo_compare_data_format_valid(raw_data):
         print("[bold red]Incorrect raw data format[/bold red].")
         return
 
