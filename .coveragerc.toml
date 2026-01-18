@@ -1,0 +1,2 @@
+[run]
+omit = ["src/cli/run*.py", "python_tests/", "*__init__.py", "src/cli/cli.py"]

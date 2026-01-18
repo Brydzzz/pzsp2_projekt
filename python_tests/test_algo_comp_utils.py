@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from src.experiments_data_processing.algo_comp_utils import (
+from src.experiments_processing.algo_comp_utils import (
     calculate_metrics,
     calculate_objectives_stats,
     get_fronts_by_run,
@@ -200,7 +200,7 @@ class TestSavingAlgoCompResults:
             {("gd", "mean"): [0.1], ("gd", "std"): [0.01]}, index=["algo1"]
         )
 
-        import src.experiments_data_processing.algo_comp_utils as utils_module
+        import src.experiments_processing.algo_comp_utils as utils_module
 
         monkeypatch.setattr(utils_module, "ALGO_COMPARE_FOLDER", str(tmp_path))
 

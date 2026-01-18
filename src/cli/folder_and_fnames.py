@@ -86,7 +86,7 @@ def generate_conv_check_raw_fname(
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    return f"conv_check__{g_name}__{i_name}__{iterations}__{runs}__{mut_prob}__{max_pop}__{step}it__{timestamp}.csv"
+    return f"conv_check__{g_name}__{i_name}__{iterations}it__{runs}run__{mut_prob}mut__{max_pop}pop__{step}step__{timestamp}.csv"
 
 
 def generate_conv_check_result_fname(
@@ -103,4 +103,4 @@ def generate_conv_check_result_fname(
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    return f"conv_check_results__{g_name}__{i_name}__{iterations}__{runs}__{mut_prob}__{max_pop}__{step}it__{timestamp}.csv"
+    return f"conv_check_results__{g_name}__{i_name}__{iterations}it__{runs}run__{mut_prob}mut__{max_pop}pop__{step}step__{timestamp}.csv"

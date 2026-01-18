@@ -116,7 +116,7 @@ class TestGetClickablePath:
         def fake_check_output(command, **kwargs):
             call_tracker["called"] = True
             call_tracker["args"] = command
-            return "\\wsl.localhost\archlinux\home\aha\tmp_path\polska.csv"
+            return r"\\wsl.localhost\archlinux\home\aha\tmp_path\polska.csv"
 
         monkeypatch.setenv("WSL_DISTRO_NAME", "Ubuntu")
         import subprocess
