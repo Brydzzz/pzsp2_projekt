@@ -61,6 +61,8 @@ Wybraliśmy Python ze względu na łatwości tworzenia aplikacji CLI (biblioteka
 
 ## Propozycje testów akceptacyjnych
 
+_**Uwaga:**_ poniższe testy akceptacyjne uległy drobnym modyfikacjom. Program zamiast wyświetlać interaktywne okno matplotlib zapisuje wygenerowane wykresu do plików `.png`. W przypadku błędnych danych wyświetlamy komunikat o błędach zamiast kierować użytkownika do przykładowych plików z danymi. Po kolejnej konsultacji z Właścicielem ustaliliśmym również, że badamy jedynie zbieżność metryk w zależności od liczności populacji (nazwa subkomendy odpowiadającej funkcjonalności to `conv-check`).
+
 W miejscach gdzie zostały użyte `<>` należy wprowadzić rzeczywiste ściezki/nazwy.
 
 ### Testy złożoności obliczeniowej
