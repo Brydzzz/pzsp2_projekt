@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     Intent intentGenerator;
     std::ifstream intentsFile(intentsPath);
     if (!intentsFile.is_open()) {
-        std::cerr << "Error: Could not open intent file at " << outputPath
+        std::cerr << "Error: Could not open intent file at " << intentsPath
                   << std::endl;
         return 1;
     }
