@@ -79,21 +79,21 @@ int main(int argc, char *argv[]) {
         std::vector<std::vector<std::vector<Individual>>> spea2_indivs(runs),
             nsga2_indivs(runs), insga_indivs(runs);
         for (int i = 0; i < runs; i++) {
-            threads.push_back(std::thread([&, i]() {
-                SPEA2<Individual> spea2(&individual_distance_function, true);
-                spea2.solve(popsize, iterations, individual_target_function,
-                            INSGAMutationVariantAStrategy, pop_generator,
-                            spea2_params);
-                spea2_indivs[i] = spea2.getLogs();
-            }));
+            // threads.push_back(std::thread([&, i]() {
+            //     SPEA2<Individual> spea2(&individual_distance_function, true);
+            //     spea2.solve(popsize, iterations, individual_target_function,
+            //                 INSGAMutationVariantAStrategy, pop_generator,
+            //                 spea2_params);
+            //     spea2_indivs[i] = spea2.getLogs();
+            // }));
 
-            threads.push_back(std::thread([&, i]() {
-                NSGA2<Individual> nsga2(true);
-                nsga2.solve(popsize, iterations, individual_target_function,
-                            INSGAMutationVariantAStrategy, pop_generator,
-                            nsga2_params);
-                nsga2_indivs[i] = nsga2.getLogs();
-            }));
+            // threads.push_back(std::thread([&, i]() {
+            //     NSGA2<Individual> nsga2(true);
+            //     nsga2.solve(popsize, iterations, individual_target_function,
+            //                 INSGAMutationVariantAStrategy, pop_generator,
+            //                 nsga2_params);
+            //     nsga2_indivs[i] = nsga2.getLogs();
+            // }));
             threads.push_back(std::thread([&, i]() {
                 INSGA<Individual> insga(QoSCriterion::Loss, true);
                 insga.solve(popsize, iterations, individual_target_function,

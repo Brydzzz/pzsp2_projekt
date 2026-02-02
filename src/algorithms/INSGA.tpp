@@ -261,7 +261,9 @@ INSGA<T>::solve(int popsize, int iterations, target_function<T> target,
     int iter = 1;
     base_population = random_initialization(popsize, population_gen);
     offspring_population = empty_offspring_population();
+    std::cout << "starting insga" << std::endl;
     while (iter <= iterations) {
+        std::cout << iter << " iter" << std::endl;
         base_extended_population =
             extend_population(base_population, offspring_population);
         fronts = non_dominance_sorting(base_extended_population, target);

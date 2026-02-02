@@ -74,16 +74,16 @@ int main(int argc, char *argv[]) {
     std::vector<std::vector<Individual>> spea2_indivs(runs), nsga2_indivs(runs),
         insga_indivs(runs);
     for (int i = 0; i < runs; i++) {
-        threads.push_back(std::thread([&, i]() {
-            spea2_indivs[i] = spea2.solve(
-                populations_alg, iterations, individual_target_function,
-                INSGAMutationVariantAStrategy, pop_generator, spea2_params);
-        }));
-        threads.push_back(std::thread([&, i]() {
-            nsga2_indivs[i] = nsga2.solve(
-                populations_alg, iterations, individual_target_function,
-                INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
-        }));
+        // threads.push_back(std::thread([&, i]() {
+        //     spea2_indivs[i] = spea2.solve(
+        //         populations_alg, iterations, individual_target_function,
+        //         INSGAMutationVariantAStrategy, pop_generator, spea2_params);
+        // }));
+        // threads.push_back(std::thread([&, i]() {
+        //     nsga2_indivs[i] = nsga2.solve(
+        //         populations_alg, iterations, individual_target_function,
+        //         INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
+        // }));
         threads.push_back(std::thread([&, i]() {
             insga_indivs[i] = insga.solve(
                 populations_alg, iterations, individual_target_function,

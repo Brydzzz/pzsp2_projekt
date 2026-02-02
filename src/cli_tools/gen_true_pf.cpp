@@ -83,10 +83,14 @@ int main(int argc, char *argv[]) {
                 populations_alg, iterations, individual_target_function,
                 INSGAMutationVariantAStrategy, pop_generator, insga_params);
         }));
-    }
 
-    for (unsigned int i = 0; i < threads.size(); i++) {
-        threads[i].join();
+        for (unsigned int i = 0; i < threads.size(); i++) {
+            threads[i].join();
+        }
+
+        std::cout<<"here"<<std::endl;
+
+        threads.clear();
     }
 
     for (int i = 0; i < runs; i++) {

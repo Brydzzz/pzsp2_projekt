@@ -77,27 +77,27 @@ int main(int argc, char *argv[]) {
             insga_times(runs);
 
         for (int i = 0; i < runs; i++) {
-            threads.push_back(std::thread([&, i]() {
-                auto start = std::chrono::high_resolution_clock::now();
-                spea2.solve(
-                    population_size, iterations, individual_target_function,
-                    INSGAMutationVariantAStrategy, pop_generator, spea2_params);
-                auto end = std::chrono::high_resolution_clock::now();
+            // threads.push_back(std::thread([&, i]() {
+            //     auto start = std::chrono::high_resolution_clock::now();
+            //     spea2.solve(
+            //         population_size, iterations, individual_target_function,
+            //         INSGAMutationVariantAStrategy, pop_generator, spea2_params);
+            //     auto end = std::chrono::high_resolution_clock::now();
 
-                std::chrono::duration<double> diff = end - start;
-                spea2_times[i] = diff.count();
-            }));
+            //     std::chrono::duration<double> diff = end - start;
+            //     spea2_times[i] = diff.count();
+            // }));
 
-            threads.push_back(std::thread([&, i]() {
-                auto start = std::chrono::high_resolution_clock::now();
-                nsga2.solve(
-                    population_size, iterations, individual_target_function,
-                    INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
-                auto end = std::chrono::high_resolution_clock::now();
+            // threads.push_back(std::thread([&, i]() {
+            //     auto start = std::chrono::high_resolution_clock::now();
+            //     nsga2.solve(
+            //         population_size, iterations, individual_target_function,
+            //         INSGAMutationVariantAStrategy, pop_generator, nsga2_params);
+            //     auto end = std::chrono::high_resolution_clock::now();
 
-                std::chrono::duration<double> diff = end - start;
-                nsga2_times[i] = diff.count();
-            }));
+            //     std::chrono::duration<double> diff = end - start;
+            //     nsga2_times[i] = diff.count();
+            // }));
 
             threads.push_back(std::thread([&, i]() {
                 auto start = std::chrono::high_resolution_clock::now();
