@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-x = [round(x/100, 2) for x in range(0, 101, 5)]
+x = [round(x / 100, 2) for x in range(0, 101, 5)]
 y = []
 
 GRAPH_FILE = "fm10"
